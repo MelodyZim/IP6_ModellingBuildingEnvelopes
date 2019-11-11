@@ -4,6 +4,7 @@
 require 'sketchup.rb'
 require_relative 'scale_tool'
 require_relative 'move_tool'
+require_relative 'image_edit_dialog'
 
 module Examples
   module IP6Test
@@ -20,6 +21,9 @@ module Examples
       }
 	  menu.add_item('IP6 Move Tool') {
 		activate_move_tool
+	  }
+	  menu.add_item('IP6 image edit Dialog') {
+		ImageEditDialog.open_dialog
 	  }
       file_loaded(__FILE__)
     end
