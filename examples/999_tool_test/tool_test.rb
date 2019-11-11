@@ -8,7 +8,7 @@ module Examples
   module IP6Test
 
     unless file_loaded?(__FILE__)
-      ex = SketchupExtension.new('PDF test', 'pdf_test/main')
+      ex = SketchupExtension.new('Tool test', 'tool_test/main')
       ex.description = 'SketchUp Ruby API test importing pdf as reference images.'
       ex.version     = '1.0.0'
       ex.copyright   = 'Trimble Navigations © 2016'
