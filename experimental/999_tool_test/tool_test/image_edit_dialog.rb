@@ -2,7 +2,30 @@ require 'sketchup.rb'
 
 module ImageEditDialog
 	def self.open_dialog
-		show_my_messagebox("You are using SketchUp #{Sketchup.version} with Ruby #{RUBY_VERSION}", "Hello SketchUpper!")
+		show_dialog
+		# show_my_messagebox("You are using SketchUp #{Sketchup.version} with Ruby #{RUBY_VERSION}", "Hello SketchUpper!")
+	end
+	
+	def self.create_dialog
+		html_file = File.join(__dir__, '..', 'cropper.js-master', 'example.html') # Use external HTML
+		options = {
+			:dialog_title => "Cropping Demo",
+			:preferences_key => "example.htmldialog.materialinspector",
+			:style => UI::HtmlDialog::STYLE_DIALOG
+		}
+		dialog = UI::HtmlDialog.new(options)
+		dialog.set_file(html_file) # Can be set here.
+		dialog.center
+		dialog
+	end
+	
+	def self.show_dialog
+		if @dialog && @dialog.visible?
+			@dialog.bring_to_front
+		else
+			@dialog ||= self.create_dialog
+			@dialog.show
+		end
 	end
 	
 	# https://forums.sketchup.com/t/web-html-dialog-message-box-like/90199/2
