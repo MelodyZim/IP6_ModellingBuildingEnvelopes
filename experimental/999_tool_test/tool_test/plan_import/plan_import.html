@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../vendor/vue.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <p><button v-on:click="add_plan">Greet</button></p>
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {      },
+      methods: {
+        add_plan: function() {
+          sketchup.add_plan("Hello " + this.name);
+          sketchup.add_plan("How are you?");
+        },
+      }
+    });
+  </script>
+
+</body>
+</html>
