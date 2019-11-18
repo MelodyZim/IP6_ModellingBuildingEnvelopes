@@ -7,7 +7,7 @@ module ImageEditDialog
 	end
 	
 	def self.create_dialog
-		html_file = File.join(__dir__, '..', 'cropper.js-master', 'example.html') # Use external HTML
+		html_file = File.join(__dir__, '..', 'tapmodo-Jcrop-1902fbc', 'index.html') # Use external HTML
 		options = {
 			:dialog_title => "Cropping Demo",
 			:preferences_key => "example.htmldialog.materialinspector",
