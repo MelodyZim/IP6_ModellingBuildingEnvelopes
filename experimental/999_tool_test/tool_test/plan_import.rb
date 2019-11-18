@@ -38,16 +38,16 @@ module Envelop
 
         def self.import_image(image_base64)
           #Tempfile.create { |f|
-          f = Tempfile.new(['plan', '.png']).binmode
+          f = Tempfile.new(['plan', '.png']).binmode;
             f.write(Base64.decode64(image_base64['data:image/png;base64,'.length .. -1]));
             f.rewind; // TODO ?
-            model = Sketchup.active_model
-            entities = model.active_entities
-            point = Geom::Point3d.new(0,0,0)
-            puts f.path
-            puts ""
-            image = entities.add_image(f.path, point, 500)
-            f.delete()
+            model = Sketchup.active_model;
+            entities = model.active_entities;
+            point = Geom::Point3d.new(0,0,0);
+            puts f.path;
+            puts "";;
+            image = entities.add_image(f.path, point, 500);
+            f.delete();
           #}
         end
 
