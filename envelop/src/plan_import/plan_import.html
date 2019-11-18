@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <script src="../vendor/jquery-3.4.1.js"></script>
-    <script src="../vendor/pdf.js"></script>
-    <script src="plan_import.js"></script>
-  </head>
+<head>
+  <script src="../vendor/jquery-3.4.1.js"></script>
+  <script src="../vendor/pdf.js"></script>
+  <script src="plan_import.js"></script>
+  <link rel="stylesheet" type="text/css" href="plan_import.css" />
+</head>
 
-  <body>
+<body>
 
-    <div id="app">
-      <div>
-        <button id="upload-button">+</button>
-        <input type="file" id="file-to-upload" accept="application/pdf" />
-      </div>
-      <div id="plan-template">
-        <canvas> </canvas>
-      </div>
-      <div id="plan-container">
-      </div>
-    </div>
+  <input type="file" id="file-to-upload" accept="application/pdf" />
+  <div class="button" id="upload-button">
+    <div class="button-content">+</div>
+  </div>
+  <div id="plan-template" class="button">
+    <canvas class="button-content"> </canvas>
+  </div>
+  <div id="plan-container">
+  </div>
 
-  </body>
+</body>
 
 </html>

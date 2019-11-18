@@ -1,6 +1,6 @@
 $(function() {
   $("#file-to-upload").hide();
-  $("#pdf-template").hide();
+  $("#plan-template").hide();
 
   // Upon click this should should trigger click on the #file-to-upload file input element
   // This is better than showing the not-good-looking file input element
@@ -89,6 +89,8 @@ function new_canvas() {
 
   // Finally insert $klon wherever you want
   $("#plan-container").append($clone);
+
+  $clone.show();
 
   return $clone.find('canvas');
 }
