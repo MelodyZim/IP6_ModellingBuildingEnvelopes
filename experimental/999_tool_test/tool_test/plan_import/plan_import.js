@@ -54,9 +54,10 @@ $(function() {
             //$("#pdf-next, #pdf-prev").removeAttr('disabled');
 
             // Show the canvas and hide the page loader
+
             $canvas.on('click', function() {
-              console.log('#'+$(this).parent()[0].id+'.click()...');
-            	$(this).attr('href', $canvas.get(0).toDataURL()).attr('download', 'page.png');
+              console.log('#' + $(this).parent()[0].id + '.click(): working with "' + $canvas.get(0).toDataURL() + '"...');
+              sketchup.import_image($canvas.get(0).toDataURL());
             });
 
             //$("#page-loader").hide();
@@ -75,6 +76,7 @@ $(function() {
 
 var canvas_counter = 0;
 var $template;
+
 function new_canvas() {
   if ($template === undefined) {
     $template = $("#plan-template");
@@ -83,10 +85,10 @@ function new_canvas() {
   canvas_counter++;
 
   // Clone it and assign the new ID
-  var $clone = $template.clone().prop('id', 'canvas_div_'+canvas_counter );
+  var $clone = $template.clone().prop('id', 'canvas_div_' + canvas_counter);
 
   // Finally insert $klon wherever you want
-  $("#plan-container").append( $clone );
+  $("#plan-container").append($clone);
 
   return $clone.find('canvas');
 }
