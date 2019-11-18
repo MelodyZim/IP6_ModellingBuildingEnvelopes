@@ -16,31 +16,43 @@ $(function() {
       return;
     }
 
-    //$("#upload-button").hide();
-
     // Send the object url of the pdf
     var pdf_url = URL.createObjectURL($("#file-to-upload").get(0).files[0]);
 
-    var pdf_doc;
-
     pdfjsLib.getDocument({
       url: pdf_url
-    }).then(function(pdf_doc) {
+    }).promise.then(function(pdf_doc) {
 
       for (i = 1; i <= pdf_doc.numPages; i++) {
         pdf_doc.getPage(i).then(function(page) {
 
           var $canvas = new_canvas();
+          var canvas = $canvas[0];
           var canvas_ctx = $canvas.get(0).getContext('2d');
 
-          // As the canvas is of a fixed width we need to set the scale of the viewport accordingly
-          //var scale_required = __CANVAS.width / page.getViewport(1).width;
+          // find larger side, to determine scale
+          var scale;
+          var scale_one_object ={ scale: 1 };
+          var viewport_width = page.getViewport(scale_one_object).width;
+          var viewport_height = page.getViewport(scale_one_object).height;
+          var width_bigger = viewport_width > viewport_height
+          if (width_bigger) {
+            scale = canvas.width / viewport_width;
+          } else {
+            scale = canvas.height / viewport_height;
+          }
 
           // Get viewport of the page at required scale
-          var viewport = page.getViewport(1);
+          var viewport = page.getViewport({
+            scale: scale
+          });
 
           // Set canvas height
-          //__CANVAS.height = viewport.height;
+          if (width_bigger) {
+            canvas.height = viewport.height;
+          } else {
+            canvas.width = viewport.width;
+          }
 
           var renderContext = {
             canvasContext: canvas_ctx,
@@ -48,27 +60,16 @@ $(function() {
           };
 
           // Render the page contents in the canvas
-          page.render(renderContext).then(function() {
-            //__PAGE_RENDERING_IN_PROGRESS = 0;
-            // Re-enable Prev & Next buttons
-            //$("#pdf-next, #pdf-prev").removeAttr('disabled');
+          page.render(renderContext).promise.then(function() {
 
-            // Show the canvas and hide the page loader
-
-            $canvas.on('click', function() {
-              console.log('#' + $(this).parent()[0].id + '.click(): working with "' + $canvas.get(0).toDataURL() + '"...');
+            // attach ruby event
+            $canvas.parent().on('click', function() {
               sketchup.import_image($canvas.get(0).toDataURL());
             });
-
-            //$("#page-loader").hide();
-            //$("#download-image").show();
           });
         });
       }
     }).catch(function(error) {
-      // If error re-show the upload button
-      //$("#upload-button").show();
-
       alert(error.message);
     });
   });
@@ -84,10 +85,8 @@ function new_canvas() {
 
   canvas_counter++;
 
-  // Clone it and assign the new ID
   var $clone = $template.clone().prop('id', 'canvas_div_' + canvas_counter);
 
-  // Finally insert $klon wherever you want
   $("#plan-container").append($clone);
 
   $clone.show();

@@ -49,15 +49,11 @@ module Envelop
       end
 
       def self.import_image(image_base64)
-        Tempfile.create(['plan', '.png']).binmode { |file|
-          f.write(Base64.decode64(image_base64['data:image/png;base64,'.length .. -1]));
-          #f.rewind; # TODO ?
-          model = Sketchup.active_model;
-          entities = model.active_entities;
+        Tempfile.create(['plan', '.png']) { |file|
+          file.binmode
+          file.write(Base64.decode64(image_base64['data:image/png;base64,'.length .. -1]));
           point = Geom::Point3d.new(0,0,0);
-          puts f.path;
-          puts "";;
-          image = entities.add_image(f.path, point, 500);
+          image = Sketchup.active_model.active_entities.add_image(file.path, point, 500);
         }
       end
 
