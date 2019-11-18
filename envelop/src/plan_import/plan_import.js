@@ -26,9 +26,8 @@ $(function() {
       for (i = 1; i <= pdf_doc.numPages; i++) {
         pdf_doc.getPage(i).then(function(page) {
 
-          var $canvas = new_canvas();
-          var canvas = $canvas[0];
-          var canvas_ctx = $canvas.get(0).getContext('2d');
+          var canvases = new_canvases();
+          var canvas = canvases[0];
 
           // find larger side, to determine scale
           var scale;
@@ -42,6 +41,7 @@ $(function() {
             scale = canvas.height / viewport_height;
           }
 
+
           // Get viewport of the page at required scale
           var viewport = page.getViewport({
             scale: scale
@@ -54,17 +54,25 @@ $(function() {
             canvas.width = viewport.width;
           }
 
-          var renderContext = {
-            canvasContext: canvas_ctx,
-            viewport: viewport
-          };
+          var canvas_quality = canvases[1];
+          {
+            canvas_quality.width = viewport_width;
+            canvas_quality.height = viewport_height;
+            page.render({
+              canvasContext: canvas_quality.getContext('2d'),
+              viewport: page.getViewport(scale_one_object)
+            });
+          }
 
           // Render the page contents in the canvas
-          page.render(renderContext).promise.then(function() {
+          page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport: viewport
+          }).promise.then(function() {
 
             // attach ruby event
-            $canvas.parent().on('click', function() {
-              sketchup.import_image($canvas.get(0).toDataURL());
+            $(canvas).parent().on('click', function() {
+              sketchup.import_image(canvas_quality.toDataURL());
             });
           });
         });
@@ -78,7 +86,7 @@ $(function() {
 var canvas_counter = 0;
 var $template;
 
-function new_canvas() {
+function new_canvases() {
   if ($template === undefined) {
     $template = $("#plan-template");
   }
