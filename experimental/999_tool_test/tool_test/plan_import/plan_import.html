@@ -1,37 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="../vendor/jquery-3.4.1.js"></script>
-  <script src="../vendor/vue.js"></script>
-  <script src="../vendor/pdf.js"></script>
-  <script src="plan_import.js"></script>
-</head>
-<body>
 
-  <div id="app">
-    <div>
-      <button id="upload-button">+</button>
-      <input type="file" id="file-to-upload" accept="application/pdf" />
-    </div>
-    <div id="plan-template">
-  		<canvas> </canvas>
-    </div>
-    <div id="plan-container">
-    </div>
-  </div>
+  <head>
+    <script src="../vendor/jquery-3.4.1.js"></script>
+    <script src="../vendor/pdf.js"></script>
+    <script src="plan_import.js"></script>
+  </head>
 
-  <script>
-    var app = new Vue({
-      el: '#app',
-      data: {      },
-      methods: {
-        add_plan: function() {
-          sketchup.add_plan("Hello " + this.name);
-          sketchup.add_plan("How are you?");
-        },
-      }
-    });
-  </script>
+  <body>
 
-</body>
+    <div id="app">
+      <div>
+        <button id="upload-button">+</button>
+        <input type="file" id="file-to-upload" accept="application/pdf" />
+      </div>
+      <div id="plan-template">
+        <canvas> </canvas>
+      </div>
+      <div id="plan-container">
+      </div>
+    </div>
+
+  </body>
+
 </html>
