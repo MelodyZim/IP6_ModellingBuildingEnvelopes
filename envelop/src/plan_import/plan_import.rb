@@ -3,6 +3,10 @@ require 'tempfile'
 module Envelop
     module PlanImport
 
+     def self.hello_world
+         puts "helloworld2"
+      end
+
       def self.show_dialog
         if @dialog && @dialog.visible?
           @dialog.bring_to_front
