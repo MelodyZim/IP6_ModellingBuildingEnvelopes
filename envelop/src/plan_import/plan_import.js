@@ -95,6 +95,10 @@ function new_canvases() {
 
   var $clone = $template.clone().prop('id', 'canvas_div_' + canvas_counter);
 
+  $clone.find('button').on('click', function() {
+    $clone.remove();
+  });
+
   $("#plan-container").append($clone);
 
   $clone.show();

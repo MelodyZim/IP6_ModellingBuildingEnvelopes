@@ -34,6 +34,17 @@ body {
   display: none;
 }
 
+.delete-button {
+    position: absolute;
+    right: -5px;
+    z-index: 99;
+    top: -5px;
+    width: 15px;
+    height: 15px;
+    border: black 1px solid;
+    border-radius: 5px;
+}
+
 canvas {
   width: 130px;
   height: 130px;
