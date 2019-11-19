@@ -72,7 +72,7 @@ $(function() {
 
             // attach ruby event
             $(canvas).parent().on('click', function() {
-              sketchup.import_image(canvas_quality.toDataURL());
+              sketchup.import_image(canvas_quality.toDataURL(), Number(prompt("Enter Orientation", "0 = Floor, 1 = North, 2 = East, 3 = South, 4 = West")));
             });
           });
         });
