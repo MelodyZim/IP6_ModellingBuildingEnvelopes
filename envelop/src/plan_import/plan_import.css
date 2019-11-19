@@ -1,0 +1,51 @@
+body {
+  height: 150px;
+  margin: 5px;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.button {
+  height: 140px;
+  width: 140px;
+  border: black 1px solid;
+  border-radius: 5px;
+  margin: 5px;
+  display:inline-block;
+  position: relative;
+}
+
+#plan-container {
+  display:inline-block;
+  white-space: nowrap;
+  width: 140px;
+}
+
+.button-content {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.original-quality {
+  display: none;
+}
+
+.delete-button {
+    position: absolute;
+    right: -5px;
+    z-index: 99;
+    top: -5px;
+    width: 15px;
+    height: 15px;
+    border: black 1px solid;
+    border-radius: 5px;
+}
+
+canvas {
+  width: 130px;
+  height: 130px;
+}

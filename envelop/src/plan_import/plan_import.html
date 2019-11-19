@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="../vendor/jquery-3.4.1.js"></script>
+  <script src="../vendor/pdf.js"></script>
+  <script src="plan_import.js"></script>
+  <link rel="stylesheet" type="text/css" href="plan_import.css" />
+</head>
+
+<body>
+
+  <input type="file" id="file-to-upload" accept="application/pdf" />
+  <div class="button" id="upload-button">
+    <div class="button-content">+</div>
+  </div>
+  <div id="plan-template" class="button">
+    <button class="delete-button"><div class="button-content">X</div></button>
+    <canvas class="button-content"> </canvas>
+    <canvas class="original-quality"> </canvas>
+  </div>
+  <div id="plan-container">
+  </div>
+
+</body>
+
+</html>
