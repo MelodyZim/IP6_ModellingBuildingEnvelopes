@@ -30,7 +30,7 @@ module Envelop
 
 		def self.show_dialog
       if @dialog&.visible?
-        setImage
+        set_image
         @dialog.bring_to_front
       else
         @dialog ||= create_dialog
