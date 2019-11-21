@@ -1,8 +1,13 @@
 var jcrop_api;
+var rotation = 0;
 
 $(function() {
   $("#target").on("load", function() {
     console.log("load triggered");
+    
+    // reset image rotation
+    $("#target").css("transform", "rotate(0deg)");
+    rotation = 0;
     
     // destroy old jcrop instance if it exists
     if (typeof jcrop_api !== "undefined") {
@@ -19,6 +24,16 @@ $(function() {
       jcrop_api = this;
     });
   })
+  
+  $("#rotCCW").on("click", function() {
+    rotation = (rotation - 90) % 360;
+    $("#target").css("transform", `rotate(${rotation}deg)`);
+  });
+  
+  $("#rotCW").on("click", function() {
+    rotation = (rotation + 90) % 360;
+    $("#target").css("transform", `rotate(${rotation}deg)`);
+  });
   
   sketchup.ready();
 })
