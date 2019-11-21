@@ -44,10 +44,11 @@ module Envelop
       dialog = UI::HtmlDialog.new(options)
       dialog.set_file(html_file)
       dialog.set_can_close do
-        false # TODO: this straight up does not work
+        false # TODO: this straight up does not work on Mac (Works on Windows)
       end
       dialog.set_size(view.vpwidth, html_height) # TODO: update this as the window is resized & make not resizeable
-      dialog.set_position(0, view.vpheight - html_height) # TODO: make it so this cannot be changed?
+      dialog.center # TODO: position calculation wrong on windows
+      #dialog.set_position(0, view.vpheight - html_height) # TODO: make it so this cannot be changed?
       dialog
     end
 
