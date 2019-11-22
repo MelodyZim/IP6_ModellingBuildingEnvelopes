@@ -11,7 +11,7 @@ module Envelop
         @dialog.bring_to_front
       else
         @dialog ||= create_dialog
-        @dialog.add_action_callback('import_image') do |_action_context, string, orientation|
+        @dialog.add_action_callback('import_image') do |_action_context, string|
           Envelop::PlanEdit.open_dialog(string)
           #image = import_image(string)
           #position_image(image, orientation)
