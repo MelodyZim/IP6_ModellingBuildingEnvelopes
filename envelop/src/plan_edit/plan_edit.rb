@@ -52,10 +52,10 @@ module Envelop
           # @dialog.close
           # nil
         # }
-        # @dialog.add_action_callback("cancel") { |action_context, value|
-          # @dialog.close
-          # nil
-        # }
+        @dialog.add_action_callback("cancel") { |action_context|
+          @dialog.close
+          nil
+        }
         @dialog.show
       end
 

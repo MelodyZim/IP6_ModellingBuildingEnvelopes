@@ -2,18 +2,20 @@
 <html>
 	<head>
 		<script src="../vendor/js/jquery-3.4.1.js"></script>
-		<script src="../vendor/js/jquery.Jcrop.js"></script>
+    <link  href="../vendor/css/cropper.css" rel="stylesheet">
+    <script src="../vendor/js/cropper.js"></script>
 		<script src="plan_edit.js"></script>
-		<link rel="stylesheet" href="../vendor/css/jquery.Jcrop.css" type="text/css" />
 	</head>
 	<body>
-			<img id="target" height="300"/>
-      <img id="output" />
-      <div>
-        <input type="button" value="rotate left" id="rotCCW">
-        <input type="button" value="rotate right" id="rotCW">
-        <input type="button" value="Cancel" id="cancel">
-        <input type="button" value="Insert Image" id="accept">
-      </div>
+    <div>
+      <img id="target" height="300" style="max-width: 100%;"/>
+    </div>
+    <div>
+      <input type="button" value="rotate left" id="rotCCW">
+      <input type="button" value="rotate right" id="rotCW">
+      <input type="button" value="Cancel" id="cancel">
+      <input type="button" value="Insert Image" id="accept">
+    </div>
+    <img id="output" />
 	</body>
 </html>

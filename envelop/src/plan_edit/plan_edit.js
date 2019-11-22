@@ -1,38 +1,29 @@
-var jcrop_api;
-var rotation = 0;
+var cropper;
 
 $(function() {
-  $("#target").on("load", function() {
-    console.log("load triggered");
-    
-    // reset image rotation
-    $("#target").css("transform", "rotate(0deg)");
-    rotation = 0;
-    
-    // destroy old jcrop instance if it exists
-    if (typeof jcrop_api !== "undefined") {
-      jcrop_api.destroy()
+  cropper = new Cropper($("#target")[0], {
+    viewMode: 2,
+    //guides: false,
+    //center: false,
+    zoomable: false,
+    scalable: false,
+    toggleDragModeOnDblclick: false,
+    autoCrop: false,
+    ready() {
+      $("#rotCCW").on('click', function() {
+        cropper.rotate(-90);
+      });
+      $("#rotCW").on('click', function() {
+        cropper.rotate(90);
+      });
+      $("#accept").on('click', function() {
+        $("#output").attr("src", cropper.getCroppedCanvas().toDataURL());
+      });
     }
-        
-    // create a new jcrop instance
-    $(this).Jcrop({
-      //onChange: previewCrop,
-      onSelect: previewCrop,
-      onRelease: previewCrop,
-      trueSize: [$(this)[0].naturalWidth, $(this)[0].naturalHeight],
-    },function(){
-      jcrop_api = this;
-    });
-  })
-  
-  $("#rotCCW").on("click", function() {
-    rotation = (rotation - 90) % 360;
-    $("#target").css("transform", `rotate(${rotation}deg)`);
   });
   
-  $("#rotCW").on("click", function() {
-    rotation = (rotation + 90) % 360;
-    $("#target").css("transform", `rotate(${rotation}deg)`);
+  $("#cancel").on('click', function() {
+    sketchup.cancel();
   });
   
   sketchup.ready();
@@ -41,16 +32,9 @@ $(function() {
 function setImage(image_base64) {
   sketchup.say("setImage callback");
 
-  // change the image
-  $("#target").attr("src", image_base64);
+  if (typeof cropper === 'undefined') return
+  cropper.replace(image_base64)
 }
-
-function previewCrop(c) {
-  if (typeof c === 'undefined') return
-  
-  // show crop preview for debug purposes
-  $("#output").attr("src", imageToDataUri($("#target")[0], c.x, c.y, c.w, c.h));
-};
 
 // https://stackoverflow.com/questions/20958078/resize-a-base-64-image-in-javascript-without-using-canvas
 function imageToDataUri(img, x, y, width, height) {
