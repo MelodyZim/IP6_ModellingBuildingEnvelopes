@@ -12,8 +12,9 @@ module Envelop
       else
         @dialog ||= create_dialog
         @dialog.add_action_callback('import_image') do |_action_context, string, orientation|
-          image = import_image(string)
-          position_image(image, orientation)
+          Envelop::PlanEdit.open_dialog(string)
+          #image = import_image(string)
+          #position_image(image, orientation)
           nil
         end
         @dialog.show
@@ -57,6 +58,7 @@ module Envelop
       Tempfile.create(['plan', '.png']) do |file|
         file.binmode
         file.write(Base64.decode64(image_base64['data:image/png;base64,'.length..-1]))
+        file.close
 
         size = ImageSize.path(file.path)
 

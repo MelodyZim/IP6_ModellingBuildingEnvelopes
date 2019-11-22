@@ -30,8 +30,13 @@ $(function() {
     zoomCropperCanvas();
   });
   $("#accept").on('click', function() {
-    $("#output").attr("src", cropper.getCroppedCanvas().toDataURL());
-    $("#orientation").text($("input[name='orientation']:checked").val());
+    img = cropper.getCroppedCanvas().toDataURL()
+    orientation = Number($("input[name='orientation']:checked").val())
+    
+    $("#output").attr("src", img);
+    $("#orientation").text(`orientation=${orientation}`);
+    
+    sketchup.accept(img, orientation);
   });
   $("#cancel").on('click', function() {
     sketchup.cancel();

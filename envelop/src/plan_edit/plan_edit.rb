@@ -47,11 +47,16 @@ module Envelop
           self.set_image
           nil
         }
-        # @dialog.add_action_callback("accept") { |action_context, value|
-          # puts "> Place image"
-          # @dialog.close
-          # nil
-        # }
+        @dialog.add_action_callback("accept") { |action_context, image_base64, orientation|
+          puts "plan_edit accept: orientation=#{orientation}"
+        
+          # TODO: move Envelop::PlanImport.import_image and Envelop::PlanImport.position_image into own module
+          image = Envelop::PlanImport.import_image(image_base64)
+          Envelop::PlanImport.position_image(image, orientation)
+          
+          @dialog.close
+          nil
+        }
         @dialog.add_action_callback("cancel") { |action_context|
           @dialog.close
           nil
