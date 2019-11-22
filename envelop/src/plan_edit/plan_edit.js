@@ -31,6 +31,7 @@ $(function() {
   });
   $("#accept").on('click', function() {
     $("#output").attr("src", cropper.getCroppedCanvas().toDataURL());
+    $("#orientation").text($("input[name='orientation']:checked").val());
   });
   $("#cancel").on('click', function() {
     sketchup.cancel();
