@@ -1,5 +1,7 @@
 require_relative 'plan_import/plan_import'
 require_relative 'plan_edit/plan_edit'
+require_relative 'plan_position/plan_position'
+require_relative 'plan_position/plan_position_tool'
 require_relative 'camera_utils/camera_utils'
 
 module Envelop

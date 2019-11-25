@@ -13,7 +13,11 @@ module Envelop
     result
   end
 
-  def self.reload
+  def self.reload(clear_model=false)
+    if clear_model
+      Sketchup.active_model.entities.clear!
+    end
+
     pattern = File.join(__dir__, '**', '*.rb')
     files = Dir.glob(pattern)
     self.mute_warnings do

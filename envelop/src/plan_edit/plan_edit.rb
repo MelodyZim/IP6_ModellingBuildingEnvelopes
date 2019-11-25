@@ -3,14 +3,14 @@ require_relative '../vendor/rb/image_size'
 module Envelop
   module PlanEdit
 		# public
-		
+
 		def self.open_dialog(image_base64)
 			@image_base64 = image_base64
 			show_dialog
 		end
-		
+
 		private
-		
+
 		def self.create_dialog
 			html_file = File.join(__dir__, 'plan_edit.html')
 			options = {
@@ -34,11 +34,6 @@ module Envelop
         @dialog.bring_to_front
       else
         @dialog ||= create_dialog
-        # @dialog.add_action_callback('import_image') { |_action_context, string, orientation|
-          # image = import_image(string)
-          # position_image(image, orientation)
-          # nil
-        # }
         @dialog.add_action_callback("say") { |action_context, text|
           puts "html > #{text}"
           nil
@@ -49,11 +44,7 @@ module Envelop
         }
         @dialog.add_action_callback("accept") { |action_context, image_base64, orientation|
           puts "plan_edit accept: orientation=#{orientation}"
-        
-          # TODO: move Envelop::PlanImport.import_image and Envelop::PlanImport.position_image into own module
-          image = Envelop::PlanImport.import_image(image_base64)
-          Envelop::PlanImport.position_image(image, orientation)
-          
+          Envelop::PlanPosition.add_image(image_base64, orientation)
           @dialog.close
           nil
         }
@@ -66,7 +57,7 @@ module Envelop
 
 			@dialog.show
 		end
-		
+
 		def self.set_image
 			return if @dialog.nil?
 			puts "ruby > set_image callback"
