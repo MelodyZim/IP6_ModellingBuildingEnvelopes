@@ -66,6 +66,34 @@ module Envelop
         result.set_attribute("house", "ishouse", true)
       end
     end
+    
+    def subtract_selection
+      model = Sketchup.active_model
+      entities = model.active_entities
+      
+      # return if selection is empty
+      if model.selection.empty?
+        UI.messagebox('Selection is empty')
+        return
+      end
+      
+      house = search_house
+      if house.nil?
+        UI.messagebox('No house found')
+        return
+      end
+      
+      # group selected
+      group_sub = entities.add_group(model.selection.to_a)
+      
+      # add operation
+      result = group_sub.subtract(house)
+      if result.nil?
+        UI.messagebox('subtract method failed!')
+      else
+        result.set_attribute("house", "ishouse", true)
+      end
+    end
   
 #    # This is an example of an observer that watches tool interactions.
 #    class MyToolsObserver < Sketchup::ToolsObserver
