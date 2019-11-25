@@ -10,20 +10,19 @@
     <div>
       <img id="target" height="300" style="max-width: 100%;"/>
     </div>
-    
+
     <div>
-      <input type="button" value="rotate left" id="rotCCW">
-      <input type="button" value="rotate right" id="rotCW">
-      <input type="button" value="Cancel" id="cancel">
-      <input type="button" value="Insert Image" id="accept">
+      <button id="rotCCW"><label for="rotCCW">rotate left</label></button>
+      <button id="rotCW"><label for="rotCW">rotate right</label></button>
+      <button id="cancel"><label for="cancel">Cancel</label></button>
     </div>
-    
-    <input type="radio" name="orientation" value="0" id="F"  checked><label for="F"> Floor</label><br>
-    <input type="radio" name="orientation" value="1" id="N"><label for="N"> North</label><br>
-    <input type="radio" name="orientation" value="2" id="E"><label for="E"> East</label><br>
-    <input type="radio" name="orientation" value="3" id="S"><label for="S"> South</label><br>
-    <input type="radio" name="orientation" value="4" id="W"><label for="W"> West</label><br>
-    
+
+    <button value="0" id="place_F"><label for="place_F">Floor</label></button>
+    <button value="1" id="place_N"><label for="place_N">North</label></button>
+    <button value="2" id="place_E"><label for="place_E">East</label></button>
+    <button value="3" id="place_S"><label for="place_S">South</label></button>
+    <button value="4" id="place_W"><label for="place_W">West</label></button>
+
     <!-- output for debugging purposes -->
     <img id="output" />
     <p id="orientation"></p>

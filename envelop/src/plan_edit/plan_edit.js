@@ -13,12 +13,12 @@ $(function() {
     toggleDragModeOnDblclick: false, // prevent manual moving
     autoCrop: false, // start without a cropbox
   });
-  
+
   // zoom the cropper canvas to fit inside the container
   function zoomCropperCanvas() {
     cropper.zoomTo(cropper.getContainerData().height / cropper.getCanvasData().naturalHeight)
   }
-  
+
   $("#rotCCW").on('click', function() {
     cropper.clear();  // clear the cropbox
     cropper.rotate(-90);
@@ -29,21 +29,37 @@ $(function() {
     cropper.rotate(90);
     zoomCropperCanvas();
   });
-  $("#accept").on('click', function() {
-    img = cropper.getCroppedCanvas().toDataURL()
-    orientation = Number($("input[name='orientation']:checked").val())
-    
-    $("#output").attr("src", img);
-    $("#orientation").text(`orientation=${orientation}`);
-    
-    sketchup.accept(img, orientation);
+  $('#place_F').on('click', function() {
+    place($(this));
+  });
+  $('#place_N').on('click', function() {
+    place($(this));
+  });
+  $('#place_W').on('click', function() {
+    place($(this));
+  });
+  $('#place_S').on('click', function() {
+    place($(this));
+  });
+  $('#place_E').on('click', function() {
+    place($(this));
   });
   $("#cancel").on('click', function() {
     sketchup.cancel();
   });
-  
+
   sketchup.ready();
 })
+
+function place(button) {
+    img = cropper.getCroppedCanvas().toDataURL()
+    orientation = Number(button.val())
+
+    $("#output").attr("src", img);
+    $("#orientation").text(`orientation=${orientation}`);
+
+    sketchup.accept(img, orientation);
+}
 
 function setImage(image_base64) {
   sketchup.say("setImage callback");
