@@ -1,5 +1,6 @@
 require 'tempfile'
 require_relative '../vendor/rb/image_size'
+require_relative '../vendor/rb/os'
 
 module Envelop
   module PlanImport
@@ -43,9 +44,15 @@ module Envelop
       dialog.set_can_close do
         false # TODO: this straight up does not work on Mac (Works on Windows)
       end
-      dialog.set_size(view.vpwidth, html_height) # TODO: update this as the window is resized & make not resizeable
+      dialog.set_size(Envelop::WindowUtils.ViewWidthPixels, html_height) # TODO: update this as the window is resized & make not resizeable
       #dialog.center # TODO: position calculation wrong on windows
-      dialog.set_position(0, Envelop::WindowUtils.ViewHeightPixels + 88 - html_height) # TODO: make it so this cannot be changed?
+
+      y_pos = Envelop::WindowUtils.ViewHeightPixels - html_height
+      if OS.mac? # this assumes sketchup is running windowed but that the window is at max size
+          y_pos = y_pos + 88
+      end
+
+      dialog.set_position(0, y_pos) # TODO: make it so this cannot be changed?
       dialog
     end
 
