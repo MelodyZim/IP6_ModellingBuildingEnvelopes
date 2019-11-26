@@ -56,6 +56,24 @@ module Envelop
 
 			@dialog.show
 		end
+    
+    # calculate the surface area of the @house group
+    # the output is a json with the result
+    def self.calc_area
+      faces = @house.entities.select {|entity| entity.is_a? Sketchup::Face }
+      faces.each do |face|
+        material = face.material
+        name = material.nil? ? "default" : material.name
+        puts "#{name} #{face.area} #{get_unit}^2"
+      end
+      @house
+    end
+    
+    # get the current unit as a string
+    def self.get_unit
+      # https://sketchucation.com/forums/viewtopic.php?t=35923
+      ['"', "'", "mm", "cm", "m"][Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]]
+    end
 
 		# def self.set_image
 			# return if @dialog.nil?
