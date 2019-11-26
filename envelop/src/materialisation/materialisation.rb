@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 module Envelop
   module Materialisation
     # Public
@@ -18,7 +20,6 @@ module Envelop
     HTML_WIDTH = 200
 
     #  Methods
-
     def self.create_dialog
       puts('Envelop::Materialisation.create_dialog()...')
 
@@ -46,11 +47,33 @@ module Envelop
       dialog
     end
 
+    def self.init_materials # TODO: save material pallete per machine, independent of default materials and then use those saved materials if any
+      materials = Sketchup.active_model.materials
+
+      materials.purge_unused
+
+      default_materials_path = html_file = File.join(__dir__, 'default_materials.json')
+      default_materials = JSON.parse(File.read(default_materials_path))['default_materials']
+
+      default_materials.each do |material_hash|
+        count = 1
+        while count <= material_hash['count']
+
+          material = materials.add("#{material_hash['id']} #{count}")
+          material.set_attribute('material', 'description', "#{material_hash['name']} #{count}") # TODO: display this somewhere
+          material.color = Sketchup::Color.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b'])
+
+          count += 1
+        end
+      end
+    end
+
     def self.reload
       if @dialog
         @dialog.close
         remove_instance_variable(:@dialog)
       end
+      init_materials
     end
     reload
   end
