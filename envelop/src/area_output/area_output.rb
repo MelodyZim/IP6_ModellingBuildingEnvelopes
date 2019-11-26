@@ -74,6 +74,9 @@ module Envelop
       faces.each do |face|
         material = face.material
         name = material.nil? ? "default" : material.name
+        
+        puts Sketchup.format_area(face.area)
+        
         area = face.area
         direction = get_direction(face.normal)
                 

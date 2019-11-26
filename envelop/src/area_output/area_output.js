@@ -27,7 +27,7 @@ function set_result(result) {
       
       directions.forEach(function (dir, index) {
         if (dir in obj[prop]) {
-          html += `<td>${obj[prop][dir].toFixed(2)}</td`
+          html += `<td>${obj[prop][dir].toFixed(2)}</td>`
         } else {
           html += "<td></td>"
         }
