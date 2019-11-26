@@ -46,9 +46,16 @@ module Envelop
         false # TODO: this straight up does not work on Mac (Works on Windows)
       end
        # TODO: update this as the window is resized & make not resizeable
-      dialog.set_size(html_width, viewHeight - Envelop::PlanImport::HTML_HEIGHT)
+      dialog.set_size(html_width, viewHeight - Envelop::PlanImport::HTML_HEIGHT + 8)
       #dialog.center # TODO: position calculation wrong on windows
-      dialog.set_position(viewWidth - html_width, 88) # - html_width, 88) # TODO: make it so this cannot be changed?
+           if OS.mac? 
+          header_height = 88
+      elsif OS.windows?
+          header_height =  77
+      else
+          puts "Usupported Platfrom, sizing and positioning of dialogs is unlikely to work"
+      end
+      dialog.set_position(viewWidth - html_width, header_height) # - html_width, 88) # TODO: make it so this cannot be changed?
 
       dialog
     end

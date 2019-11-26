@@ -21,7 +21,14 @@ module Envelop
     private
 
     # Settings
-    HTML_HEIGHT = 150 + 26 #  TODO: verify this is correct on all platforms (+ 26 for size of title bar)
+    HTML_HEIGHT = 150 #  TODO: verify this is correct on all platforms (+ 26 for size of title bar)
+       if OS.mac? 
+          HTML_HEIGHT = HTML_HEIGHT + 26
+      elsif OS.windows?
+          HTML_HEIGHT = HTML_HEIGHT + 62
+      else
+          puts "Usupported Platfrom, sizing and positioning of dialogs is unlikely to work"
+      end
 
     #  Methods
 
@@ -48,8 +55,13 @@ module Envelop
       #dialog.center # TODO: position calculation wrong on windows
 
       y_pos = Envelop::WindowUtils.ViewHeightPixels - html_height
-      if OS.mac? # this assumes sketchup is running windowed but that the window is at max size
+      # TODO: this assumes sketchup is running windowed but that the window is at max size, on both OSs
+      if OS.mac? 
           y_pos = y_pos + 88
+      elsif OS.windows?
+          y_pos = y_pos + 77
+      else
+          puts "Usupported Platfrom, sizing and positioning of dialogs is unlikely to work"
       end
 
       dialog.set_position(0, y_pos) # TODO: make it so this cannot be changed?
