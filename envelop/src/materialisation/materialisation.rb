@@ -59,22 +59,33 @@ module Envelop
 
       default_materials.each do |material_hash|
         count = 1
-        base_color = ColorMath.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b']).to_hsl
+
+        base_color = ColorMath.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b'])
+        base_color_hsl = base_color.to_hsl
 
         while count <= material_hash['count']
 
           material = materials.add("#{material_hash['id']} #{count}")
           material.set_attribute('material', 'description', "#{material_hash['name']} #{count}") # TODO: display this somewhere
-          material.color = Sketchup::Color.new(
-            ColorMath.from_hsl(
-              base_color[0],
-              base_color[1] * (rand() * Envelop::Materialisation::SMALL_DEVIATION),
-              base_color[2] * (rand() * Envelop::Materialisation::SMALL_DEVIATION)
-            ).to_rgb)
+          material.color = Sketchup::Color.new(deviate_to_rgb(base_color_hsl))
 
           count += 1
         end
       end
+    end
+
+    def self.deviate_to_rgb(color_hsl)
+
+      rand1 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
+      rand2 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
+
+      res = ColorMath.from_hsl(
+        color_hsl[0],
+        (color_hsl[1] + rand1).clamp(0, 100),
+        (color_hsl[2] + rand2).clamp(0, 100)
+      )
+
+      res.to_rgb
     end
 
     def self.reload
