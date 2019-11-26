@@ -13,7 +13,7 @@ module Envelop
     result
   end
 
-  def self.reload(clear_model=false)
+  def self.reload(clear_model=false, open_dialogs=false)
     if clear_model
       Sketchup.active_model.entities.clear!
     end
@@ -26,6 +26,11 @@ module Envelop
       }
     end
     puts "Reloaded #{files.size} files"
+
+    if open_dialogs
+      Envelop::PlanImport.show_dialog()
+      Envelop::Materialisation.show_dialog()
+    end
   end
 
   def self.create_extension

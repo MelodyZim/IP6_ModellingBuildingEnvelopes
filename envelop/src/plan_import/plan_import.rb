@@ -44,8 +44,8 @@ module Envelop
         false # TODO: this straight up does not work on Mac (Works on Windows)
       end
       dialog.set_size(view.vpwidth, html_height) # TODO: update this as the window is resized & make not resizeable
-      dialog.center # TODO: position calculation wrong on windows
-      #dialog.set_position(0, view.vpheight - html_height) # TODO: make it so this cannot be changed?
+      #dialog.center # TODO: position calculation wrong on windows
+      dialog.set_position(0, Envelop::WindowUtils.ViewHeightPixels + 88 - html_height) # TODO: make it so this cannot be changed?
       dialog
     end
 
