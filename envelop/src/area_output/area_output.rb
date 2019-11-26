@@ -17,7 +17,7 @@ module Envelop
 				:dialog_title => "Area Output",
 				:preferences_key => "envelop.areaoutput",
 				:style => UI::HtmlDialog::STYLE_DIALOG,
-				:resizable => false,
+				:resizable => true,
 				:width => 500,
 				:height => 500,
 			}
@@ -30,31 +30,38 @@ module Envelop
 
 		def self.show_dialog
       if @dialog&.visible?
+        set_area
         @dialog.bring_to_front
       else
         @dialog ||= create_dialog
-        # @dialog.add_action_callback("say") { |action_context, text|
-          # puts "html > #{text}"
-          # nil
-        # }
-        # @dialog.add_action_callback("ready") { |action_context|
-          # self.set_image
-          # nil
-        # }
+        @dialog.add_action_callback("say") { |action_context, text|
+          puts "html > #{text}"
+          nil
+        }
+        @dialog.add_action_callback("ready") { |action_context|
+          puts "Envelop::AreaOutput.show_dialog: action_callback('ready') ..."
+          self.set_area
+          nil
+        }
         # @dialog.add_action_callback("accept") { |action_context, image_base64, orientation|
           # puts "plan_edit accept: orientation=#{orientation}"
           # Envelop::PlanPosition.add_image(image_base64, orientation)
           # @dialog.close
           # nil
         # }
-        # @dialog.add_action_callback("cancel") { |action_context|
-          # @dialog.close
-          # nil
-        # }
+        @dialog.add_action_callback("close") { |action_context|
+          @dialog.close
+          nil
+        }
         @dialog.show
       end
 
 			@dialog.show
+		end
+
+    def self.set_area
+			return if @dialog.nil?
+			@dialog.execute_script("set_result('#{calc_area(@house)}')")
 		end
 
     # calculate the surface area of the supplied Sketchup::Group
@@ -107,8 +114,9 @@ module Envelop
     def self.reload
       if @dialog
         @dialog.close
-        remove_instance_variable(:@house) unless @house.nil?
+        remove_instance_variable(:@dialog)
       end
+      remove_instance_variable(:@house) unless @house.nil?
     end
     reload
   end

@@ -1,19 +1,28 @@
 $(function() {
+  $("#close").on('click', function() {
+    sketchup.close();
+  });
 
   sketchup.ready();
 })
 
 function set_result(result) {
-  // clear table
-  $("#areaTable").not(':first').remove();
+  sketchup.say("set result")
+  
+  var html = '';
+  const obj = JSON.parse(result);
+  const directions = ["F", "R", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+  
+  // generate header
+  html += "<tr><th></th>"
+  directions.forEach(function (dir, index) {
+    html += `<th>${dir}</th>`
+  });
+  html += "</tr>"
   
   // generate new table rows
-  var obj = JSON.parse(result);
-  var html = '';
-  
   for (var prop in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-      directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
       html += `<tr><th>${prop}</th>`
       
       directions.forEach(function (dir, index) {
@@ -27,5 +36,6 @@ function set_result(result) {
     }
   }
   
-  $('#areaTable tr').first().after(html);
+  // replace content of table
+  $('#areaTable').html(html);
 }
