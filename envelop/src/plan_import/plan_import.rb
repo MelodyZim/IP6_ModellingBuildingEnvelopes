@@ -20,7 +20,7 @@ module Envelop
     private
 
     # Settings
-    HTML_HEIGHT = 150 + Envelop::WindowUtils.HTMLWindowHeaderAndVertScrollbarHeight
+    HTML_HEIGHT = 150 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
 
     #  Methods
     def self.create_dialog
@@ -30,10 +30,10 @@ module Envelop
       options = {
         dialog_title: 'Plan Import',
         preferences_key: 'envelop.planimport',
-        min_height: Envelop::PlanImport::HTML_HEIGHT, # TODO: consider making this window resizeable
+        min_height: Envelop::PlanImport::HTML_HEIGHT, # TODO: consider making this window resizeable. TODO: ensure these settings actually work
         max_height: Envelop::PlanImport::HTML_HEIGHT,
-        min_width: Envelop::WindowUtils.ViewWidthPixels,
-        max_width: Envelop::WindowUtils.ViewWidthPixels,
+        min_width: Envelop::WindowUtils.view_width_pixels,
+        max_width: Envelop::WindowUtils.view_width_pixels,
         style: UI::HtmlDialog::STYLE_UTILITY
       }
       dialog = UI::HtmlDialog.new(options)
@@ -42,8 +42,9 @@ module Envelop
         false # TODO: this straight up does not work on Mac (Works on Windows)
       end
 
-      dialog.set_size(Envelop::WindowUtils.ViewWidthPixels, Envelop::PlanImport::HTML_HEIGHT) # TODO: update this as the main window is resized.
-      dialog.set_position(0, Envelop::WindowUtils.ViewHeightPixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.SketchupMenuAndToolbarHeight) # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+      dialog.set_size(Envelop::WindowUtils.view_width_pixels, Envelop::PlanImport::HTML_HEIGHT) # TODO: update this as the main window is resized.
+      dialog.set_position(0, Envelop::WindowUtils.view_height_pixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+
       dialog
     end
 

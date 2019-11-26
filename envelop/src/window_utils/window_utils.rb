@@ -5,7 +5,7 @@ require_relative '../vendor/rb/os'
 module Envelop
   module WindowUtils
     # TODO: ensure this is correct for different OSs, Screen Resolutions & DPIs
-    def self.HTMLWindowHeaderAndVertScrollbarHeight
+    def self.html_window_header_and_vert_scrollbar_height
       if OS.mac?
         26
       elsif OS.windows?
@@ -17,7 +17,7 @@ module Envelop
     end
 
     # TODO: ensure this is correct for different OSs, Screen Resolutions & DPIs
-    def self.SketchupMenuAndToolbarHeight
+    def self.sketchup_menu_and_toolbar_height
       if OS.mac?
         88 # TODO: this assumes Sketchup is running windowed & at max size. Either ensure or at least validate this assumption
       elsif OS.windows?
@@ -32,9 +32,9 @@ module Envelop
       puts 'Envelop::WindowUtils: UI.scale_factor != 2.0, window positioning and sizing might not work.'
     end
 
-    def self.ViewHeightPixels
+    def self.view_height_pixels
       if OS.windows?
-        Sketchup.active_model.active_view.vpheight / 2.0 + MagicWindowSizeAndPositioningConst
+        Sketchup.active_model.active_view.vpheight / 2.0 + magic_window_size_and_positioning_const
       elsif OS.mac?
         Sketchup.active_model.active_view.vpheight / 2.0
       else
@@ -43,9 +43,9 @@ module Envelop
       end
     end
 
-    def self.ViewWidthPixels
+    def self.view_width_pixels
       if OS.windows?
-        Sketchup.active_model.active_view.vpwidth / 2.0 + MagicWindowSizeAndPositioningConst
+        Sketchup.active_model.active_view.vpwidth / 2.0 + magic_window_size_and_positioning_const
       elsif OS.mac?
         Sketchup.active_model.active_view.vpwidth / 2.0
       else
@@ -54,7 +54,7 @@ module Envelop
       end
     end
 
-    def self.MagicWindowSizeAndPositioningConst
+    def self.magic_window_size_and_positioning_const
       if OS.windows?
         8 # TODO: this + 8 is very mysterious and very unlikely to work outside of patricks machine
       elsif OS.mac?
