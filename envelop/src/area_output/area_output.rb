@@ -58,12 +58,10 @@ module Envelop
 			@dialog.show
 		end
 
-    # calculate the surface area of the @house group
+    # calculate the surface area of the supplied Sketchup::Group
     # the output is a json with the result
-    def self.calc_area
-      @house = Envelop::ModelingTool.search_house
-
-      faces = @house.entities.select {|entity| entity.is_a? Sketchup::Face }
+    def self.calc_area(group)
+      faces = group.entities.select {|entity| entity.is_a? Sketchup::Face }
 
       materials = Hash.new
 
@@ -71,16 +69,20 @@ module Envelop
         material = face.material
         name = material.nil? ? "default" : material.name
         area = face.area
-        puts "#{} #{area} #{face.normal}"
+        direction = get_direction(face.normal)
+                
         if materials[name].nil?
-          materials[name] = area
-        else
-          materials[name] += area
+          materials[name] = Hash.new
         end
-        #puts "#{name} #{face.area} #{get_unit}^2"
+        if materials[name][direction].nil?
+          materials[name][direction] = 0
+        end
+        
+        materials[name][direction] += area
+
       end
-      puts materials
-      @house
+      
+      return materials
     end
 
     # get the current unit as a string
@@ -89,9 +91,18 @@ module Envelop
       ['"', "'", "mm", "cm", "m"][Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]]
     end
 
-    # determine the face direction from its normal, return a string for example "N" for North
+    # determine the cardinal direction of the normal, returns a string for example "N" for North
     def self.get_direction(normal)
-
+      z_axis = Geom::Vector3d.new(0,0,1)
+      pitch_angle = z_axis.angle_between(normal).radians
+      if pitch_angle < 45
+        return "R" #Roof
+      elsif pitch_angle < 135
+        direction = Math.atan2(normal.y, normal.x).radians
+        return ["W", "SW", "S", "SE", "E", "NE", "N", "NW", "W"][((direction + 180) / 45).round]
+      else
+        return "F" #Floor
+      end
     end
 
 		# def self.set_image
@@ -103,7 +114,7 @@ module Envelop
     def self.reload
       if @dialog
         @dialog.close
-        remove_instance_variable(:@house)
+        remove_instance_variable(:@house) unless @house.nil?
       end
     end
     reload
