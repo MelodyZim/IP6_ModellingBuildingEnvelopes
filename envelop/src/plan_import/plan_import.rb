@@ -1,6 +1,5 @@
 require 'tempfile'
 require_relative '../vendor/rb/image_size'
-require_relative '../vendor/rb/os'
 
 module Envelop
   module PlanImport
@@ -21,29 +20,20 @@ module Envelop
     private
 
     # Settings
-    HTML_HEIGHT = 150 #  TODO: verify this is correct on all platforms (+ 26 for size of title bar)
-       if OS.mac? 
-          HTML_HEIGHT = HTML_HEIGHT + 26
-      elsif OS.windows?
-          HTML_HEIGHT = HTML_HEIGHT + 62
-      else
-          puts "Usupported Platfrom, sizing and positioning of dialogs is unlikely to work"
-      end
+    HTML_HEIGHT = 150 + Envelop::WindowUtils.HTMLWindowHeaderAndVertScrollbarHeight
 
     #  Methods
-
     def self.create_dialog
       puts('Envelop::PlanImport.create_dialog()...')
-
-      view = Sketchup.active_model.active_view
-      html_height = Envelop::PlanImport::HTML_HEIGHT
 
       html_file = File.join(__dir__, 'plan_import.html')
       options = {
         dialog_title: 'Plan Import',
         preferences_key: 'envelop.planimport',
-        min_height: html_height,
-        max_height: html_height,
+        min_height: Envelop::PlanImport::HTML_HEIGHT, # TODO: consider making this window resizeable
+        max_height: Envelop::PlanImport::HTML_HEIGHT,
+        min_width: Envelop::WindowUtils.ViewWidthPixels,
+        max_width: Envelop::WindowUtils.ViewWidthPixels,
         style: UI::HtmlDialog::STYLE_UTILITY
       }
       dialog = UI::HtmlDialog.new(options)
@@ -51,20 +41,9 @@ module Envelop
       dialog.set_can_close do
         false # TODO: this straight up does not work on Mac (Works on Windows)
       end
-      dialog.set_size(Envelop::WindowUtils.ViewWidthPixels, html_height) # TODO: update this as the window is resized & make not resizeable
-      #dialog.center # TODO: position calculation wrong on windows
 
-      y_pos = Envelop::WindowUtils.ViewHeightPixels - html_height
-      # TODO: this assumes sketchup is running windowed but that the window is at max size, on both OSs
-      if OS.mac? 
-          y_pos = y_pos + 88
-      elsif OS.windows?
-          y_pos = y_pos + 77
-      else
-          puts "Usupported Platfrom, sizing and positioning of dialogs is unlikely to work"
-      end
-
-      dialog.set_position(0, y_pos) # TODO: make it so this cannot be changed?
+      dialog.set_size(Envelop::WindowUtils.ViewWidthPixels, Envelop::PlanImport::HTML_HEIGHT) # TODO: update this as the main window is resized.
+      dialog.set_position(0, Envelop::WindowUtils.ViewHeightPixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.SketchupMenuAndToolbarHeight) # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
       dialog
     end
 
