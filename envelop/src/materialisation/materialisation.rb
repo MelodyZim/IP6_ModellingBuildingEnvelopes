@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative '../vendor/rb/color_math'
 
 module Envelop
   module Materialisation
@@ -18,6 +19,7 @@ module Envelop
 
     # Settings
     HTML_WIDTH = 200
+    SMALL_DEVIATION = 0.1
 
     #  Methods
     def self.create_dialog
@@ -57,11 +59,18 @@ module Envelop
 
       default_materials.each do |material_hash|
         count = 1
+        base_color = ColorMath.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b']).to_hsl
+
         while count <= material_hash['count']
 
           material = materials.add("#{material_hash['id']} #{count}")
           material.set_attribute('material', 'description', "#{material_hash['name']} #{count}") # TODO: display this somewhere
-          material.color = Sketchup::Color.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b'])
+          material.color = Sketchup::Color.new(
+            ColorMath.from_hsl(
+              base_color[0],
+              base_color[1] * (rand() * Envelop::Materialisation::SMALL_DEVIATION),
+              base_color[2] * (rand() * Envelop::Materialisation::SMALL_DEVIATION)
+            ).to_rgb)
 
           count += 1
         end
