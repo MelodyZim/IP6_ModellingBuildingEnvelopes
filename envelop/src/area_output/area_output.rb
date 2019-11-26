@@ -1,4 +1,5 @@
 require_relative '../vendor/rb/image_size'
+require 'json'
 
 module Envelop
   module AreaOutput
@@ -56,23 +57,41 @@ module Envelop
 
 			@dialog.show
 		end
-    
+
     # calculate the surface area of the @house group
     # the output is a json with the result
     def self.calc_area
+      @house = Envelop::ModelingTool.search_house
+
       faces = @house.entities.select {|entity| entity.is_a? Sketchup::Face }
+
+      materials = Hash.new
+
       faces.each do |face|
         material = face.material
         name = material.nil? ? "default" : material.name
-        puts "#{name} #{face.area} #{get_unit}^2"
+        area = face.area
+        puts "#{} #{area} #{face.normal}"
+        if materials[name].nil?
+          materials[name] = area
+        else
+          materials[name] += area
+        end
+        #puts "#{name} #{face.area} #{get_unit}^2"
       end
+      puts materials
       @house
     end
-    
+
     # get the current unit as a string
     def self.get_unit
       # https://sketchucation.com/forums/viewtopic.php?t=35923
       ['"', "'", "mm", "cm", "m"][Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]]
+    end
+
+    # determine the face direction from its normal, return a string for example "N" for North
+    def self.get_direction(normal)
+
     end
 
 		# def self.set_image
