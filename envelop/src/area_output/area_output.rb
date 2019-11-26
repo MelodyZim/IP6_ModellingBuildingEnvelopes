@@ -1,12 +1,11 @@
-require_relative '../vendor/rb/image_size'
 require 'json'
 
 module Envelop
   module AreaOutput
 		# public
 
-		def self.open_dialog()
-			@house = Envelop::ModelingTool.search_house
+		def self.open_dialog(house)
+			@house = house
 			show_dialog
 		end
 
@@ -82,7 +81,7 @@ module Envelop
 
       end
       
-      return materials
+      return materials.to_json
     end
 
     # get the current unit as a string
@@ -104,12 +103,6 @@ module Envelop
         return "F" #Floor
       end
     end
-
-		# def self.set_image
-			# return if @dialog.nil?
-			# puts "ruby > set_image callback"
-			# @dialog.execute_script("setImage('#{@image_base64}')")
-		# end
 
     def self.reload
       if @dialog
