@@ -19,7 +19,8 @@ module Envelop
 
     # Settings
     HTML_WIDTH = 200
-    SMALL_DEVIATION = 0.1
+    MAX_DEVIATION = 0.2 # TODO: consider if these values are optimal
+    MIN_DEVIATION = 0.05
 
     #  Methods
     def self.create_dialog
@@ -76,8 +77,8 @@ module Envelop
 
     def self.deviate_to_rgb(color_hsl)
 
-      rand1 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
-      rand2 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
+      rand1 = [-1,1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
+      rand2 = [-1,1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
 
       res = ColorMath.from_hsl(
         color_hsl[0],
