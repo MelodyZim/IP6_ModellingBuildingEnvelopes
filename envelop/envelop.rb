@@ -13,7 +13,7 @@ module Envelop
     result
   end
 
-  def self.reload(clear_model=false, open_dialogs=false)
+  def self.reload(clear_model=false, show_dialogs=true)
     if clear_model
       Sketchup.active_model.entities.clear!
     end
@@ -27,9 +27,8 @@ module Envelop
     end
     puts "Reloaded #{files.size} files"
 
-    if open_dialogs
-      Envelop::PlanImport.show_dialog()
-      Envelop::Materialisation.show_dialog()
+    if show_dialogs
+      Envelop::Main.show_dialogs
     end
   end
 

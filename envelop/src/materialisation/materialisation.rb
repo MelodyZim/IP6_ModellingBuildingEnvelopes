@@ -24,7 +24,7 @@ module Envelop
 
     #  Methods
     def self.create_dialog
-      puts('Envelop::Materialisation.create_dialog()...')
+      puts('Envelop::Materialisation.create_dialog: ...')
 
       height = Envelop::WindowUtils.view_height_pixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.magic_window_size_and_positioning_const
 
@@ -50,6 +50,28 @@ module Envelop
       dialog
     end
 
+    def self.materials_as_hash_array
+      res = Array.new
+      Sketchup.active_model.materials.each do |material|
+        material_hash = Hash.new
+
+        material_hash["Bob"]
+        material.set_attribute('material', 'base_name', material_hash['name'])
+
+        res.push
+      end
+      res
+    end
+
+		def self.set_materials
+      puts 'Envelop::Materialisation.set_materials: ...'
+      if @dialog.nil?
+        warn '@dialog is nil, aborting...'
+        return
+      end
+			@dialog.execute_script("setMaterials('#{materials_as_hash_array.to_json}')")
+		end
+
     def self.init_materials # TODO: save material pallete per machine, independent of default materials and then use those saved materials if any
       materials = Sketchup.active_model.materials
 
@@ -67,8 +89,12 @@ module Envelop
         while count <= material_hash['count']
 
           material = materials.add("#{material_hash['id']} #{count}")
+          color_hsl = deviate_to_rgb(base_color_hsl)
+          material.color = Sketchup::Color.new(color_hsl)
           material.set_attribute('material', 'description', "#{material_hash['name']} #{count}") # TODO: display this somewhere
-          material.color = Sketchup::Color.new(deviate_to_rgb(base_color_hsl))
+          material.set_attribute('material', 'color_hsl', material_hash['id'])
+          material.set_attribute('material', 'base_id', count)
+          material.set_attribute('material', 'base_name', material_hash['name'])
 
           count += 1
         end
@@ -94,6 +120,7 @@ module Envelop
         @dialog.close
         remove_instance_variable(:@dialog)
       end
+
       init_materials
     end
     reload

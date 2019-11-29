@@ -8,6 +8,8 @@ require_relative 'materialisation/materialisation'
 
 module Envelop
   module Main
+    OPEN_DIALOGS_AFTER_LOAD = TRUE
+
     SCALING = 1
 
     # TODO: find out if this has to be editable
@@ -35,5 +37,9 @@ module Envelop
       self.North.transform(trans)
     end
 
+    def self.show_dialogs
+      Envelop::PlanImport.show_dialog
+      Envelop::Materialisation.show_dialog
+    end
   end
 end
