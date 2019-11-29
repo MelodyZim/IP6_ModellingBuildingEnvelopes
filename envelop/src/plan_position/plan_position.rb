@@ -48,8 +48,10 @@ module Envelop
       # floor
       if orientation == 0
         puts('Assuming image is already alligned')
-
-        @floor_image ||= image
+        
+        if @floor_image.nil? || @floor_image.deleted?
+          @floor_image = image
+        end
 
       # North
       elsif orientation == 1
@@ -59,7 +61,7 @@ module Envelop
         image.transform!(trans)
 
         # translate based on floor image if any set yet
-        if @floor_image
+        if @floor_image && !@floor_image.deleted?
           vec = Geom::Vector3d.new(Envelop::Main.North)
           vec.length = @floor_image.bounds.height
 
@@ -85,7 +87,7 @@ module Envelop
         image.transform!(trans)
 
         # translate based on floor image if any set yet
-        if @floor_image
+        if @floor_image && !@floor_image.deleted?
           vec = Geom::Vector3d.new(Envelop::Main.East)
           vec.length = @floor_image.bounds.width
 
