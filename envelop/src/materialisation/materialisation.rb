@@ -13,17 +13,23 @@ module Envelop
         @dialog ||= create_dialog
         @dialog.show
       end
+
+      @dialog.add_action_callback('ready') do |_action_context|
+        set_materials
+        nil
+      end
     end
 
     private
 
     # Settings
     HTML_WIDTH = 200
-    SMALL_DEVIATION = 0.1
+    MAX_DEVIATION = 0.2 # TODO: consider if these values are optimal
+    MIN_DEVIATION = 0.05
 
     #  Methods
     def self.create_dialog
-      puts('Envelop::Materialisation.create_dialog()...')
+      puts('Envelop::Materialisation.create_dialog: ...')
 
       height = Envelop::WindowUtils.view_height_pixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.magic_window_size_and_positioning_const
 
@@ -49,6 +55,33 @@ module Envelop
       dialog
     end
 
+    def self.materials_as_hash_array
+      res = Array.new
+      Sketchup.active_model.materials.each do |material|
+        unless material.name.start_with?("Marc")
+          material_hash = Hash.new
+
+          material_hash['name'] = material.name
+          material_hash['id'] =  material.entityID
+          material_hash['color_rgb'] = material.get_attribute('material', 'color_rgb')
+
+          res.push(material_hash)
+        end
+      end
+      res
+    end
+
+		def self.set_materials
+      puts 'Envelop::Materialisation.set_materials: ...'
+
+      if @dialog.nil?
+        warn '@dialog is nil, aborting...'
+        return
+      end
+
+			@dialog.execute_script("setMaterials('#{materials_as_hash_array.to_json}')")
+		end
+
     def self.init_materials # TODO: save material pallete per machine, independent of default materials and then use those saved materials if any
       materials = Sketchup.active_model.materials
 
@@ -66,8 +99,13 @@ module Envelop
         while count <= material_hash['count']
 
           material = materials.add("#{material_hash['id']} #{count}")
+          color_rgb = deviate_to_rgb(base_color_hsl)
+          material.color = Sketchup::Color.new(color_rgb)
           material.set_attribute('material', 'description', "#{material_hash['name']} #{count}") # TODO: display this somewhere
-          material.color = Sketchup::Color.new(deviate_to_rgb(base_color_hsl))
+          material.set_attribute('material', 'id', material_hash['id'])
+          material.set_attribute('material', 'base_id', count)
+          material.set_attribute('material', 'base_name', material_hash['name'])
+          material.set_attribute('material', 'color_rgb', color_rgb)
 
           count += 1
         end
@@ -76,8 +114,8 @@ module Envelop
 
     def self.deviate_to_rgb(color_hsl)
 
-      rand1 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
-      rand2 = (rand() * (Envelop::Materialisation::SMALL_DEVIATION * 2) - Envelop::Materialisation::SMALL_DEVIATION) * 100
+      rand1 = [-1,1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
+      rand2 = [-1,1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
 
       res = ColorMath.from_hsl(
         color_hsl[0],
@@ -93,6 +131,7 @@ module Envelop
         @dialog.close
         remove_instance_variable(:@dialog)
       end
+
       init_materials
     end
     reload

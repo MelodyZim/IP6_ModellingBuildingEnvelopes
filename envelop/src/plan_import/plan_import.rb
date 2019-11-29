@@ -24,7 +24,7 @@ module Envelop
 
     #  Methods
     def self.create_dialog
-      puts('Envelop::PlanImport.create_dialog()...')
+      puts('Envelop::PlanImport.create_dialog: ...')
 
       html_file = File.join(__dir__, 'plan_import.html')
       options = {

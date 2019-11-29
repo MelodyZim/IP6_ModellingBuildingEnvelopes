@@ -11,7 +11,7 @@ module Envelop
       elsif OS.windows?
         62
       else
-        puts 'Envelop::WindowUtils.HTMLWindowHeaderAndVertScrollbarHeight: Usupported Platfrom, returning 0. HTML Windows will likely be too small.'
+        warn 'Envelop::WindowUtils.HTMLWindowHeaderAndVertScrollbarHeight: Usupported Platfrom, returning 0. HTML Windows will likely be too small.'
         0
      end
     end
@@ -23,13 +23,13 @@ module Envelop
       elsif OS.windows?
         77
       else
-        puts 'Envelop::WindowUtils.SketchupMenuAndToolbarHeight: Usupported Platfrom, returning 0. HTML Windows will likely be positioned too high.'
+        warn 'Envelop::WindowUtils.SketchupMenuAndToolbarHeight: Usupported Platfrom, returning 0. HTML Windows will likely be positioned too high.'
         0
       end
     end
 
     if UI.scale_factor != 2.0
-      puts 'Envelop::WindowUtils: UI.scale_factor != 2.0, window positioning and sizing might not work.'
+      warn 'Envelop::WindowUtils: UI.scale_factor != 2.0, window positioning and sizing might not work.'
     end
 
     def self.view_height_pixels
@@ -38,7 +38,7 @@ module Envelop
       elsif OS.mac?
         Sketchup.active_model.active_view.vpheight / 2.0
       else
-        puts 'Envelop::WindowUtils.ViewHeightPixels: Usupported Platfrom, returning Sketchup.active_model.active_view.vpheight. HTML Windows will likely be positioned much too low.'
+        warn 'Envelop::WindowUtils.ViewHeightPixels: Usupported Platfrom, returning Sketchup.active_model.active_view.vpheight. HTML Windows will likely be positioned much too low.'
         Sketchup.active_model.active_view.vpheight
       end
     end
@@ -49,7 +49,7 @@ module Envelop
       elsif OS.mac?
         Sketchup.active_model.active_view.vpwidth / 2.0
       else
-        puts 'Envelop::WindowUtils.ViewWidthPixels: Usupported Platfrom, returning Sketchup.active_model.active_view.vpwidth. HTML Windows will likely be positioned much too far to the right.'
+        warn 'Envelop::WindowUtils.ViewWidthPixels: Usupported Platfrom, returning Sketchup.active_model.active_view.vpwidth. HTML Windows will likely be positioned much too far to the right.'
         Sketchup.active_model.active_view.vpwidth
       end
     end
@@ -60,7 +60,7 @@ module Envelop
       elsif OS.mac?
         0
       else
-        puts 'Envelop::WindowUtils.MagicWindowSizeAndPositioningConst: Usupported Platfrom, returning 0. Windows positioning and sizing is unlikely to work correctly.'
+        warn 'Envelop::WindowUtils.MagicWindowSizeAndPositioningConst: Usupported Platfrom, returning 0. Windows positioning and sizing is unlikely to work correctly.'
         0
       end
     end
