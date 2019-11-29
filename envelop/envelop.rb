@@ -49,4 +49,6 @@ module Envelop
     @extension.check
     file_loaded(__FILE__)
   end
+
+  Envelop::Main.show_dialogs
 end # Envelop
