@@ -13,6 +13,9 @@ module Envelop
 
       if @plan_count > 1
         Envelop::PlanPositionTool.activate_plan_position_tool(image)
+      else
+        # register first plan at the PlanManager
+        Envelop::PlanManager.add_plan(image)
       end
 
       model.commit_operation
