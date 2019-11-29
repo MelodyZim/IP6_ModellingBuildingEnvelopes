@@ -1,0 +1,49 @@
+body {
+  width: 200px;
+  margin: 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.material-div {
+    height: 20px;
+    width: 170px;
+    border: black 1px solid;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+    position: relative;
+    padding: 0px 0px 0px 5px;
+}
+
+#materials-container {
+  width: 190px;
+}
+
+.material-name {
+  margin-left: 5px;
+  margin-right: 5px;
+  font-size: small;
+}
+
+.material-delete {
+}
+
+.button-content {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.material-content {
+  display: inline-block;
+  position: relative;
+}
+
+.material-button {
+    border: black 1px solid;
+    border-width: 0px 0px 0px 1px;
+    padding: 0px 5px 0px 5px;
+    height: 20px;
+    float: right;
+}
