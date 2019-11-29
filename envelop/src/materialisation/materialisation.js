@@ -28,9 +28,13 @@ function add_material(matrial_as_hash) {
     sketchup.delete_material(local_matrial_as_hash.name);
   }}(material_div, matrial_as_hash));
 
-  material_div.find('.material-add').on('click', function(local_material_div, local_matrial_as_hash){ return  function() {
+  material_div.find('.material-add').on('click', function(local_matrial_as_hash){ return  function() {
     sketchup.add_material(local_matrial_as_hash.name);
-  }}(material_div, matrial_as_hash));
+  }}(matrial_as_hash));
+
+  material_div.on('click', function(local_matrial_as_hash){ return  function() {
+    sketchup.select_material(local_matrial_as_hash.name);
+  }}(matrial_as_hash));
 }
 
 var material_div_counter = 0;

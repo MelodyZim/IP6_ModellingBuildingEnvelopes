@@ -24,6 +24,10 @@ module Envelop
           set_materials
           nil
         end
+        @dialog.add_action_callback('select_material') do |_action_context, material_name|
+          Envelop::MaterialisationTool.activate_materialisation_tool(Sketchup.active_model.materials[material_name])
+          nil
+        end
         @dialog.show
       end
     end
@@ -105,8 +109,6 @@ module Envelop
       materials = Sketchup.active_model.materials
       base_material = materials[material_name]
       base_index = base_material.get_attribute('material', 'index')
-
-
 
       # add material
       count = base_material.get_attribute('material', 'count') + 1

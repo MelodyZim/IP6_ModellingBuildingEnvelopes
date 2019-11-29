@@ -62,7 +62,7 @@ module Envelop
 
       # TODO: consider having a custom cursor like: CURSOR_PENCIL = UI.create_cursor(cursor_path, 0, 0)
       CURSOR_PENCIL = 632
-      def onSetCursors
+      def onSetCursor
         UI.set_cursor(CURSOR_PENCIL)
       end
 
