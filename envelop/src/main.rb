@@ -5,6 +5,8 @@ require_relative 'plan_edit/plan_edit'
 require_relative 'plan_position/plan_position'
 require_relative 'plan_position/plan_position_tool'
 require_relative 'materialisation/materialisation'
+require_relative 'camera_utils/camera_utils'
+require_relative 'area_output/area_output'
 
 module Envelop
   module Main
