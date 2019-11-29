@@ -145,6 +145,9 @@ module Envelop
       def finish
         @phase = PHASES[:FINISHED]
 
+        # register new image at the PlanManager
+        Envelop::PlanManager.add_plan(@image_obj)
+
         model = Sketchup.active_model
         model.selection.clear
         model.select_tool(nil)

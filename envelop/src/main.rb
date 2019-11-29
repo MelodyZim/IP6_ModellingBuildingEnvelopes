@@ -7,6 +7,7 @@ require_relative 'plan_position/plan_position_tool'
 require_relative 'materialisation/materialisation'
 require_relative 'camera_utils/camera_utils'
 require_relative 'area_output/area_output'
+require_relative 'plan_manager/plan_manager'
 
 module Envelop
   module Main
