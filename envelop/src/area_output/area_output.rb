@@ -43,6 +43,9 @@ module Envelop
           self.set_area
           nil
         }
+        @dialog.add_action_callback("getLengthUnit") { |action_context|
+          self.get_current_unit
+        }
         # @dialog.add_action_callback("accept") { |action_context, image_base64, orientation|
           # puts "plan_edit accept: orientation=#{orientation}"
           # Envelop::PlanPosition.add_image(image_base64, orientation)
@@ -73,11 +76,8 @@ module Envelop
 
       faces.each do |face|
         material = face.material
-        name = material.nil? ? "default" : material.name
-        
-        puts Sketchup.format_area(face.area)
-        
-        area = face.area
+        name = material.nil? ? "default" : material.name        
+        area = area_to_current_unit(face.area)
         direction = get_direction(face.normal)
                 
         if materials[name].nil?
@@ -95,9 +95,24 @@ module Envelop
     end
 
     # get the current unit as a string
-    def self.get_unit
+    def self.get_current_unit
       # https://sketchucation.com/forums/viewtopic.php?t=35923
       ['"', "'", "mm", "cm", "m"][Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]]
+    end
+    
+    # convert internal square inch float to current unit area 
+    def self.area_to_current_unit (area)
+      current_unit_index = Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]
+
+      transformations = [
+        -> (inch) {inch},             # inch^2 => inch^2
+        -> (inch) {inch / 12**2},     # inch^2 => foot^2
+        -> (inch) {inch * 25.4**2},   # inch^2 => mm^2
+        -> (inch) {inch * 2.54**2},   # inch^2 => cm^2
+        -> (inch) {inch * 0.0254**2}, # inch^2 => m^2
+      ]
+      
+      transformations[current_unit_index].call(area)
     end
 
     # determine the cardinal direction of the normal, returns a string for example "N" for North
