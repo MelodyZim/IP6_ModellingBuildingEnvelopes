@@ -28,11 +28,40 @@ module Envelop
       
       return cmd
     end
+    
+    def self.modeling_tool_add_command
+      cmd = UI::Command.new("Add") {
+        Envelop::ModelingTool.add_selection
+      }
+      cmd.small_icon = "add_selection.svg"
+      cmd.large_icon = "add_selection.svg"
+      cmd.tooltip = "Add Selection"
+      cmd.status_bar_text = "Add selection to house"
+      cmd.menu_text = "Add"
+      
+      return cmd
+    end
+    
+    def self.modeling_tool_subtract_command
+      cmd = UI::Command.new("Subtract") {
+        Envelop::ModelingTool.subtract_selection
+      }
+      cmd.small_icon = "subtract_selection.svg"
+      cmd.large_icon = "subtract_selection.svg"
+      cmd.tooltip = "Subtract Selection"
+      cmd.status_bar_text = "Subtract selection from house"
+      cmd.menu_text = "Subtract"
+      
+      return cmd
+    end
 
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new "Envelop Toolbar"
     
       @toolbar = @toolbar.add_item area_command
+      @toolbar = @toolbar.add_separator
+      @toolbar = @toolbar.add_item modeling_tool_add_command
+      @toolbar = @toolbar.add_item modeling_tool_subtract_command
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item reload_command
       
