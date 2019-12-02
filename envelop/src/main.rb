@@ -8,6 +8,7 @@ require_relative 'plan/plan_manager/plan_manager'
 require_relative 'modeling/materialisation/materialisation'
 require_relative 'modeling/materialisation/materialisation_tool'
 require_relative 'modeling/modeling_tool/modeling_tool'
+require_relative 'modeling/scale/scale_tool'
 require_relative 'output/area_output/area_output'
 require_relative 'ui/toolbar/toolbar'
 
