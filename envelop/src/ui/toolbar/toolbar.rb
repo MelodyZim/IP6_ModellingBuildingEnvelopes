@@ -76,6 +76,19 @@ module Envelop
       return cmd
     end
 
+    def self.scale_tool_command
+      cmd = UI::Command.new("Scale") {
+        Envelop::ScaleTool.activate_scale_tool
+      }
+      cmd.small_icon = ""
+      cmd.large_icon = ""
+      cmd.tooltip = "Scale model"
+      cmd.status_bar_text = "Scale model by defining a known distance"
+      cmd.menu_text = "Scale"
+
+      return cmd
+    end
+
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new "Envelop Toolbar"
     
@@ -83,6 +96,7 @@ module Envelop
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item modeling_tool_add_command
       @toolbar = @toolbar.add_item modeling_tool_subtract_command
+      @toolbar = @toolbar.add_item scale_tool_command
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item reload_command
       
