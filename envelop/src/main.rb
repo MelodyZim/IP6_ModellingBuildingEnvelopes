@@ -9,7 +9,7 @@ require_relative 'modeling/materialisation/materialisation'
 require_relative 'modeling/materialisation/materialisation_tool'
 require_relative 'modeling/modeling_tool/modeling_tool'
 require_relative 'output/area_output/area_output'
-require_relative 'toolbar/toolbar'
+require_relative 'ui/toolbar/toolbar'
 
 module Envelop
   module Main
