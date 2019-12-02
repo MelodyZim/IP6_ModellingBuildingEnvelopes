@@ -18,8 +18,8 @@ module Envelop
 				:preferences_key => "envelop.areaoutput",
 				:style => UI::HtmlDialog::STYLE_DIALOG,
 				:resizable => true,
-				:width => 500,
-				:height => 500,
+				:width => 600,
+				:height => 255,
 			}
 			dialog = UI::HtmlDialog.new(options)
 			dialog.set_size(options[:width], options[:height]) # Ensure size is set.
@@ -76,21 +76,21 @@ module Envelop
 
       faces.each do |face|
         material = face.material
-        name = material.nil? ? "default" : material.name        
+        name = material.nil? ? "default" : material.name
         area = area_to_current_unit(face.area)
         direction = get_direction(face.normal)
-                
+
         if materials[name].nil?
           materials[name] = Hash.new
         end
         if materials[name][direction].nil?
           materials[name][direction] = 0
         end
-        
+
         materials[name][direction] += area
 
       end
-      
+
       return materials.to_json
     end
 
@@ -99,8 +99,8 @@ module Envelop
       # https://sketchucation.com/forums/viewtopic.php?t=35923
       ['"', "'", "mm", "cm", "m"][Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]]
     end
-    
-    # convert internal square inch float to current unit area 
+
+    # convert internal square inch float to current unit area
     def self.area_to_current_unit (area)
       current_unit_index = Sketchup.active_model.options["UnitsOptions"]["LengthUnit"]
 
@@ -111,7 +111,7 @@ module Envelop
         -> (inch) {inch * 2.54**2},   # inch^2 => cm^2
         -> (inch) {inch * 0.0254**2}, # inch^2 => m^2
       ]
-      
+
       transformations[current_unit_index].call(area)
     end
 
