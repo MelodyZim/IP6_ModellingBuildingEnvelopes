@@ -48,7 +48,7 @@ module Envelop
       # floor
       if orientation == 0
         puts('Assuming image is already alligned')
-        
+
         if @floor_image.nil? || @floor_image.deleted?
           @floor_image = image
         end
@@ -58,6 +58,17 @@ module Envelop
 
         # Errect
         trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.East, 90.degrees)
+        image.transform!(trans)
+
+        # Rotate
+        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, -180.degrees)
+        image.transform!(trans)
+
+        # Translate back to (0,0,0)
+        vec = Geom::Vector3d.new(Envelop::Main.East)
+        vec.length = image.bounds.width
+
+        trans = Geom::Transformation.translation(vec)
         image.transform!(trans)
 
         # translate based on floor image if any set yet
@@ -76,14 +87,7 @@ module Envelop
         image.transform!(trans)
 
         # Rotate
-        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, -90.degrees)
-        image.transform!(trans)
-
-        # Translate back to (0,0,0)
-        vec = Geom::Vector3d.new(Envelop::Main.North)
-        vec.length = image.bounds.height
-
-        trans = Geom::Transformation.translation(vec)
+        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, 90.degrees)
         image.transform!(trans)
 
         # translate based on floor image if any set yet
@@ -102,17 +106,6 @@ module Envelop
         trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.East, 90.degrees)
         image.transform!(trans)
 
-        # Rotate
-        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, -180.degrees)
-        image.transform!(trans)
-
-        # Translate back to (0,0,0)
-        vec = Geom::Vector3d.new(Envelop::Main.East)
-        vec.length = image.bounds.width
-
-        trans = Geom::Transformation.translation(vec)
-        image.transform!(trans)
-
       # West
       elsif orientation == 4
         # Errect
@@ -120,7 +113,14 @@ module Envelop
         image.transform!(trans)
 
         # Rotate
-        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, 90.degrees)
+        trans = Geom::Transformation.rotation(Geom::Point3d.new, Envelop::Main.Up, -90.degrees)
+        image.transform!(trans)
+
+        # Translate back to (0,0,0)
+        vec = Geom::Vector3d.new(Envelop::Main.North)
+        vec.length = image.bounds.height
+
+        trans = Geom::Transformation.translation(vec)
         image.transform!(trans)
 
       else
