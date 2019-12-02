@@ -1,9 +1,9 @@
 {
   "default_materials": [
     {
-      "name": "Aussenwand gegen Erdreich",
-      "id": "AwE",
-      "count": 2,
+      "name": "Aussenwand",
+      "id": "AW",
+      "count": 3,
       "color": {
         "r": 60,
         "g": 180,
@@ -11,19 +11,9 @@
       }
     },
     {
-      "name": "Aussenwand gegen Aussenluft",
-      "id": "AwA",
+      "name": "Innenwand",
+      "id": "IW",
       "count": 3,
-      "color": {
-        "r": 210,
-        "g": 245,
-        "b": 60
-      }
-    },
-    {
-      "name": "Innenwand gegen unbeheizt",
-      "id": "Iwu",
-      "count": 1,
       "color": {
         "r": 0,
         "g": 130,
@@ -31,19 +21,9 @@
       }
     },
     {
-      "name": "Innenwand gegen Nachbargebäude",
-      "id": "IwN",
-      "count": 1,
-      "color": {
-        "r": 70,
-        "g": 240,
-        "b": 240
-      }
-    },
-    {
-      "name": "Boden gegen Aussenluft",
-      "id": "BoA",
-      "count": 1,
+      "name": "Boden",
+      "id": "Bo",
+      "count": 3,
       "color": {
         "r": 230,
         "g": 25,
@@ -51,28 +31,8 @@
       }
     },
     {
-      "name": "Boden gegen Erdreich",
-      "id": "BoE",
-      "count": 1,
-      "color": {
-        "r": 245,
-        "g": 130,
-        "b": 48
-      }
-    },
-    {
-      "name": "Boden gegen unbeheizt",
-      "id": "Bou",
-      "count": 1,
-      "color": {
-        "r": 128,
-        "g": 0,
-        "b": 0
-      }
-    },
-    {
-      "name": "Dach gegen Aussenluft",
-      "id": "DaA",
+      "name": "Dach",
+      "id": "DA",
       "count": 2,
       "color": {
         "r": 255,
@@ -81,18 +41,8 @@
       }
     },
     {
-      "name": "Dachterrasse",
-      "id": "Dat",
-      "count": 1,
-      "color": {
-        "r": 170,
-        "g": 110,
-        "b": 40
-      }
-    },
-    {
-      "name": "Decke gegen unbeheitzt",
-      "id": "Deu",
+      "name": "Decke",
+      "id": "DE",
       "count": 1,
       "color": {
         "r": 145,
@@ -101,8 +51,8 @@
       }
     },
     {
-      "name": "Ausenfenster / Fenstertüren",
-      "id": "Af",
+      "name": "Fenster",
+      "id": "AF",
       "count": 2,
       "color": {
         "r": 250,
@@ -112,18 +62,18 @@
     },
     {
       "name": "Dachfenster",
-      "id": "Daf",
+      "id": "DAF",
       "count": 1,
       "color": {
         "r": 230,
         "g": 190,
-        "b": 255
+        "b": 250
       }
     },
     {
-      "name": "Aussentüre gegen Aussenluft",
-      "id": "AtA",
-      "count": 2,
+      "name": "Aussentüre",
+      "id": "AT",
+      "count": 1,
       "color": {
         "r": 0,
         "g": 128,
@@ -131,8 +81,8 @@
       }
     },
     {
-      "name": "Innentüre gegen unbeheizt",
-      "id": "AtA",
+      "name": "Innentüre",
+      "id": "IT",
       "count": 1,
       "color": {
         "r": 170,

@@ -36,8 +36,8 @@ module Envelop
 
     # Settings
     HTML_WIDTH = 200
-    MAX_DEVIATION = 0.2 # TODO: consider if these values are optimal
-    MIN_DEVIATION = 0.05
+    MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
+    MIN_DEVIATION = 0.1
 
     #  Methods
     def self.create_dialog
