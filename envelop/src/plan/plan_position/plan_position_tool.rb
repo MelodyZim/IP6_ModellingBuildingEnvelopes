@@ -122,7 +122,7 @@ module Envelop
         # assumes @first_point.valid? && @first_point set to useful position
         # assumes @move_target.valid? && @move_target set to useful position
 
-        current_length = @move_target.position.distance(@first_point.position) # TODO: NOW: THIS DOES NOT WORKL?
+        current_length = @move_target.position.distance(@first_point.position) # TODO: NOW: THIS DOES NOT WORK?
         target_length = @move_target.position.distance(second_point.position)
         ratio = target_length / current_length
 
