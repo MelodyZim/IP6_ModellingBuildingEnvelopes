@@ -5,7 +5,14 @@ module Envelop
   
     def self.area_command
       cmd = UI::Command.new("Area") {
-        Envelop::AreaOutput.open_dialog(Sketchup.active_model.selection[0])
+        Envelop::AreaOutput.open_dialog(Envelop::ModelingTool.search_house)
+      }
+      cmd.set_validation_proc {
+        if Envelop::ModelingTool.search_house.nil?
+          MF_GRAYED
+        else
+          MF_ENABLED
+        end
       }
       cmd.small_icon = "area.svg"
       cmd.large_icon = "area.svg"
@@ -33,6 +40,13 @@ module Envelop
       cmd = UI::Command.new("Add") {
         Envelop::ModelingTool.add_selection
       }
+      cmd.set_validation_proc {
+        if Sketchup.active_model.selection.length == 0
+          MF_GRAYED
+        else
+          MF_ENABLED
+        end
+      }
       cmd.small_icon = "add_selection.svg"
       cmd.large_icon = "add_selection.svg"
       cmd.tooltip = "Add Selection"
@@ -45,6 +59,13 @@ module Envelop
     def self.modeling_tool_subtract_command
       cmd = UI::Command.new("Subtract") {
         Envelop::ModelingTool.subtract_selection
+      }
+      cmd.set_validation_proc {
+        if Sketchup.active_model.selection.length == 0
+          MF_GRAYED
+        else
+          MF_ENABLED
+        end
       }
       cmd.small_icon = "subtract_selection.svg"
       cmd.large_icon = "subtract_selection.svg"
