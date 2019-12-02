@@ -64,10 +64,6 @@ module Envelop
       private
 
       def reset_tool
-        # reset selection
-        selection = Sketchup.active_model.selection
-        selection.clear
-
         # reset state
         @mouse_ip = Sketchup::InputPoint.new
 

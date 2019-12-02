@@ -15,6 +15,17 @@ module Envelop
         0
      end
     end
+      # TODO: ensure this is correct for different OSs, Screen Resolutions & DPIs, Sketchup versions?
+      def self.html_window_horirontal_scrollbar_width
+        if OS.mac?
+          0
+        elsif OS.windows?
+          33
+        else
+          warn 'Envelop::WindowUtils.html_window_horirontal_scrollbar_width: Usupported Platfrom, returning 0. HTML Windows will likely be too small.'
+          0
+       end
+      end
 
     # TODO: ensure this is correct for different OSs, Screen Resolutions & DPIs
     def self.sketchup_menu_and_toolbar_height
