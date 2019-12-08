@@ -64,20 +64,30 @@ module Envelop
 
     def self.set_area
 			return if @dialog.nil?
-			@dialog.execute_script("set_result('#{calc_area(@house)}')")
+			@dialog.execute_script("set_result('#{calc_area(@house).to_json}')")
 		end
 
-    # calculate the surface area of the supplied Sketchup::Group
-    # the output is a json with the result
-    def self.calc_area(group)
+    # calculate the total surface area separated by ordinal direction and material of all the faces (Sketchup::Face) 
+    # of the supplied group, nested groups are resolved recursively
+    # @param group [Sketchup::Group] the group to examine
+    # @param transformation [Geom::Transformation] the transformation of parent groups
+    # @param materials [Hash] hash to append the results or nil to create a new one
+    # @return [Hash] the total surface area separated by ordinal direction and material
+    def self.calc_area(group, transformation=Geom::Transformation.new, materials=nil)
+      transformation *= group.transformation
+      if materials.nil?
+        materials = Hash.new
+      end
+    
+      # extract interesting entities
       faces = group.entities.select {|entity| entity.is_a? Sketchup::Face }
+      sub_groups = group.entities.select {|entity| entity.is_a? Sketchup::Group }
 
-      materials = Hash.new
-
+      # calculate faces
       faces.each do |face|
         material = face.material
         name = material.nil? ? "default" : material.name
-        area = area_to_current_unit(face.area)
+        area = area_to_current_unit(face.area(transformation))
         direction = get_direction(face.normal)
 
         if materials[name].nil?
@@ -88,10 +98,14 @@ module Envelop
         end
 
         materials[name][direction] += area
-
+      end
+      
+      # calculate sub_groups
+      sub_groups.each do |group|
+        calc_area(group, transformation, materials)
       end
 
-      return materials.to_json
+      return materials
     end
 
     # get the current unit as a string
