@@ -71,7 +71,7 @@ module Envelop
       end
 
       def set_status_text
-        Sketchup.status_text = 'Click ared to apply material. "Esc" to abort.'
+        Sketchup.status_text = 'Click area to apply material. "Esc" to abort.'
       end
     end
 
