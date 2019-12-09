@@ -18,7 +18,7 @@ module Envelop
         Envelop::PlanManager.add_plan(image)
       end
 
-      model.commit_operation
+      model.commit_operation # TODO: dont, if aborted/unsucessfull
     end
 
     private
