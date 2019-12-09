@@ -6,7 +6,7 @@ $(function() {
     //guides: false,
     //center: false,
     scalable: false,
-    movable: false,
+    movable: true,
     zoomable: true,
     zoomOnWheel: false, // prevent manual zooming
     zoomOnTouch: false, // prevent manual zooming
@@ -16,10 +16,26 @@ $(function() {
 
   // zoom the cropper canvas to fit inside the container
   function zoomCropperCanvas() {
-    cropper.zoomTo(cropper.getContainerData().height / cropper.getCanvasData().naturalHeight)
+    const containerData = cropper.getContainerData()
+    const canvasData = cropper.getCanvasData()
+    
+    cropper.zoomTo(Math.min(
+      containerData.height / canvasData.naturalHeight, 
+      containerData.width / canvasData.naturalWidth));
+  }
+  
+  // move the cropper canvas to the center of the container
+  function centerCropperCanvas() {
+    const containerData = cropper.getContainerData()
+    const canvasData = cropper.getCanvasData()
+    
+    cropper.moveTo(
+      (containerData.width / 2) - (canvasData.width / 2),
+      (containerData.height / 2) - (canvasData.height / 2));
   }
 
   $("#rotCCW").on('click', function() {
+    centerCropperCanvas();
     cropper.clear();  // clear the cropbox
     cropper.rotate(-90);
     zoomCropperCanvas();
