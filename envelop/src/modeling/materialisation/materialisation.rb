@@ -35,6 +35,7 @@ module Envelop
     private
 
     # Settings
+    DEFAULT_ALPHA = 0.5
     HTML_WIDTH = 200
     MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
     MIN_DEVIATION = 0.1
@@ -207,6 +208,8 @@ module Envelop
           material.set_attribute('material', 'color_rgb', color.to_rgb)
           material.set_attribute('material', 'color_hsl_l', color.to_hsl[2] / 100.0)
           material.set_attribute('material', 'index', material_index)
+
+          material.alpha = Envelop::Materialisation::DEFAULT_ALPHA
 
           count += 1
           material_index += 1
