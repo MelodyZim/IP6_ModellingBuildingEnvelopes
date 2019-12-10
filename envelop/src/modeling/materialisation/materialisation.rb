@@ -35,7 +35,7 @@ module Envelop
     private
 
     # Settings
-    DEFAULT_ALPHA = 0.5
+    DEFAULT_ALPHA = 0.75
     HTML_WIDTH = 200
     MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
     MIN_DEVIATION = 0.1
