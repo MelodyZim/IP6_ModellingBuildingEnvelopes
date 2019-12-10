@@ -76,6 +76,7 @@ module Envelop
 
     private
 
+    # TODO: this does not work if mark is still present in the scene
     def self.try_populate_from_model
       model = Sketchup.active_model
 
