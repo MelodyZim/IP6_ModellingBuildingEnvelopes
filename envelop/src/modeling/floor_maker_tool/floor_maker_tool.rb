@@ -70,7 +70,7 @@ module Envelop
       private
 
       # Settings
-      FOR_SURE_OUTSIDE_MODEL = 999_999
+      FOR_SURE_OUTSIDE_MODEL = 999_999_999
 
       def split_house_at(height)
 

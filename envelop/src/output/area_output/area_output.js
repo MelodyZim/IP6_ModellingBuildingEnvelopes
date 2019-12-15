@@ -17,8 +17,8 @@ function set_result(result) {
   sketchup.say("set result")
 
   var html = '';
-  const obj = JSON.parse(result);
-  const directions = ["F", "R", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+  const result_json = getSortedHash(JSON.parse(result));
+  const directions = ["N", "NO", "NW", "SO", "W", "SW", "H", "Total"]
 
   // generate header
   html += "<tr><th></th>"
@@ -28,13 +28,13 @@ function set_result(result) {
   html += "</tr>"
 
   // generate new table rows
-  for (var prop in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+  for (var prop in result_json) {
+    if (Object.prototype.hasOwnProperty.call(result_json, prop)) {
       html += `<tr><th>${prop}</th>`
 
       directions.forEach(function (dir, index) {
-        if (dir in obj[prop]) {
-          html += `<td>${obj[prop][dir].toFixed(2)}</td>`
+        if (dir in result_json[prop]) {
+          html += `<td>${result_json[prop][dir].toFixed(2)}</td>`
         } else {
           html += "<td></td>"
         }
@@ -45,4 +45,17 @@ function set_result(result) {
 
   // replace content of table
   $('#areaTable').html(html);
+}
+
+//from https://stackoverflow.com/a/33572804
+function getSortedHash(inputHash){
+  var resultHash = {};
+
+  var keys = Object.keys(inputHash);
+  keys.sort(function(a, b) {
+    return inputHash[a].index - inputHash[b].index
+  }).forEach(function(k) {
+    resultHash[k] = inputHash[k];
+  });
+  return resultHash;
 }

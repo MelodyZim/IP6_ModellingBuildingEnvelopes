@@ -35,6 +35,7 @@ module Envelop
     private
 
     # Settings
+    LAST_MATERIAL_INDEX = 999_999
     DEFAULT_ALPHA = 0.75
     HTML_WIDTH = 200
     MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal

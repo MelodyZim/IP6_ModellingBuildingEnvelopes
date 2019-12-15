@@ -81,6 +81,9 @@ module Envelop
       transformation *= group.transformation
       if materials.nil?
         materials = Hash.new
+
+        materials["Total"] = Hash.new
+        materials["Total"]["index"] = Envelop::Materialisation::LAST_MATERIAL_INDEX
       end
 
       # extract interesting entities
@@ -92,16 +95,28 @@ module Envelop
         material = face.material
         name = material.nil? ? "default" : material.name
         area = area_to_current_unit(face.area(transformation))
-        direction = get_direction(face.normal)
+        direction = map_direction(get_direction(face.normal))
 
         if materials[name].nil?
           materials[name] = Hash.new
+          materials[name]["index"] = material.get_attribute('material', 'index')
         end
+
         if materials[name][direction].nil?
           materials[name][direction] = 0
         end
 
+        if materials[name]["Total"].nil?
+          materials[name]["Total"] = 0
+        end
+
+        if materials["Total"][direction].nil?
+          materials["Total"][direction] = 0
+        end
+
         materials[name][direction] += area
+        materials[name]["Total"] += area
+        materials["Total"][direction] += area
       end
 
       # calculate sub_groups
@@ -145,6 +160,20 @@ module Envelop
       else
         return "F" #Floor
       end
+    end
+
+    def self.map_direction(dir)
+      if ["R", "F"].include?(dir)
+        return "H"
+      elsif "SE" == dir
+        return "SO"
+      elsif "E" == dir
+        return "O"
+      elsif "NE" == dir
+        return "NO"
+      end
+
+      return dir
     end
 
     def self.reload
