@@ -6,7 +6,9 @@ module Envelop
       # TODO: consider using the input on the lower right hand side to either set line length or set how long the line should be
       PHASES = { BEFORE_FIRST_POINT: 0, BEFORE_SECOND_POINT: 2, BEFORE_SCALE: 3 }.freeze
 
-      def initialize; end
+      def initialize(proceedToOutput = false)
+        @proceedToOutput = proceedToOutput
+      end
 
       def activate
         puts 'activating ScaleTool...'
@@ -89,7 +91,11 @@ module Envelop
             set_status_text
 
             if scale_dialog
+              Envelop::ScaleTool.scaled = true
               Sketchup.active_model.select_tool(nil)
+              if @proceedToOutput
+                Envelop::AreaOutput.open_dialog
+              end
             else
               @phase = PHASES[:BEFORE_SECOND_POINT]
               set_status_text
@@ -161,13 +167,22 @@ module Envelop
           Sketchup.status_text = 'Enter measurement of selected line in model to rescale. "Enter" to accept current measurement.'
         end
       end
-      end
+    end
 
-    def self.activate_scale_tool
-      Sketchup.active_model.select_tool(Envelop::ScaleTool::ScaleTool.new)
+    def self.scaled=(value)
+      @scaled = value
+    end
+
+    def self.scaled
+      @scaled
+    end
+
+    def self.activate_scale_tool(proceedToOutput = false)
+      Sketchup.active_model.select_tool(Envelop::ScaleTool::ScaleTool.new(proceedToOutput))
     end
 
     def self.reload
+      @scaled = false
       Sketchup.active_model.select_tool(nil)
     end
     reload

@@ -6,7 +6,7 @@ module Envelop
   module Toolbar
     def self.area_command
       cmd = UI::Command.new('Area') do
-        Envelop::AreaOutput.open_dialog(Envelop::Housekeeper.get_house)
+        Envelop::AreaOutput.open_dialog()
       end
       cmd.set_validation_proc do
         if Envelop::Housekeeper.get_house.nil?

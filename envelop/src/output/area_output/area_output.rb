@@ -3,10 +3,14 @@ require 'json'
 module Envelop
   module AreaOutput
 		# public
-
-		def self.open_dialog(house)
-			@house = house
-			show_dialog
+		def self.open_dialog(house = Envelop::Housekeeper.get_house)
+      if !Envelop::ScaleTool.scaled
+        UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
+        Envelop::ScaleTool.activate_scale_tool(true)
+      else
+  			@house = house
+  			show_dialog
+      end
 		end
 
 		private
@@ -67,7 +71,7 @@ module Envelop
 			@dialog.execute_script("set_result('#{calc_area(@house).to_json}')")
 		end
 
-    # calculate the total surface area separated by ordinal direction and material of all the faces (Sketchup::Face) 
+    # calculate the total surface area separated by ordinal direction and material of all the faces (Sketchup::Face)
     # of the supplied group, nested groups are resolved recursively
     # @param group [Sketchup::Group] the group to examine
     # @param transformation [Geom::Transformation] the transformation of parent groups
@@ -78,7 +82,7 @@ module Envelop
       if materials.nil?
         materials = Hash.new
       end
-    
+
       # extract interesting entities
       faces = group.entities.select {|entity| entity.is_a? Sketchup::Face }
       sub_groups = group.entities.select {|entity| entity.is_a? Sketchup::Group }
@@ -99,7 +103,7 @@ module Envelop
 
         materials[name][direction] += area
       end
-      
+
       # calculate sub_groups
       sub_groups.each do |group|
         calc_area(group, transformation, materials)
