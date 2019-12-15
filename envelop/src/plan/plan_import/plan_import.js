@@ -46,19 +46,6 @@ $(function() {
               scale = canvas.height / viewport_height;
             }
 
-
-            // Get viewport of the page at required scale
-            var viewport = page.getViewport({
-              scale: scale
-            });
-
-            // Set canvas height
-            if (width_bigger) {
-              canvas.height = viewport.height;
-            } else {
-              canvas.width = viewport.width;
-            }
-
             var canvas_quality = canvases[1]; {
               canvas_quality.width = viewport_width;
               canvas_quality.height = viewport_height;
@@ -67,6 +54,13 @@ $(function() {
                 viewport: page.getViewport(scale_one_object)
               });
             }
+
+            // Get viewport of the page at required scale
+            var viewport = page.getViewport({
+              scale: scale
+            });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
 
             // Render the page contents in the canvas
             page.render({
