@@ -115,6 +115,19 @@ module Envelop
 
       cmd
     end
+    
+    def self.pushpull_tool_command
+      cmd = UI::Command.new('Push-Pull Tool') do
+        Envelop::PushPullTool.activate_pushpull_tool
+      end
+      cmd.small_icon = 'pushpull_tool.svg'
+      cmd.large_icon = 'pushpull_tool.svg'
+      cmd.tooltip = 'Push-Pull'
+      cmd.status_bar_text = 'Extrude a face into a volume'
+      cmd.menu_text = 'Push-Pull Tool'
+
+      cmd
+    end
 
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
@@ -122,6 +135,7 @@ module Envelop
       @toolbar = @toolbar.add_item area_command
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item pen_tool_command
+      @toolbar = @toolbar.add_item pushpull_tool_command
       @toolbar = @toolbar.add_item modeling_tool_add_command
       @toolbar = @toolbar.add_item modeling_tool_subtract_command
       @toolbar = @toolbar.add_item scale_tool_command

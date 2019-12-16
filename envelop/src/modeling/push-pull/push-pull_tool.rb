@@ -82,6 +82,8 @@ module Envelop
             sign = @direction_vector.samedirection?(@face.normal) ? 1 : -1
             @face.pushpull(sign * @direction_vector.length, false)
             
+            Envelop::Materialisation.apply_default_material
+            
             # release inference locks
             view.lock_inference
             
