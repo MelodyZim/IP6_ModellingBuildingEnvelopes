@@ -101,13 +101,27 @@ module Envelop
       cmd.menu_text = 'Create Floor'
 
       cmd
-  end
+    end
+    
+    def self.pen_tool_command
+      cmd = UI::Command.new('Pen Tool') do
+        Envelop::PenTool.activate_pen_tool
+      end
+      cmd.small_icon = 'pen_tool.svg'
+      cmd.large_icon = 'pen_tool.svg'
+      cmd.tooltip = 'Create Polygon or Rectangle'
+      cmd.status_bar_text = 'Create Polygon or Rectangle Face'
+      cmd.menu_text = 'Pen Tool'
+
+      cmd
+    end
 
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
 
       @toolbar = @toolbar.add_item area_command
       @toolbar = @toolbar.add_separator
+      @toolbar = @toolbar.add_item pen_tool_command
       @toolbar = @toolbar.add_item modeling_tool_add_command
       @toolbar = @toolbar.add_item modeling_tool_subtract_command
       @toolbar = @toolbar.add_item scale_tool_command
