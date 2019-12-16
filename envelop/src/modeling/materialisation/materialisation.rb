@@ -262,17 +262,15 @@ module Envelop
     end
 
     def self.unset_tmp_materials(grp)
-      materials = Sketchup.active_model.materials
-
       grp.entities.grep(Sketchup::Face).each do |face|
 
         original_name = face.get_attribute('tmp_material', 'original_name')
         if !original_name.nil?
-          
+
           if original_name == "default"
             face.material = nil
           else
-            face.material = materials[original_name]
+            face.material = original_name
           end
           face.delete_attribute("tmp_material")
         end
