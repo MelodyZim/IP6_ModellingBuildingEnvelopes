@@ -11,6 +11,7 @@ require_relative 'modeling/materialisation/materialisation_tool'
 require_relative 'modeling/modeling_tool/modeling_tool'
 require_relative 'modeling/floor_maker_tool/floor_maker_tool'
 require_relative 'modeling/scale/scale_tool'
+require_relative 'modeling/pen/pen_tool'
 require_relative 'output/area_output/area_output'
 require_relative 'ui/toolbar/toolbar'
 
