@@ -277,8 +277,18 @@ module Envelop
       end
     end
 
+    # This is an example of an observer that watches the
+    # component placement event.
+    class OnSaveModelSaveCustomMaterials < Sketchup::ModelObserver
+      def onSaveModel(model)
+        Envelop::Materialisation.save_custom_materials
+      end
+    end
+
     def self.reload
       init_materials
+
+      Sketchup.active_model.add_observer(OnSaveModelSaveCustomMaterials.new)
     end
     reload
   end

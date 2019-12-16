@@ -5,12 +5,12 @@
     "base_name": "Aussenwand",
     "count": 1,
     "color_rgb": [
-      146,
-      204,
-      177
+      18,
+      140,
+      59
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.69,
+    "color_hsl_l": 0.31,
     "index": 1
   },
   {
@@ -19,12 +19,12 @@
     "base_name": "Aussenwand",
     "count": 2,
     "color_rgb": [
-      33,
-      69,
-      46
+      26,
+      108,
+      51
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2,
+    "color_hsl_l": 0.26,
     "index": 2
   },
   {
@@ -33,12 +33,12 @@
     "base_name": "Aussenwand",
     "count": 3,
     "color_rgb": [
-      148,
-      239,
-      175
+      51,
+      75,
+      41
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.76,
+    "color_hsl_l": 0.23,
     "index": 3
   },
   {
@@ -47,12 +47,12 @@
     "base_name": "Innenwand",
     "count": 1,
     "color_rgb": [
-      19,
-      222,
-      235
+      16,
+      23,
+      89
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.5,
+    "color_hsl_l": 0.21,
     "index": 4
   },
   {
@@ -62,7 +62,7 @@
     "count": 2,
     "color_rgb": [
       0,
-      53,
+      43,
       102
     ],
     "color_alpha": 0.75,
@@ -76,7 +76,7 @@
     "count": 3,
     "color_rgb": [
       0,
-      101,
+      47,
       102
     ],
     "color_alpha": 0.75,
@@ -89,12 +89,12 @@
     "base_name": "Boden",
     "count": 1,
     "color_rgb": [
-      253,
-      142,
-      196
+      251,
+      79,
+      79
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.77,
+    "color_hsl_l": 0.65,
     "index": 7
   },
   {
@@ -103,12 +103,12 @@
     "base_name": "Boden",
     "count": 2,
     "color_rgb": [
-      145,
-      29,
-      29
+      222,
+      123,
+      123
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.34,
+    "color_hsl_l": 0.68,
     "index": 8
   },
   {
@@ -117,12 +117,12 @@
     "base_name": "Boden",
     "count": 3,
     "color_rgb": [
-      255,
-      73,
-      185
+      226,
+      131,
+      191
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.64,
+    "color_hsl_l": 0.7,
     "index": 9
   },
   {
@@ -131,12 +131,12 @@
     "base_name": "Dach",
     "count": 1,
     "color_rgb": [
-      111,
-      184,
-      0
+      238,
+      198,
+      144
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.36,
+    "color_hsl_l": 0.75,
     "index": 10
   },
   {
@@ -145,12 +145,12 @@
     "base_name": "Dach",
     "count": 2,
     "color_rgb": [
-      161,
-      100,
-      24
+      255,
+      139,
+      86
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.36,
+    "color_hsl_l": 0.67,
     "index": 11
   },
   {
@@ -159,9 +159,9 @@
     "base_name": "Decke",
     "count": 1,
     "color_rgb": [
-      254,
-      65,
-      219
+      124,
+      68,
+      251
     ],
     "color_alpha": 0.75,
     "color_hsl_l": 0.63,
@@ -173,12 +173,12 @@
     "base_name": "Fenster",
     "count": 1,
     "color_rgb": [
-      231,
-      93,
-      93
+      221,
+      122,
+      122
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.64,
+    "color_hsl_l": 0.67,
     "index": 13
   },
   {
@@ -187,9 +187,9 @@
     "base_name": "Fenster",
     "count": 2,
     "color_rgb": [
-      245,
-      225,
-      214
+      248,
+      222,
+      211
     ],
     "color_alpha": 0.75,
     "color_hsl_l": 0.9,
@@ -201,9 +201,9 @@
     "base_name": "Dachfenster",
     "count": 1,
     "color_rgb": [
-      218,
-      211,
-      248
+      255,
+      204,
+      244
     ],
     "color_alpha": 0.75,
     "color_hsl_l": 0.9,
@@ -215,12 +215,12 @@
     "base_name": "Aussentüre",
     "count": 1,
     "color_rgb": [
-      6,
-      48,
-      96
+      24,
+      175,
+      211
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2,
+    "color_hsl_l": 0.46,
     "index": 16
   },
   {
@@ -229,12 +229,12 @@
     "base_name": "Innentüre",
     "count": 1,
     "color_rgb": [
-      60,
-      255,
-      77
+      215,
+      251,
+      208
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.62,
+    "color_hsl_l": 0.9,
     "index": 17
   }
 ]
