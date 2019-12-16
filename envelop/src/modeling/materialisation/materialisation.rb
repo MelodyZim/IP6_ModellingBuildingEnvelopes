@@ -6,100 +6,40 @@ require_relative '../../vendor/rb/color_math'
 
 module Envelop
   module Materialisation
-    # Public
-    def self.show_dialog
-      if @dialog&.visible?
-        @dialog.bring_to_front
-      else
-        @dialog ||= create_dialog
-        @dialog.add_action_callback('ready') do |_action_context|
-          set_materials
-          nil
+
+    DEFAULT_MATERIAL = "default"
+
+    def self.set_tmp_materials(grp)
+      materials = Sketchup.active_model.materials
+
+      grp.entities.grep(Sketchup::Face).each do |face|
+
+        if face.material.nil?
+          original_name = "noMaterial"
+        else
+          original_name = face.material.name
         end
-        @dialog.add_action_callback('delete_material') do |_action_context, material_name|
-          delete_material(material_name)
-          nil
-        end
-        @dialog.add_action_callback('add_material') do |_action_context, material_name|
-          add_material(material_name)
-          set_materials
-          nil
-        end
-        @dialog.add_action_callback('select_material') do |_action_context, material_name|
-          Envelop::MaterialisationTool.activate_materialisation_tool(Sketchup.active_model.materials[material_name])
-          nil
-        end
-        @dialog.show
+        face.set_attribute('tmp_material', 'original_name', original_name)
+
+        material = materials.add(SecureRandom.hex(8))
+        face.material = material
       end
     end
 
-    private
+    def self.unset_tmp_materials(grp)
+      grp.entities.grep(Sketchup::Face).each do |face|
 
-    # Settings
-    LAST_MATERIAL_INDEX = 999_999
-    DEFAULT_ALPHA = 0.75
-    HTML_WIDTH = 200
-    MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
-    MIN_DEVIATION = 0.1
-    MAX_HUE_DEVIATION = 0.1
-    MIN_HUE_DEVIATION = 0.01
+        original_name = face.get_attribute('tmp_material', 'original_name')
+        if !original_name.nil?
 
-    #  Methods
-    def self.create_dialog
-      puts('Envelop::Materialisation.create_dialog: ...')
-
-      height = Envelop::WindowUtils.view_height_pixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.magic_window_size_and_positioning_const
-      width = Envelop::WindowUtils.html_window_horirontal_scrollbar_width + Envelop::Materialisation::HTML_WIDTH
-
-      html_file = File.join(__dir__, 'materialisation.html')
-      options = {
-        dialog_title: 'Materialisation',
-        preferences_key: 'envelop.materialisation',
-        min_width: width, # TODO: consider making this window resizeable. TODO: ensure these settings actually work
-        max_width: width,
-        min_height: height,
-        max_height: height,
-        style: UI::HtmlDialog::STYLE_UTILITY
-      }
-      dialog = UI::HtmlDialog.new(options)
-      dialog.set_file(html_file)
-      dialog.set_can_close do
-        false # TODO: this straight up does not work on Mac (Works on Windows)
+          if original_name == "noMaterial"
+            face.material = nil
+          else
+            face.material = original_name
+          end
+          face.delete_attribute("tmp_material")
+        end
       end
-
-      dialog.set_size(width, height) # TODO: update this as the main window is resized.
-      dialog.set_position(Envelop::WindowUtils.view_width_pixels - width, Envelop::WindowUtils.sketchup_menu_and_toolbar_height) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
-
-      dialog
-    end
-
-    def self.materials_as_hash_array
-      res = []
-      Sketchup.active_model.materials.each do |material|
-        next if material.name.start_with?('Marc')
-
-        material_hash = {}
-
-        material_hash['name'] = material.name
-        material_hash['id'] = material.entityID
-        material_hash['color_rgb'] = material.get_attribute('material', 'color_rgb')
-        material_hash['color_hsl_l'] = material.get_attribute('material', 'color_hsl_l')
-        material_hash['index'] = material.get_attribute('material', 'index')
-
-        res.push(material_hash)
-      end
-      res
-    end
-
-    def self.set_materials
-      puts 'Envelop::Materialisation.set_materials: ...'
-
-      if @dialog.nil?
-        warn '@dialog is nil, aborting...'
-        return
-      end
-
-      @dialog.execute_script("setMaterials('#{materials_as_hash_array.to_json}')")
     end
 
     def self.delete_material(material_name)
@@ -109,6 +49,7 @@ module Envelop
       materials.remove(materials[material_name]) # TODO: what happens if still in use?
     end
 
+    # TODO: FS: deduplicate add_material and init_materials
     def self.add_material(material_name)
       puts "Envelop::Materialisation.add_material: adding material based on material with name #{material_name}..."
 
@@ -178,6 +119,8 @@ module Envelop
 
       material.set_attribute('material', 'index', base_index + 1)
 
+      material.set_attribute('material', 'user_facing', true)
+
       material.alpha = Envelop::Materialisation::DEFAULT_ALPHA
     end
 
@@ -185,6 +128,10 @@ module Envelop
       materials = Sketchup.active_model.materials
 
       materials.purge_unused
+
+      material = materials.add(Envelop::Materialisation::DEFAULT_MATERIAL)
+      material.color = Sketchup::Color.new(Envelop::Materialisation::COLOR_DEFAULT_MATERIAL_R,Envelop::Materialisation::COLOR_DEFAULT_MATERIAL_G,Envelop::Materialisation::COLOR_DEFAULT_MATERIAL_B)
+      material.alpha = Envelop::Materialisation::ALPHA_DEFAULT_MATERIAL
 
       default_materials_path = html_file = File.join(__dir__, 'default_materials.json')
       default_materials = JSON.parse(File.read(default_materials_path))['default_materials']
@@ -217,6 +164,8 @@ module Envelop
 
           material.set_attribute('material', 'index', material_index)
 
+          material.set_attribute('material', 'user_facing', true)
+
           material.alpha = Envelop::Materialisation::DEFAULT_ALPHA
 
           count += 1
@@ -225,6 +174,21 @@ module Envelop
       end
     end
 
+    private
+
+    # Settings
+    LAST_MATERIAL_INDEX = 999_999
+    DEFAULT_ALPHA = 0.75
+    ALPHA_DEFAULT_MATERIAL = 0.5
+    COLOR_DEFAULT_MATERIAL_R = 242
+    COLOR_DEFAULT_MATERIAL_G = 242
+    COLOR_DEFAULT_MATERIAL_B = 242
+    MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
+    MIN_DEVIATION = 0.1
+    MAX_HUE_DEVIATION = 0.1
+    MIN_HUE_DEVIATION = 0.01
+
+    #  Methods
     def self.deviate_color(color_hsl)
       #puts "Envelop::Materialisation.deviate_color: in_hsl: (#{color_hsl[0]}, #{color_hsl[1]}, #{color_hsl[2]})"
 
@@ -244,45 +208,7 @@ module Envelop
       res
     end
 
-    def self.set_tmp_materials(grp)
-      materials = Sketchup.active_model.materials
-
-      grp.entities.grep(Sketchup::Face).each do |face|
-
-        if face.material.nil?
-          original_name = "default"
-        else
-          original_name = face.material.name
-        end
-        face.set_attribute('tmp_material', 'original_name', original_name)
-
-        material = materials.add(SecureRandom.hex(8))
-        face.material = material
-      end
-    end
-
-    def self.unset_tmp_materials(grp)
-      grp.entities.grep(Sketchup::Face).each do |face|
-
-        original_name = face.get_attribute('tmp_material', 'original_name')
-        if !original_name.nil?
-
-          if original_name == "default"
-            face.material = nil
-          else
-            face.material = original_name
-          end
-          face.delete_attribute("tmp_material")
-        end
-      end
-    end
-
     def self.reload
-      if @dialog
-        @dialog.close
-        remove_instance_variable(:@dialog)
-      end
-
       init_materials
     end
     reload
