@@ -99,7 +99,7 @@ module Envelop
 
         if materials[name].nil?
           materials[name] = Hash.new
-          materials[name]["index"] = material.get_attribute('material', 'index')
+          materials[name]["index"] = material.get_attribute('material', 'index') # TODO handle the case where material=nil
         end
 
         if materials[name][direction].nil?

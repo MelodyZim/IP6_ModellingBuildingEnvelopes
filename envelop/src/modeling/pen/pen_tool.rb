@@ -92,6 +92,7 @@ module Envelop
           if @points.length >= 3
             @points << @points[0]
             num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
+            Envelop::Materialisation.apply_default_material
             reset_tool
           end
         end
@@ -125,11 +126,13 @@ module Envelop
         
           if @points.length == 2            
             num_new_faces = create_line(@entities, @transform, *get_points(@points[0], @points[1]))
+            Envelop::Materialisation.apply_default_material
             if num_new_faces > 0
               reset_tool
             end
           elsif @points.length > 2
             num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
+            Envelop::Materialisation.apply_default_material
             if num_new_faces > 0
               reset_tool
             end

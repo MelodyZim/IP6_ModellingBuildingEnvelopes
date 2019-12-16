@@ -8,6 +8,25 @@ module Envelop
   module Materialisation
     DEFAULT_MATERIAL = 'default'
 
+    # Apply DEFAULT_MATERIAL to all faces without material
+    #
+    # @param entities [Sketchup::Entities, nil] entities to change material recursively (defaults to Sketchup.active_model.active_entities)
+    def self.apply_default_material(entities = nil)      
+      if entities.nil?
+        entities = Sketchup.active_model.active_entities
+      end
+    
+      entities.grep(Sketchup::Face).each do |face|
+        if face.material.nil?
+          face.material = DEFAULT_MATERIAL
+        end
+      end
+      
+      entities.grep(Sketchup::Group).each do |group|
+        apply_default_material(group.entities)
+      end
+    end
+
     def self.set_tmp_materials(grp)
       materials = Sketchup.active_model.materials
 
