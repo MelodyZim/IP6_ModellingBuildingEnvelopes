@@ -27,6 +27,10 @@ module Envelop
     end
     puts "Reloaded #{files.size} files"
 
+    # reset view/model state
+    Sketchup.active_model.selection.clear
+    Sketchup.active_model.active_view.lock_inference
+
     if show_dialogs
       Envelop::Main.show_dialogs
     end
