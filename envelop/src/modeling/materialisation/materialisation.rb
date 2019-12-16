@@ -40,6 +40,8 @@ module Envelop
     HTML_WIDTH = 200
     MAX_DEVIATION = 0.3 # TODO: consider if these values are optimal
     MIN_DEVIATION = 0.1
+    MAX_HUE_DEVIATION = 0.1
+    MIN_HUE_DEVIATION = 0.01
 
     #  Methods
     def self.create_dialog
@@ -174,6 +176,8 @@ module Envelop
       material.set_attribute('material', 'color_hsl_l', color.to_hsl[2] / 100.0)
 
       material.set_attribute('material', 'index', base_index + 1)
+
+      material.alpha = Envelop::Materialisation::DEFAULT_ALPHA
     end
 
     def self.init_materials # TODO: save material pallete per machine, independent of default materials and then use those saved materials if any
@@ -193,6 +197,7 @@ module Envelop
         base_color_hsl = base_color.to_hsl
 
         while count <= material_hash['count']
+          #puts "Envelp::Materialisation.init_materials: #{material_hash['id']} #{count}"
 
           material = materials.add("#{material_hash['id']} #{count}")
 
@@ -208,6 +213,7 @@ module Envelop
           material.set_attribute('material', 'base_color_hsl', base_color_hsl)
           material.set_attribute('material', 'color_rgb', color.to_rgb)
           material.set_attribute('material', 'color_hsl_l', color.to_hsl[2] / 100.0)
+
           material.set_attribute('material', 'index', material_index)
 
           material.alpha = Envelop::Materialisation::DEFAULT_ALPHA
@@ -219,15 +225,21 @@ module Envelop
     end
 
     def self.deviate_color(color_hsl)
+      #puts "Envelop::Materialisation.deviate_color: in_hsl: (#{color_hsl[0]}, #{color_hsl[1]}, #{color_hsl[2]})"
+
+      rand_hue = [-1, 1].sample * rand(Envelop::Materialisation::MIN_HUE_DEVIATION..Envelop::Materialisation::MAX_HUE_DEVIATION) * 360
       rand1 = [-1, 1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
       rand2 = [-1, 1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
 
+      #puts "Envelop::Materialisation.deviate_color: res_from_hsl: (#{color_hsl[0]}, #{(color_hsl[1] + rand1).clamp(0, 100)}, #{(color_hsl[2] + rand2).clamp(0, 100)})"
+
       res = ColorMath.from_hsl(
-        color_hsl[0],
-        (color_hsl[1] + rand1).clamp(0, 100),
-        (color_hsl[2] + rand2).clamp(0, 100)
+        (color_hsl[0] + rand_hue).clamp(0, 360),
+        (color_hsl[1] + rand1).clamp(20, 100),
+        (color_hsl[2] + rand2).clamp(20, 90)
       )
 
+      #puts "Envelop::Materialisation.deviate_color: out_hsl: (#{res.to_hsl[0]}, #{res.to_hsl[1]}, #{res.to_hsl[2]})"
       res
     end
 
