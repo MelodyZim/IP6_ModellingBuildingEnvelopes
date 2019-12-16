@@ -65,23 +65,6 @@ module Envelop
       dialog
     end
 
-    def self.materials_as_hash_array
-      res = []
-      Sketchup.active_model.materials.each do |material|
-        next unless material.get_attribute('material', 'user_facing')
-
-        material_hash = {}
-
-        material_hash['name'] = material.name
-        material_hash['color_rgb'] = material.get_attribute('material', 'color_rgb')
-        material_hash['color_hsl_l'] = material.get_attribute('material', 'color_hsl_l')
-        material_hash['index'] = material.get_attribute('material', 'index')
-
-        res.push(material_hash)
-      end
-      res
-    end
-
     def self.set_materials
       puts 'Envelop::MaterialisationDialog.set_materials: ...'
 
@@ -90,7 +73,7 @@ module Envelop
         return
       end
 
-      @dialog.execute_script("setMaterials('#{materials_as_hash_array.to_json}')")
+      @dialog.execute_script("setMaterials('#{Envelop::Materialisation.user_facing_materials_as_hash_array.to_json}')")
     end
 
     def self.reload
