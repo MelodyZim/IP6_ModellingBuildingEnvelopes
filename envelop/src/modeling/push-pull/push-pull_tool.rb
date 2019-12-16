@@ -75,14 +75,37 @@ module Envelop
         if @mouse_ip.valid?
           if @face.nil?
             @face = @mouse_ip.face
+            @transform = @mouse_ip.transformation
             view.lock_inference(
               Sketchup::InputPoint.new(@face.vertices[0]), 
               Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
           else
+            # TODO cleanup code
+            points = @face.vertices.map {|v| v.position}
             sign = @direction_vector.samedirection?(@face.normal) ? 1 : -1
-            @face.pushpull(sign * @direction_vector.length, false)
+          
+            model = Sketchup.active_model
+            group = model.active_entities.add_group()
+            group.transformation = @transform
+            face_copy = group.entities.add_face(points)
+            
+            face_copy.pushpull(sign * @direction_vector.length, false)
+            
+            # Add newly created group to house
+            Envelop::Housekeeper.add_to_house(group)
             
             Envelop::Materialisation.apply_default_material
+            
+            # delete original face
+            if not @face.deleted?
+              edges = @face.edges
+              @face.erase!
+              edges.each do |e|
+                if e.faces.length == 0
+                  e.erase!
+                end
+              end
+            end
             
             # release inference locks
             view.lock_inference
@@ -119,6 +142,7 @@ module Envelop
         @mouse_ip = Sketchup::InputPoint.new
         @face = nil
         @direction_vector = Geom::Vector3d.new
+        @transform = Geom::Transformation.new
 
         set_status_text
       end
