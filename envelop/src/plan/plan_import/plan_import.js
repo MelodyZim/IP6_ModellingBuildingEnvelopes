@@ -19,6 +19,8 @@ $(function() {
         return;
       }
 
+      // TODO: FS: consider fixing the previews so they have consisnten second border around prf preview
+
       // Send the object url of the pdf
       var pdf_url = URL.createObjectURL(f);
 
