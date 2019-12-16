@@ -4,6 +4,10 @@ module Envelop
   module Housekeeper
     # TODO: persist and load @house in save
 
+    def self.house_exists?
+      return !@house.nil?
+    end
+
     def self.get_house
       unless @house
         warn 'Envelop::Housekeeper.get_house: no house variable, returning nil. This will likely cause issues.'

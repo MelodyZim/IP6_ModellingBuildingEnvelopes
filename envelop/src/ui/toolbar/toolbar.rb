@@ -9,10 +9,10 @@ module Envelop
         Envelop::AreaOutput.open_dialog()
       end
       cmd.set_validation_proc do
-        if Envelop::Housekeeper.get_house.nil?
-          MF_GRAYED
-        else
+        if Envelop::Housekeeper.house_exists?
           MF_ENABLED
+        else
+          MF_GRAYED
         end
       end
       cmd.small_icon = 'area.svg'
