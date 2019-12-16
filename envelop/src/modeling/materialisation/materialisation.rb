@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'securerandom'
 require_relative '../../vendor/rb/color_math'
 
 module Envelop
@@ -241,6 +242,41 @@ module Envelop
 
       #puts "Envelop::Materialisation.deviate_color: out_hsl: (#{res.to_hsl[0]}, #{res.to_hsl[1]}, #{res.to_hsl[2]})"
       res
+    end
+
+    def self.set_tmp_materials(grp)
+      materials = Sketchup.active_model.materials
+
+      grp.entities.grep(Sketchup::Face).each do |face|
+
+        if face.material.nil?
+          original_name = "default"
+        else
+          original_name = face.material.name
+        end
+        face.set_attribute('tmp_material', 'original_name', original_name)
+
+        material = materials.add(SecureRandom.hex(8))
+        face.material = material
+      end
+    end
+
+    def self.unset_tmp_materials(grp)
+      materials = Sketchup.active_model.materials
+
+      grp.entities.grep(Sketchup::Face).each do |face|
+
+        original_name = face.get_attribute('tmp_material', 'original_name')
+        if !original_name.nil?
+          
+          if original_name == "default"
+            face.material = nil
+          else
+            face.material = materials[original_name]
+          end
+          face.delete_attribute("tmp_material")
+        end
+      end
     end
 
     def self.reload

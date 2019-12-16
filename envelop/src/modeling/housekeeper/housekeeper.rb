@@ -21,6 +21,15 @@ module Envelop
       # create a new house with the selection as content
       house = Sketchup.active_model.active_entities.add_group(entity_a)
 
+      if house.nil?
+        if !fail_silently
+          UI.messagebox('Cannot create house group with supplied argument, as the group would be nil')
+        else
+          puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would be nil.'
+        end
+        return
+      end
+
       if house.manifold?
         @house = house
       else
@@ -40,6 +49,7 @@ module Envelop
 
         # group input
         add_group = Sketchup.active_model.active_entities.add_group(entity_a)
+        Materialisation.set_tmp_materials(add_group)
 
         # add operation
         result = @house.outer_shell(add_group)
@@ -47,6 +57,7 @@ module Envelop
           UI.messagebox('Cannot add supplied argument to house group, as the result would not be manifold.')
           add_group.explode
         else
+          Materialisation.unset_tmp_materials(result)
           @house = result
         end
       else

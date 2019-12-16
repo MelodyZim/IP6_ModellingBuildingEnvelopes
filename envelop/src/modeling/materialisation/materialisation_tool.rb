@@ -3,7 +3,6 @@ module Envelop
     class MaterialisationTool
       def initialize(material)
         @material = material
-        puts @material
       end
 
       def activate
