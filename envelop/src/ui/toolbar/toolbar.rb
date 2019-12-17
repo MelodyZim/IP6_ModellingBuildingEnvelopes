@@ -118,7 +118,7 @@ module Envelop
     
     def self.pushpull_add_command
       cmd = UI::Command.new('Push-Pull Add Tool') do
-        Envelop::PushPullTool.activate_pushpull_tool
+        Envelop::PushPullTool.activate_pushpull_tool(true)
       end
       cmd.small_icon = 'pushpull_add.svg'
       cmd.large_icon = 'pushpull_add.svg'
@@ -131,7 +131,7 @@ module Envelop
     
     def self.pushpull_subtract_command
       cmd = UI::Command.new('Push-Pull Subtract Tool') do
-        Envelop::PushPullTool.activate_pushpull_tool
+        Envelop::PushPullTool.activate_pushpull_tool(false)
       end
       cmd.small_icon = 'pushpull_subtract.svg'
       cmd.large_icon = 'pushpull_subtract.svg'

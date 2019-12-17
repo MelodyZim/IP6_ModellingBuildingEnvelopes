@@ -2,8 +2,12 @@
 
 module Envelop
   module PushPullTool
-    class PushPullTool    
-      def initialize; end
+    class PushPullTool   
+
+      # @param add [Boolean] whether the created volume should be added (true) or subtracted (false) from the house
+      def initialize(add = true)
+        @add = add
+      end
 
       def activate
         puts 'activating PushPullTool...'
@@ -75,10 +79,12 @@ module Envelop
         if @mouse_ip.valid?
           if @face.nil?
             @face = @mouse_ip.face
-            @transform = @mouse_ip.transformation
-            view.lock_inference(
-              Sketchup::InputPoint.new(@face.vertices[0]), 
-              Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
+            unless @face.nil?
+              @transform = @mouse_ip.transformation
+              view.lock_inference(
+                Sketchup::InputPoint.new(@face.vertices[0]), 
+                Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
+            end
           else
             # TODO cleanup code
             points = @face.vertices.map {|v| v.position}
@@ -92,7 +98,11 @@ module Envelop
             face_copy.pushpull(sign * @direction_vector.length, false)
             
             # Add newly created group to house
-            Envelop::Housekeeper.add_to_house(group)
+            if @add
+              Envelop::Housekeeper.add_to_house(group)
+            else
+              Envelop::Housekeeper.remove_from_house(group)
+            end
             
             Envelop::Materialisation.apply_default_material
             
@@ -148,8 +158,12 @@ module Envelop
       end
     end
 
-    def self.activate_pushpull_tool
-      Sketchup.active_model.select_tool(Envelop::PushPullTool::PushPullTool.new)
+    # Activate the custom Push-Pull Tool
+    #
+    # @param add [Boolean] whether the created volume should be added (true) or subtracted (false) from the house
+    #
+    def self.activate_pushpull_tool(add=true)
+      Sketchup.active_model.select_tool(Envelop::PushPullTool::PushPullTool.new(add))
     end
 
     def self.reload
