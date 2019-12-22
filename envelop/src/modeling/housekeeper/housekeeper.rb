@@ -17,9 +17,15 @@ module Envelop
       @house
     end
 
+    # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to add, must be manifold
+    # @param fail_silently [Boolean]
     def self.create_house(entity_a, fail_silently = false)
       # create a new house with the selection as content
-      house = Sketchup.active_model.active_entities.add_group(entity_a)
+      if entity_a.is_a? Sketchup::Group
+        house = entity_a
+      else
+        house = Sketchup.active_model.active_entities.add_group(entity_a)
+      end
 
       if house.nil?
         if !fail_silently
@@ -44,11 +50,17 @@ module Envelop
       end
     end
 
+    # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to add, must be manifold
     def self.add_to_house(entity_a)
       if @house
 
-        # group input
-        add_group = Sketchup.active_model.active_entities.add_group(entity_a)
+        # group input        
+        if entity_a.is_a? Sketchup::Group
+          add_group = entity_a
+        else
+          add_group = Sketchup.active_model.active_entities.add_group(entity_a)
+        end
+        
         Materialisation.set_tmp_materials(add_group)
 
         # add operation
@@ -66,17 +78,22 @@ module Envelop
       end
     end
 
+    # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to subtract, must be manifold
     def self.remove_from_house(entity_a)
       if @house
 
-        # group input
-        remove_group = Sketchup.active_model.active_entities.add_group(entity_a)
+        # group input        
+        if entity_a.is_a? Sketchup::Group
+          remove_group = entity_a
+        else
+          remove_group = Sketchup.active_model.active_entities.add_group(entity_a)
+        end
 
         # add operation
-        result = @house.subtract(house)
+        result = remove_group.subtract(@house)
         if result.nil?
           UI.messagebox('Cannot remove supplied argument from house group, as the result would not be manifold.')
-          remove_group.explode
+          remove_group.explode  # TODO this is not the intended behaviour if entity_a was a group
         else
           @house = result
         end

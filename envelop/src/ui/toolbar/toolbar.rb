@@ -28,8 +28,8 @@ module Envelop
       cmd = UI::Command.new('Reload') do
         Envelop.reload
       end
-      cmd.small_icon = 'ToolPencilSmall.png'
-      cmd.large_icon = 'ToolPencilLarge.png'
+      cmd.small_icon = 'reload.svg'
+      cmd.large_icon = 'reload.svg'
       cmd.tooltip = 'Envelop.reload'
       cmd.status_bar_text = 'Reload the envelop plugin'
       cmd.menu_text = 'Reload'
@@ -81,8 +81,8 @@ module Envelop
       cmd = UI::Command.new('Scale') do
         Envelop::ScaleTool.activate_scale_tool
       end
-      cmd.small_icon = ''
-      cmd.large_icon = ''
+      cmd.small_icon = 'scale_tool.svg'
+      cmd.large_icon = 'scale_tool.svg'
       cmd.tooltip = 'Scale model'
       cmd.status_bar_text = 'Scale model by defining a known distance'
       cmd.menu_text = 'Scale'
@@ -94,8 +94,8 @@ module Envelop
       cmd = UI::Command.new('Floor Maker') do
         Envelop::FloorMakerTool.activate_floor_maker_tool
       end
-      cmd.small_icon = ''
-      cmd.large_icon = ''
+      cmd.small_icon = 'floor_tool.svg'
+      cmd.large_icon = 'floor_tool.svg'
       cmd.tooltip = 'Create Floor'
       cmd.status_bar_text = 'Create a Floor at Mouseclick-Height'
       cmd.menu_text = 'Create Floor'
@@ -116,15 +116,28 @@ module Envelop
       cmd
     end
     
-    def self.pushpull_tool_command
-      cmd = UI::Command.new('Push-Pull Tool') do
-        Envelop::PushPullTool.activate_pushpull_tool
+    def self.pushpull_add_command
+      cmd = UI::Command.new('Push-Pull Add Tool') do
+        Envelop::PushPullTool.activate_pushpull_tool(true)
       end
-      cmd.small_icon = 'pushpull_tool.svg'
-      cmd.large_icon = 'pushpull_tool.svg'
-      cmd.tooltip = 'Push-Pull'
-      cmd.status_bar_text = 'Extrude a face into a volume'
-      cmd.menu_text = 'Push-Pull Tool'
+      cmd.small_icon = 'pushpull_add.svg'
+      cmd.large_icon = 'pushpull_add.svg'
+      cmd.tooltip = 'Push-Pull Add'
+      cmd.status_bar_text = 'Extrude a face into a volume and add to house'
+      cmd.menu_text = 'Push-Pull Add Tool'
+
+      cmd
+    end
+    
+    def self.pushpull_subtract_command
+      cmd = UI::Command.new('Push-Pull Subtract Tool') do
+        Envelop::PushPullTool.activate_pushpull_tool(false)
+      end
+      cmd.small_icon = 'pushpull_subtract.svg'
+      cmd.large_icon = 'pushpull_subtract.svg'
+      cmd.tooltip = 'Push-Pull Subtract'
+      cmd.status_bar_text = 'Extrude a face into a volume and subtract from house'
+      cmd.menu_text = 'Push-Pull Subtract Tool'
 
       cmd
     end
@@ -132,15 +145,18 @@ module Envelop
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
 
-      @toolbar = @toolbar.add_item area_command
-      @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item pen_tool_command
-      @toolbar = @toolbar.add_item pushpull_tool_command
+      @toolbar = @toolbar.add_item pushpull_add_command
+      @toolbar = @toolbar.add_item pushpull_subtract_command
+      @toolbar = @toolbar.add_item floor_maker_command
+      @toolbar = @toolbar.add_separator
+      @toolbar = @toolbar.add_item scale_tool_command
+      @toolbar = @toolbar.add_item area_command
+      
+      @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item modeling_tool_add_command
       @toolbar = @toolbar.add_item modeling_tool_subtract_command
-      @toolbar = @toolbar.add_item scale_tool_command
       @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item floor_maker_command
       @toolbar = @toolbar.add_item reload_command
 
       file_loaded(__FILE__)

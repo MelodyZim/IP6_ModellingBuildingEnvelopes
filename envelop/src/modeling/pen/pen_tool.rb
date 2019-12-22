@@ -37,7 +37,7 @@ module Envelop
 
       def draw(view)
         rectangle = false
-        if @points.length == 1
+        if @points.length == 1 and not @force_polygon
           if @mouse_ip.valid?
             p = get_points(@points[0], @mouse_ip)
             if p.length == 5; rectangle = true; end
@@ -84,17 +84,21 @@ module Envelop
         view.invalidate
       end
 
+      def onReturn(view)
+        if @points.length >= 3
+          @points << @points[0]
+          num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
+          Envelop::Materialisation.apply_default_material
+          reset_tool
+        end
+      end
+
       def onKeyDown(key, _repeat, _flags, view)
         if key == CONSTRAIN_MODIFIER_KEY
           # locks the inference based on @mouse_ip input point
           view.lock_inference(@mouse_ip)
-        elsif key == 13 # ENTER
-          if @points.length >= 3
-            @points << @points[0]
-            num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
-            Envelop::Materialisation.apply_default_material
-            reset_tool
-          end
+        elsif key == VK_CONTROL or key == VK_ALT
+          @force_polygon = true
         end
 
         view.invalidate
@@ -104,6 +108,8 @@ module Envelop
         if key == CONSTRAIN_MODIFIER_KEY
           # unlock inference
           view.lock_inference
+        elsif key == VK_CONTROL or key == VK_ALT
+          @force_polygon = false
         end
 
         view.invalidate
@@ -124,13 +130,21 @@ module Envelop
             @transform = @points[0].transformation
           end
         
-          if @points.length == 2            
-            num_new_faces = create_line(@entities, @transform, *get_points(@points[0], @points[1]))
+          if @points.length == 2 and not @force_polygon
+            # # add new edges at top level if the first two points are not on the same face
+            if get_common_face(@points[0], @points[1]).nil?
+              @entities = Sketchup.active_model.active_entities
+              @transform = Geom::Transformation.new
+            end
+          
+            p = get_points(@points[0], @points[1])
+            num_new_faces = create_line(@entities, @transform, *p)
             Envelop::Materialisation.apply_default_material
-            if num_new_faces > 0
+
+            if num_new_faces > 0 or p.length == 5
               reset_tool
             end
-          elsif @points.length > 2
+          elsif @points.length >= 2
             num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
             Envelop::Materialisation.apply_default_material
             if num_new_faces > 0
@@ -185,6 +199,37 @@ module Envelop
         return num_faces
       end
 
+
+      # Get a face that both input points have in common
+      #
+      # @param ip1 [Sketchup::InputPoint] first input point
+      # @param ip2 [Sketchup::InputPoint] second InputPoint
+      #
+      # @return [Sketchup::Face, nil]
+      def get_common_face(ip1, ip2)
+        face = nil
+        if ip1.edge.nil?
+          if ip2.edge.nil?
+            if ip1.face == ip2.face
+              face = ip1.face
+            end
+          else
+            if ip2.edge.used_by?(ip1.face)
+              face = ip1.face
+            end
+          end
+        else
+          if ip2.edge.nil?
+            if ip1.edge.used_by?(ip2.face)
+              face = ip2.face
+            end
+          else
+            face = ip1.edge.common_face(ip2.edge)
+          end
+        end
+        return face
+      end
+
       
       # Given two InputPoint return a list of points:
       # If ip1 and ip2 form a line parallel to an axis the positions of ip1 and ip2 are returned
@@ -209,26 +254,7 @@ module Envelop
         z_axis = Geom::Vector3d.new(0,0,1)
         
         # try to get a common face from the input points
-        face = nil
-        if ip1.edge.nil?
-          if ip2.edge.nil?
-            if ip1.face == ip2.face
-              face = ip1.face
-            end
-          else
-            if ip2.edge.used_by?(ip1.face)
-              face = ip1.face
-            end
-          end
-        else
-          if ip2.edge.nil?
-            if ip1.edge.used_by?(ip2.face)
-              face = ip2.face
-            end
-          else
-            face = ip1.edge.common_face(ip2.edge)
-          end
-        end
+        face = get_common_face(ip1, ip2)
         
         if face.nil? or z_axis.cross(face.normal).length == 0
         
@@ -296,6 +322,7 @@ module Envelop
         @phase = PHASES[:BEFORE_FIRST_POINT]
         @mouse_ip = Sketchup::InputPoint.new
         @points = Array.new
+        @force_polygon = false
         
         @entities = nil
         @transform = Geom::Transformation.new

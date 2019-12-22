@@ -2,8 +2,12 @@
 
 module Envelop
   module PushPullTool
-    class PushPullTool    
-      def initialize; end
+    class PushPullTool   
+
+      # @param add [Boolean] whether the created volume should be added (true) or subtracted (false) from the house
+      def initialize(add = true)
+        @add = add
+      end
 
       def activate
         puts 'activating PushPullTool...'
@@ -75,14 +79,43 @@ module Envelop
         if @mouse_ip.valid?
           if @face.nil?
             @face = @mouse_ip.face
-            view.lock_inference(
-              Sketchup::InputPoint.new(@face.vertices[0]), 
-              Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
+            unless @face.nil?
+              @transform = @mouse_ip.transformation
+              view.lock_inference(
+                Sketchup::InputPoint.new(@face.vertices[0]), 
+                Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
+            end
           else
+            # TODO cleanup code
+            points = @face.vertices.map {|v| v.position}
             sign = @direction_vector.samedirection?(@face.normal) ? 1 : -1
-            @face.pushpull(sign * @direction_vector.length, false)
+          
+            model = Sketchup.active_model
+            group = model.active_entities.add_group()
+            group.transformation = @transform
+            face_copy = group.entities.add_face(points)
+            
+            face_copy.pushpull(sign * @direction_vector.length, false)
+            
+            # Add newly created group to house
+            if @add
+              Envelop::Housekeeper.add_to_house(group)
+            else
+              Envelop::Housekeeper.remove_from_house(group)
+            end
             
             Envelop::Materialisation.apply_default_material
+            
+            # delete original face
+            if not @face.deleted?
+              edges = @face.edges
+              @face.erase!
+              edges.each do |e|
+                if e.faces.length == 0
+                  e.erase!
+                end
+              end
+            end
             
             # release inference locks
             view.lock_inference
@@ -119,13 +152,18 @@ module Envelop
         @mouse_ip = Sketchup::InputPoint.new
         @face = nil
         @direction_vector = Geom::Vector3d.new
+        @transform = Geom::Transformation.new
 
         set_status_text
       end
     end
 
-    def self.activate_pushpull_tool
-      Sketchup.active_model.select_tool(Envelop::PushPullTool::PushPullTool.new)
+    # Activate the custom Push-Pull Tool
+    #
+    # @param add [Boolean] whether the created volume should be added (true) or subtracted (false) from the house
+    #
+    def self.activate_pushpull_tool(add=true)
+      Sketchup.active_model.select_tool(Envelop::PushPullTool::PushPullTool.new(add))
     end
 
     def self.reload
