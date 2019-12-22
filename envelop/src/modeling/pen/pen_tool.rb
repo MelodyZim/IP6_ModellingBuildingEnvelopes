@@ -37,7 +37,7 @@ module Envelop
 
       def draw(view)
         rectangle = false
-        if @points.length == 1
+        if @points.length == 1 and not @force_polygon
           if @mouse_ip.valid?
             p = get_points(@points[0], @mouse_ip)
             if p.length == 5; rectangle = true; end
@@ -97,6 +97,8 @@ module Envelop
         if key == CONSTRAIN_MODIFIER_KEY
           # locks the inference based on @mouse_ip input point
           view.lock_inference(@mouse_ip)
+        elsif key == VK_CONTROL or key == VK_ALT
+          @force_polygon = true
         end
 
         view.invalidate
@@ -106,6 +108,8 @@ module Envelop
         if key == CONSTRAIN_MODIFIER_KEY
           # unlock inference
           view.lock_inference
+        elsif key == VK_CONTROL or key == VK_ALT
+          @force_polygon = false
         end
 
         view.invalidate
@@ -126,7 +130,7 @@ module Envelop
             @transform = @points[0].transformation
           end
         
-          if @points.length == 2
+          if @points.length == 2 and not @force_polygon
             # # add new edges at top level if the first two points are not on the same face
             if get_common_face(@points[0], @points[1]).nil?
               @entities = Sketchup.active_model.active_entities
@@ -139,7 +143,7 @@ module Envelop
             if num_new_faces > 0
               reset_tool
             end
-          elsif @points.length > 2
+          elsif @points.length >= 2
             num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
             Envelop::Materialisation.apply_default_material
             if num_new_faces > 0
@@ -317,6 +321,7 @@ module Envelop
         @phase = PHASES[:BEFORE_FIRST_POINT]
         @mouse_ip = Sketchup::InputPoint.new
         @points = Array.new
+        @force_polygon = false
         
         @entities = nil
         @transform = Geom::Transformation.new
