@@ -137,10 +137,11 @@ module Envelop
               @transform = Geom::Transformation.new
             end
           
-            num_new_faces = create_line(@entities, @transform, *get_points(@points[0], @points[1]))
+            p = get_points(@points[0], @points[1])
+            num_new_faces = create_line(@entities, @transform, *p)
             Envelop::Materialisation.apply_default_material
 
-            if num_new_faces > 0
+            if num_new_faces > 0 or p.length == 5
               reset_tool
             end
           elsif @points.length >= 2
