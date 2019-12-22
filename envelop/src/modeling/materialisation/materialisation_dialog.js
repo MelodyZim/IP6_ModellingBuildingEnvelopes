@@ -66,7 +66,7 @@ function add_material(matrial_as_hash) {
     }
   }(material_div, picker));
 
-  // <button value="0" id="place_F"></button>
+// TODO: FS: it would be nice if there was a abort button too
   var save_color_button = document.createElement('button');
   save_color_button.className = 'save-color-button';
   save_color_button.innerHTML = 'Save Color';
@@ -83,6 +83,19 @@ function add_material(matrial_as_hash) {
     }
   }(matrial_as_hash, material_div, picker), false);
   picker.self.appendChild(save_color_button);
+
+// TODO: FS: it would be nicer if this was not a prompt, but would change the field to a input, and the buttons to acccept and abort
+// TODO FS: it would be nice to be able to change all fields of the materials
+// TODO: FS: it would be nice if the description would be shown wqhen howevring
+// TODO :FS: the materialisation tool is generaly active after clicking the buttons to do something with ti - that is wrong
+  material_div.find('.material-change-name').on('click', function(local_material_div, local_matrial_as_hash) {
+    return function() {
+      var new_id = prompt("Please enter new base id:", local_matrial_as_hash.base_id);
+      if (new_id !== null && new_id !== "" && new_id !== local_matrial_as_hash.base_id) {
+        sketchup.update_base_id(local_matrial_as_hash.name, new_id);
+      }
+    }
+  }(material_div, matrial_as_hash));
 
   material_div.on('click', function(local_matrial_as_hash) {
     return function() {

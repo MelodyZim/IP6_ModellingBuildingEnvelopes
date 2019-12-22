@@ -100,6 +100,21 @@ module Envelop
       material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
     end
 
+    def self.update_base_id(material_name, new_base_id)
+      puts "Envelop::Materialisation.update_base_id: updating base name for material with name #{material_name} to #{new_base_id}..."
+
+      material = Sketchup.active_model.materials[material_name]
+
+      count = find_next_count_for_material_id_count(new_base_id, 0)
+      index = find_index_for_material_id_count(new_base_id, count)
+
+      material.name = "#{new_base_id} #{count}"
+
+      material.set_attribute('material', 'base_id', new_base_id)
+      material.set_attribute('material', 'count', count)
+      material.set_attribute('material', 'index', index)
+    end
+
     private
 
     # Settings
@@ -136,8 +151,13 @@ module Envelop
         prev_count -= 1
 
         if prev_count < 1
-          warn 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1...'
-          return materials["#{id} #{count}"].get_attribute('material', 'index') + 1
+          warn 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
+          base_material =  materials["#{id} #{count}"]
+          if base_material.nil?
+            return LAST_MATERIAL_INDEX
+          else
+            return base_material.get_attribute('material', 'index') + 1
+          end
         end
       end
 
@@ -195,7 +215,6 @@ module Envelop
       # material.set_attribute('material', 'description', "#{name} #{count}") # TODO: display this somewhere
 
       # color
-      puts(color_alpha)
       material.color = Sketchup::Color.new(color_rgb)
       material.set_attribute('material', 'color_rgb', color_rgb)
       material.set_attribute('material', 'color_hsl_l', color_hsl_l)
@@ -254,9 +273,7 @@ module Envelop
     end
 
     def self.deviate_color(color_hsl)
-      if color_hsl.nil?
-        return nil
-      end
+      return nil if color_hsl.nil?
 
       # puts "Envelop::Materialisation.deviate_color: in_hsl: (#{color_hsl[0]}, #{color_hsl[1]}, #{color_hsl[2]})"
 
@@ -289,7 +306,7 @@ module Envelop
     # This is an example of an observer that watches the
     # component placement event.
     class OnSaveModelSaveCustomMaterials < Sketchup::ModelObserver
-      def onSaveModel(model)
+      def onSaveModel(_model)
         Envelop::Materialisation.save_custom_materials
       end
     end

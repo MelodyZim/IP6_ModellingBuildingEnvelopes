@@ -32,6 +32,11 @@ module Envelop
             set_materials
           nil
         end
+        @dialog.add_action_callback('update_base_id') do |_action_context, material_name, new_base_id|
+            Envelop::Materialisation.update_base_id(material_name, new_base_id)
+            set_materials
+          nil
+        end
         @dialog.show
       end
     end
