@@ -84,17 +84,19 @@ module Envelop
         view.invalidate
       end
 
+      def onReturn(view)
+        if @points.length >= 3
+          @points << @points[0]
+          num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
+          Envelop::Materialisation.apply_default_material
+          reset_tool
+        end
+      end
+
       def onKeyDown(key, _repeat, _flags, view)
         if key == CONSTRAIN_MODIFIER_KEY
           # locks the inference based on @mouse_ip input point
           view.lock_inference(@mouse_ip)
-        elsif key == 13 # ENTER
-          if @points.length >= 3
-            @points << @points[0]
-            num_new_faces = create_line(@entities, @transform, @points[-2].position, @points[-1].position)
-            Envelop::Materialisation.apply_default_material
-            reset_tool
-          end
         end
 
         view.invalidate
