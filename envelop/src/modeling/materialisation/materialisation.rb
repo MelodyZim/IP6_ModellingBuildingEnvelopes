@@ -195,9 +195,11 @@ module Envelop
       # material.set_attribute('material', 'description', "#{name} #{count}") # TODO: display this somewhere
 
       # color
-      material.color = Sketchup::Color.new(*color_rgb, color_alpha)
+      puts(color_alpha)
+      material.color = Sketchup::Color.new(color_rgb)
       material.set_attribute('material', 'color_rgb', color_rgb)
       material.set_attribute('material', 'color_hsl_l', color_hsl_l)
+      material.alpha = color_alpha
 
       # sorting index
       material.set_attribute('material', 'index', index)

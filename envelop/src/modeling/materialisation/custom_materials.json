@@ -5,12 +5,12 @@
     "base_name": "Aussenwand",
     "count": 1,
     "color_rgb": [
-      18,
-      140,
+      16,
+      112,
       59
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.31,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.25,
     "index": 1
   },
   {
@@ -19,12 +19,12 @@
     "base_name": "Aussenwand",
     "count": 2,
     "color_rgb": [
-      26,
-      108,
+      23,
+      97,
       51
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.26,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.24,
     "index": 2
   },
   {
@@ -33,12 +33,12 @@
     "base_name": "Aussenwand",
     "count": 3,
     "color_rgb": [
-      51,
-      75,
-      41
+      128,
+      219,
+      80
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.23,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
     "index": 3
   },
   {
@@ -47,12 +47,12 @@
     "base_name": "Innenwand",
     "count": 1,
     "color_rgb": [
-      16,
-      23,
-      89
+      51,
+      84,
+      234
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.21,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.56,
     "index": 4
   },
   {
@@ -61,12 +61,12 @@
     "base_name": "Innenwand",
     "count": 2,
     "color_rgb": [
-      0,
-      43,
-      102
+      87,
+      134,
+      231
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.2,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
     "index": 5
   },
   {
@@ -75,12 +75,12 @@
     "base_name": "Innenwand",
     "count": 3,
     "color_rgb": [
-      0,
-      47,
-      102
+      7,
+      60,
+      109
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.2,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.23,
     "index": 6
   },
   {
@@ -89,12 +89,12 @@
     "base_name": "Boden",
     "count": 1,
     "color_rgb": [
-      251,
-      79,
-      79
+      255,
+      120,
+      180
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.65,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.74,
     "index": 7
   },
   {
@@ -103,12 +103,12 @@
     "base_name": "Boden",
     "count": 2,
     "color_rgb": [
-      222,
-      123,
-      123
+      232,
+      160,
+      169
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.68,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.77,
     "index": 8
   },
   {
@@ -117,12 +117,12 @@
     "base_name": "Boden",
     "count": 3,
     "color_rgb": [
-      226,
-      131,
-      191
+      253,
+      155,
+      229
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.7,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.8,
     "index": 9
   },
   {
@@ -131,12 +131,12 @@
     "base_name": "Dach",
     "count": 1,
     "color_rgb": [
-      238,
-      198,
-      144
+      116,
+      199,
+      21
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.75,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.43,
     "index": 10
   },
   {
@@ -145,12 +145,12 @@
     "base_name": "Dach",
     "count": 2,
     "color_rgb": [
-      255,
-      139,
-      86
+      147,
+      54,
+      0
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.67,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.29,
     "index": 11
   },
   {
@@ -159,12 +159,12 @@
     "base_name": "Decke",
     "count": 1,
     "color_rgb": [
-      124,
-      68,
-      251
+      153,
+      97,
+      205
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.63,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
     "index": 12
   },
   {
@@ -173,12 +173,12 @@
     "base_name": "Fenster",
     "count": 1,
     "color_rgb": [
-      221,
-      122,
-      122
+      255,
+      133,
+      77
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.67,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.65,
     "index": 13
   },
   {
@@ -187,12 +187,12 @@
     "base_name": "Fenster",
     "count": 2,
     "color_rgb": [
-      248,
-      222,
-      211
+      226,
+      77,
+      77
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.9,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
     "index": 14
   },
   {
@@ -201,11 +201,11 @@
     "base_name": "Dachfenster",
     "count": 1,
     "color_rgb": [
-      255,
-      204,
-      244
+      218,
+      214,
+      245
     ],
-    "color_alpha": 1.0,
+    "color_alpha": 0.75,
     "color_hsl_l": 0.9,
     "index": 15
   },
@@ -215,12 +215,12 @@
     "base_name": "Aussentüre",
     "count": 1,
     "color_rgb": [
-      24,
-      175,
-      211
+      28,
+      218,
+      157
     ],
-    "color_alpha": 1.0,
-    "color_hsl_l": 0.46,
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.48,
     "index": 16
   },
   {
@@ -229,11 +229,11 @@
     "base_name": "Innentüre",
     "count": 1,
     "color_rgb": [
-      215,
-      251,
-      208
+      204,
+      255,
+      230
     ],
-    "color_alpha": 1.0,
+    "color_alpha": 0.75,
     "color_hsl_l": 0.9,
     "index": 17
   }
