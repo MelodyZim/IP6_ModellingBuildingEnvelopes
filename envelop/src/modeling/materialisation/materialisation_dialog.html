@@ -3,7 +3,9 @@
 
 <head>
   <script src="../../vendor/js/jquery-3.4.1.js"></script>
+    <script src="../../vendor/js/color-picker.min.js"></script>
   <script src="materialisation_dialog.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../vendor/css/color-picker.min.css" />
   <link rel="stylesheet" type="text/css" href="materialisation_dialog.css" />
 </head>
 
@@ -12,11 +14,19 @@
   <div id="material-template" class="material-div">
     <div class="material-name material-content">
     </div>
+    <!-- TODO: FS: add nice icons for these buttons, but also switch them between black and white -->
     <div class="material-delete material-content material-button">
-      <div class="button-content">x</div>
+      <div class="button-content">×</div>
     </div>
     <div class="material-add material-content material-button">
       <div class="button-content">+</div>
+    </div>
+    <div class="material-change-color material-content material-button">
+      <div class="button-content">o</div>
+    </div>
+    <!-- TODO: FS: also add ability to change all other fields -->
+    <div class="material-change-name material-content material-button">
+      <div class="button-content">e</div>
     </div>
   </div>
   <div id="materials-container">

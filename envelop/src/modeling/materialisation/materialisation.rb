@@ -91,6 +91,15 @@ module Envelop
       create_material(base_id, base_name, count, base_color_hsl, index)
     end
 
+    def self.update_color(material_name, color_rgb_a)
+      puts "Envelop::Materialisation.update_color: changing color for material with name #{material_name} to color #{color_rgb_a}..."
+
+      material = Sketchup.active_model.materials[material_name]
+      material.color = Sketchup::Color.new(*color_rgb_a)
+      material.set_attribute('material', 'color_rgb', color_rgb_a)
+      material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
+    end
+
     private
 
     # Settings
@@ -186,11 +195,9 @@ module Envelop
       # material.set_attribute('material', 'description', "#{name} #{count}") # TODO: display this somewhere
 
       # color
-      puts color_rgb
-      material.color = Sketchup::Color.new(color_rgb)
+      material.color = Sketchup::Color.new(*color_rgb, color_alpha)
       material.set_attribute('material', 'color_rgb', color_rgb)
       material.set_attribute('material', 'color_hsl_l', color_hsl_l)
-      material.alpha = color_alpha
 
       # sorting index
       material.set_attribute('material', 'index', index)

@@ -7,14 +7,14 @@ body {
 }
 
 .material-div {
-    height: 20px;
-    width: 175px;
-    border: black 1px solid;
-    border-radius: 5px;
-    margin-bottom: 5px;
-    display: inline-block;
-    position: relative;
-    padding: 0px 0px 0px 5px;
+  height: 20px;
+  width: 175px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+  position: relative;
+  padding: 0px 0px 0px 5px;
+  border: black 1px solid;
 }
 
 #materials-container {
@@ -27,12 +27,20 @@ body {
   font-size: small;
 }
 
-.material-delete {
+.hidden {
+  display: block;
+  width: 0px;
+  height: 0px;
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
+.material-delete {}
+
 .button-content {
-    vertical-align: middle;
-    display: inline-block;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .material-content {
@@ -40,10 +48,28 @@ body {
   position: relative;
 }
 
+.material-button-black-border {
+  border: black 1px solid;
+}
+
+.material-button-white-border {
+  border: white 1px solid;
+}
+
 .material-button {
-    border: black 1px solid;
-    border-width: 0px 0px 0px 1px;
-    padding: 0px 5px 0px 5px;
-    height: 20px;
+  border-width: 0px 0px 0px 1px;
+  padding: 0px 5px 0px 5px;
+  height: 20px;
+  float: right;
+}
+
+.color-picker {
+  left: 10px !important;
+  width: 182px;
+  background-color: white;
+}
+
+.save-color-button {
+    margin: 5px;
     float: right;
 }

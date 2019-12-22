@@ -5,7 +5,7 @@ module Envelop
     # TODO: persist and load @house in save
 
     def self.house_exists?
-      return !@house.nil?
+      !@house.nil?
     end
 
     def self.get_house
@@ -15,10 +15,6 @@ module Envelop
       end
 
       @house
-    end
-
-    def self.set_house(house)
-      @house = house
     end
 
     def self.create_house(entity_a, fail_silently = false)

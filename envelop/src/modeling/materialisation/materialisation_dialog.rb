@@ -27,6 +27,11 @@ module Envelop
           Envelop::MaterialisationTool.activate_materialisation_tool(Sketchup.active_model.materials[material_name])
           nil
         end
+        @dialog.add_action_callback('update_color') do |_action_context, material_name, color_rgb_a|
+            Envelop::Materialisation.update_color(material_name, color_rgb_a)
+            set_materials
+          nil
+        end
         @dialog.show
       end
     end
