@@ -19,6 +19,9 @@ module Envelop
 
         # no need to reset_tool, tool instance will be discarded after this
 
+        # release inference locks
+        view.lock_inference
+
         view.invalidate
       end
 
