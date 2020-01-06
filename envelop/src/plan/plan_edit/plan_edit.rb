@@ -5,75 +5,41 @@ require_relative '../../vendor/rb/image_size'
 module Envelop
   module PlanEdit
     # public
-
     def self.open_dialog(image_base64)
       @image_base64 = image_base64
-      show_dialog
+      Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
     end
 
     private
 
-    def self.create_dialog
-      html_file = File.join(__dir__, 'plan_edit.html')
-      options = {
-        dialog_title: 'Plan Edit',
-        preferences_key: 'envelop.planedit',
-        style: UI::HtmlDialog::STYLE_DIALOG,
-        resizable: false,
-        width: 500,
-        height: 500
-      }
-      dialog = UI::HtmlDialog.new(options)
-      dialog.set_size(options[:width], options[:height]) # Ensure size is set.
-      dialog.set_file(html_file)
-      dialog.center
-      dialog
+    # settings
+    DIALOG_OPTIONS = {
+      path_to_html: File.join(__dir__, 'plan_edit.html'),
+      title: 'Plan Edit',
+      id: 'Envelop::PlanEdit:PlanEdit',
+      height: 500, width: 500,
+      pos_x: 0, pos_y: 0,
+      center: true
+    }.freeze
+
+    def self.attach_callbacks(dialog)
+      dialog.add_action_callback('call_set_image') do |_action_context|
+        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "setImage('#{@image_base64}')")
+        nil
+      end
+      dialog.add_action_callback('accept') do |_action_context, image_base64, orientation|
+        puts "plan_edit accept: orientation=#{orientation}"
+        Envelop::PlanPosition.add_image(image_base64, orientation)
+        Envelop::DialogUtils.close_dialog(DIALOG_OPTIONS[:id])
+        nil
+      end
+      dialog.add_action_callback('cancel') do |_action_context|
+        Envelop::DialogUtils.close_dialog(DIALOG_OPTIONS[:id])
+        nil
+      end
     end
 
-    def self.show_dialog
-      if @dialog&.visible?
-        set_image
-        @dialog.bring_to_front
-      else
-        @dialog ||= create_dialog
-        @dialog.add_action_callback('say') do |_action_context, text|
-          puts "html > #{text}"
-          nil
-        end
-        @dialog.add_action_callback('ready') do |_action_context|
-          set_image
-          nil
-        end
-        @dialog.add_action_callback('accept') do |_action_context, image_base64, orientation|
-          puts "plan_edit accept: orientation=#{orientation}"
-          Envelop::PlanPosition.add_image(image_base64, orientation)
-          @dialog.close
-          nil
-        end
-        @dialog.add_action_callback('cancel') do |_action_context|
-          @dialog.close
-          nil
-        end
-        @dialog.show
-      end
-
-      @dialog.show
-    end
-
-    def self.set_image
-      puts 'Envelop::PlanEdit.set_image: ...'
-      if @dialog.nil?
-        warn '@dialog is nil, aborting...'
-        return
-      end
-      @dialog.execute_script("setImage('#{@image_base64}')")
-    end
-
-    def self.reload
-      if @dialog
-        @dialog.close
-        remove_instance_variable(:@dialog)
-      end
+    def self.reloads
       remove_instance_variable(:@image_base64) if @image_base64
     end
     reload

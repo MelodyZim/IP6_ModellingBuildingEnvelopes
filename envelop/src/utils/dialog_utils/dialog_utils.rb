@@ -1,6 +1,14 @@
 module Envelop
     module DialogUtils
       # Public
+      def self.close_dialog(id)
+        if @dialogs[id].nil?
+          warn "Envelop::DialogUtils.close_dialog: could not find dialog with ID #{id}."
+        else
+          @dialogs[id].close
+        end
+      end
+
       def self.execute_script(id, execute_script_parameter)
         if @dialogs[id].nil?
           warn "Envelop::DialogUtils.execute_script: could not find dialog with ID #{id}."

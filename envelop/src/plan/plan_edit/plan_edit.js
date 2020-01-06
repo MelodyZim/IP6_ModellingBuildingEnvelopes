@@ -18,17 +18,17 @@ $(function() {
   function zoomCropperCanvas() {
     const containerData = cropper.getContainerData()
     const canvasData = cropper.getCanvasData()
-    
+
     cropper.zoomTo(Math.min(
-      containerData.height / canvasData.naturalHeight, 
+      containerData.height / canvasData.naturalHeight,
       containerData.width / canvasData.naturalWidth));
   }
-  
+
   // move the cropper canvas to the center of the container
   function centerCropperCanvas() {
     const containerData = cropper.getContainerData()
     const canvasData = cropper.getCanvasData()
-    
+
     cropper.moveTo(
       (containerData.width / 2) - (canvasData.width / 2),
       (containerData.height / 2) - (canvasData.height / 2));
@@ -64,7 +64,7 @@ $(function() {
     sketchup.cancel();
   });
 
-  sketchup.ready();
+  sketchup.call_set_image();
 })
 
 function place(button) {
@@ -78,8 +78,6 @@ function place(button) {
 }
 
 function setImage(image_base64) {
-  sketchup.say("setImage callback");
-
   if (typeof cropper === 'undefined') return
   cropper.replace(image_base64)
 }
