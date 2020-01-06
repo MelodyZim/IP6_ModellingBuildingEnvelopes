@@ -89,36 +89,7 @@ module Envelop
                 Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
             end
           else
-            # TODO cleanup code
-            points = @face.vertices.map {|v| v.position}
-            sign = @direction_vector.samedirection?(@face.normal) ? 1 : -1
-          
-            model = Sketchup.active_model
-            group = model.active_entities.add_group()
-            group.transformation = @transform
-            face_copy = group.entities.add_face(points)
-            
-            face_copy.pushpull(sign * @direction_vector.length, false)
-            
-            # Add newly created group to house
-            if @add
-              Envelop::Housekeeper.add_to_house(group)
-            else
-              Envelop::Housekeeper.remove_from_house(group)
-            end
-            
-            Envelop::Materialisation.apply_default_material
-            
-            # delete original face
-            if not @face.deleted?
-              edges = @face.edges
-              @face.erase!
-              edges.each do |e|
-                if e.faces.length == 0
-                  e.erase!
-                end
-              end
-            end
+            push_pull_face(@face, @direction_vector, @add)
             
             # release inference locks
             view.lock_inference
@@ -136,6 +107,54 @@ module Envelop
         else
           Sketchup.status_text = 'Click to accept preview'
         end
+      end
+      
+      # @param face [Sketchup::Face] Face to push/pull
+      # @param direction_vector [Geom::Vector3d] direction in which the face is moved
+      # @param add [Boolean] true adds the resulting volume to the house while false subtracts it
+      def push_pull_face(face, direction_vector, add)
+        # start undo operation
+        Sketchup.active_model.start_operation("Push/Pull #{add ? 'Add' : 'Subtract'}", false)
+        
+        points = face.vertices.map {|v| v.position}
+        sign = direction_vector.samedirection?(face.normal) ? 1 : -1
+      
+        model = Sketchup.active_model
+        group = model.active_entities.add_group()
+        group.transformation = @transform
+        face_copy = group.entities.add_face(points)
+        
+        face_copy.pushpull(sign * direction_vector.length, false)
+                
+        # Add newly created group to house
+        if add
+          successful = Envelop::Housekeeper.add_to_house(group)
+        else
+          successful = Envelop::Housekeeper.remove_from_house(group)
+        end
+        
+        # abort if not successful
+        if not successful
+          Sketchup.active_model.abort_operation
+          return
+        end
+        
+        Envelop::Materialisation.apply_default_material
+        
+        # delete original face
+        if not face.deleted?
+          edges = face.edges
+          face.erase!
+          edges.each do |e|
+            if e.faces.length == 0
+              e.erase!
+            end
+          end
+        end
+        
+        # finally commit operation
+        Sketchup.active_model.commit_operation
+        
       end
       
       # Draw the given points as a continuous line
