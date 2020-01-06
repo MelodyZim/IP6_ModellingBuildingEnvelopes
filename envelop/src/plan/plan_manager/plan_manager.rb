@@ -27,8 +27,7 @@ module Envelop
     class RemovePlanFromManagerUponErase < Sketchup::EntityObserver
       def onEraseEntity(entity)
         unless entity.valid?
-          puts "removing entity"
-          #Envelop::PlanManager.remove_plan(entity)
+          Envelop::PlanManager.remove_plan(entity)
         end
       end
     end
