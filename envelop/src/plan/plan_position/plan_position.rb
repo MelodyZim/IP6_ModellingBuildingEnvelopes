@@ -9,9 +9,7 @@ module Envelop
       image = import_image(image_base64)
       position_image(image, orientation)
 
-      @plan_count = @plan_count + 1
-
-      if @plan_count > 1
+      if Envelop::PlanManager.get_plans.length() > 1
         Envelop::PlanPositionTool.activate_plan_position_tool(image)
       else
         # register first plan at the PlanManager
@@ -132,7 +130,6 @@ module Envelop
       if @floor_image
         remove_instance_variable(:@floor_image)
       end
-      @plan_count = 0
     end
     reload
   end
