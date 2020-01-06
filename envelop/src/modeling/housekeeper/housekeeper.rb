@@ -51,6 +51,7 @@ module Envelop
     end
 
     # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to add, must be manifold
+    # @return [Boolean] true when the operation was successful, false otherwise
     def self.add_to_house(entity_a)
       if @house
 
@@ -64,21 +65,25 @@ module Envelop
         Materialisation.set_tmp_materials(add_group)
 
         # add operation
-        result = @house.outer_shell(add_group)
+        result = @house.outer_shell(add_group)  # TODO fix "reference to deleted Group" (@house group is deleted)
         if result.nil?
           UI.messagebox('Cannot add supplied argument to house group, as the result would not be manifold.')
           add_group.explode
+          return false
         else
           Materialisation.unset_tmp_materials(result)
           @house = result
+          return true
         end
       else
         puts 'Envelop::Housekeeper.add_to_house: No house yet, thus creating house group with supplied argument.'
         create_house(entity_a)
+        return true
       end
     end
 
     # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to subtract, must be manifold
+    # @return [Boolean] true when the operation was successful, false otherwise
     def self.remove_from_house(entity_a)
       if @house
 
@@ -94,11 +99,14 @@ module Envelop
         if result.nil?
           UI.messagebox('Cannot remove supplied argument from house group, as the result would not be manifold.')
           remove_group.explode  # TODO this is not the intended behaviour if entity_a was a group
+          return false
         else
           @house = result
+          return true
         end
       else
         UI.messagebox('No house to remove anything from, not doing anything...')
+        return false
       end
     end
 
