@@ -16,6 +16,9 @@ module Envelop
         puts 'deactivating PenTool...'
 
         # no need to reset_tool, tool instance will be discarded after this
+        
+        # release inference locks
+        view.lock_inference
 
         view.invalidate
       end
@@ -152,10 +155,18 @@ module Envelop
             end
           end
         end
+        
+        set_status_text
       end
 
       def set_status_text
-        Sketchup.status_text = 'TODO UPDATE set_status_text!!!!'
+        if @points.length == 0
+          Sketchup.status_text = 'Select start point'
+        elsif @points.length == 1
+          Sketchup.status_text = 'Select next point. Ctrl = toggle between rectangle and line'
+        else
+          Sketchup.status_text = 'Select next point'
+        end
       end
       
       
@@ -193,7 +204,7 @@ module Envelop
         model.start_operation('Edge', true)
         points[0..-2].zip(points[1..-1]).each do |line| 
           edge = entities.add_line(line[0], line[1])
-          num_faces += edge.find_faces
+          num_faces += edge.find_faces  # TODO only find_faces if not editing house
         end
         model.commit_operation
         return num_faces

@@ -19,6 +19,9 @@ module Envelop
 
         # no need to reset_tool, tool instance will be discarded after this
 
+        # release inference locks
+        view.lock_inference
+
         view.invalidate
       end
 
@@ -123,10 +126,16 @@ module Envelop
             reset_tool
           end
         end
+        
+        set_status_text
       end
 
       def set_status_text
-        Sketchup.status_text = 'TODO UPDATE set_status_text!!!!'
+        if @face.nil?
+          Sketchup.status_text = 'Select a Face to push or pull.'
+        else
+          Sketchup.status_text = 'Click to accept preview'
+        end
       end
       
       # Draw the given points as a continuous line
