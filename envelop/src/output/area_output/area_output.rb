@@ -9,67 +9,35 @@ module Envelop
         Envelop::ScaleTool.activate_scale_tool(true)
       else
   			@house = house
-  			show_dialog
+        Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
       end
 		end
 
 		private
 
-		def self.create_dialog
-			html_file = File.join(__dir__, 'area_output.html')
-			options = {
-				:dialog_title => "Area Output",
-				:preferences_key => "envelop.areaoutput",
-				:style => UI::HtmlDialog::STYLE_DIALOG,
-				:resizable => true,
-				:width => 600,
-				:height => 255,
-			}
-			dialog = UI::HtmlDialog.new(options)
-			dialog.set_size(options[:width], options[:height]) # Ensure size is set.
-			dialog.set_file(html_file)
-			dialog.center
-			dialog
-		end
+    # settings
+    DIALOG_OPTIONS = {
+      path_to_html: File.join(__dir__, 'area_output.html'),
+      title: 'Area Output',
+      id: 'Envelop::AreaOutput:AreaOutput',
+      height: 255, width: 600,
+      pos_x: 0, pos_y: 0,
+      center: true
+    }.freeze
 
-		def self.show_dialog
-      if @dialog&.visible?
-        set_area
-        @dialog.bring_to_front
-      else
-        @dialog ||= create_dialog
-        @dialog.add_action_callback("say") { |action_context, text|
-          puts "html > #{text}"
-          nil
-        }
-        @dialog.add_action_callback("ready") { |action_context|
-          puts "Envelop::AreaOutput.show_dialog: action_callback('ready') ..."
-          self.set_area
-          nil
-        }
-        @dialog.add_action_callback("getLengthUnit") { |action_context|
-          self.get_current_unit
-        }
-        # @dialog.add_action_callback("accept") { |action_context, image_base64, orientation|
-          # puts "plan_edit accept: orientation=#{orientation}"
-          # Envelop::PlanPosition.add_image(image_base64, orientation)
-          # @dialog.close
-          # nil
-        # }
-        @dialog.add_action_callback("close") { |action_context|
-          @dialog.close
-          nil
-        }
-        @dialog.show
-      end
-
-			@dialog.show
-		end
-
-    def self.set_area
-			return if @dialog.nil?
-			@dialog.execute_script("set_result('#{calc_area(@house).to_json}')")
-		end
+    def self.attach_callbacks(dialog)
+      dialog.add_action_callback("call_set_result") { |action_context|
+        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "set_result('#{calc_area(@house).to_json}')")
+        nil
+      }
+      dialog.add_action_callback("getLengthUnit") { |action_context|
+        self.get_current_unit
+      }
+      dialog.add_action_callback("close") { |action_context|
+        Envelop::DialogUtils.close_dialog(DIALOG_OPTIONS[:id])
+        nil
+      }
+    end
 
     # calculate the total surface area separated by ordinal direction and material of all the faces (Sketchup::Face)
     # of the supplied group, nested groups are resolved recursively
@@ -177,10 +145,6 @@ module Envelop
     end
 
     def self.reload
-      if @dialog
-        @dialog.close
-        remove_instance_variable(:@dialog)
-      end
       remove_instance_variable(:@house) unless @house.nil?
     end
     reload

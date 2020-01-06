@@ -10,12 +10,10 @@ $(function() {
     sketchup.close();
   });
 
-  sketchup.ready();
+  sketchup.call_set_result();
 })
 
 function set_result(result) {
-  sketchup.say("set result")
-
   var html = '';
   const result_json = getSortedHash(JSON.parse(result));
   const directions = ["N", "NO", "NW", "SO", "W", "SW", "H", "Total"]
