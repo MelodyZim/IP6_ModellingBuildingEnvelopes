@@ -5,55 +5,50 @@ module Envelop
   module PlanImport
     # Public
     def self.show_dialog
-      if @dialog&.visible?
-        @dialog.bring_to_front
-      else
-        @dialog ||= create_dialog
-        @dialog.add_action_callback('import_image') do |_action_context, string|
-          Envelop::PlanEdit.open_dialog(string)
-          nil
-        end
-        @dialog.show
-      end
+      Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
+    end
+
+    def self.save_imported_plans
+      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS, 'call_save_imported_plans()')
     end
 
     private
 
     # Settings
     HTML_HEIGHT = 150 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
+    DIALOG_OPTIONS = {
+      path_to_html: File.join(__dir__, 'plan_import.html'),
+      title: 'Plan Import',
+      id: 'Envelop::PlanImport:PlanImport',
+      height: HTML_HEIGHT, width: Envelop::WindowUtils.view_width_pixels,
+      pos_x: 0, pos_y: Envelop::WindowUtils.view_height_pixels - HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height
+    }.freeze
 
-    #  Methods
-    def self.create_dialog
-      puts('Envelop::PlanImport.create_dialog: ...')
-
-      html_file = File.join(__dir__, 'plan_import.html')
-      options = {
-        dialog_title: 'Plan Import',
-        preferences_key: 'envelop.planimport',
-        min_height: Envelop::PlanImport::HTML_HEIGHT, # TODO: consider making this window resizeable. TODO: ensure these settings actually work
-        max_height: Envelop::PlanImport::HTML_HEIGHT,
-        min_width: Envelop::WindowUtils.view_width_pixels,
-        max_width: Envelop::WindowUtils.view_width_pixels,
-        style: UI::HtmlDialog::STYLE_UTILITY
-      }
-      dialog = UI::HtmlDialog.new(options)
-      dialog.set_file(html_file)
-      dialog.set_can_close do
-        false # TODO: this straight up does not work on Mac (Works on Windows)
+    # Methods
+    def self.attach_callbacks(dialog)
+      dialog.add_action_callback('call_load_imported_plans') do |_action_context|
+        imported_plans = Sketchup.active_model.get_attribute('Envelop::PlanImport', 'imported_plans')
+        unless imported_plans.nil?
+          Envelop::DialogUtils.execute_script(DIALOG_OPTIONS, "load_imported_plans(#{imported_plans})")
+        end
+        nil
       end
-
-      dialog.set_size(Envelop::WindowUtils.view_width_pixels, Envelop::PlanImport::HTML_HEIGHT) # TODO: update this as the main window is resized.
-      dialog.set_position(0, Envelop::WindowUtils.view_height_pixels - Envelop::PlanImport::HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
-
-      dialog
-    end
-
-    def self.reload
-      if @dialog
-        @dialog.close
-        remove_instance_variable(:@dialog)
+      dialog.add_action_callback('import_image') do |_action_context, image|
+        Envelop::PlanEdit.open_dialog(image)
+        nil
+      end
+      dialog.add_action_callback('save_imported_plans') do |_action_context, imported_plans|
+        Sketchup.active_model.set_attribute('Envelop::PlanImport', 'imported_plans', imported_plans)
+        nil
       end
     end
-    reload
+
+    # Saving
+    class OnSaveModelSavePlanImportState < Sketchup::ModelObserver
+      def onSaveModel(_model)
+        Envelop::PlanImport.save_imported_plans
+      end
+    end
+    Sketchup.active_model.add_observer(OnSaveModelSavePlanImportState.new)
   end
 end

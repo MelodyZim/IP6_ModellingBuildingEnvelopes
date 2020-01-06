@@ -10,13 +10,13 @@
 
 <body>
 
-  <input type="file" id="file-to-upload" accept="application/pdf" multiple/>
+  <input type="file" id="file-to-upload" accept="application/pdf" class="hidden" multiple/>
   <div class="button" id="upload-button">
     <div class="button-content">+</div>
   </div>
-  <div id="plan-template" class="button">
+  <div id="plan-template" class="button hidden">
     <button class="delete-button"><div class="button-content">X</div></button>
-    <canvas class="button-content" width="130" height="130"> </canvas>
+    <canvas class="button-content preview-quality" width="130" height="130"> </canvas>
     <canvas class="original-quality"> </canvas>
   </div>
   <div id="plan-container">
