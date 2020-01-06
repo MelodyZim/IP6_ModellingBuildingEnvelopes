@@ -18,6 +18,8 @@ module Envelop
       Sketchup.active_model.entities.clear!
     end
 
+    Envelop::ObserverUtils.detach_all_observers
+
     pattern = File.join(__dir__, '**', '*.rb')
     files = Dir.glob(pattern)
     self.mute_warnings do

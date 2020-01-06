@@ -39,7 +39,7 @@ module Envelop
       end
     end
 
-    def self.reloads
+    def self.reload
       remove_instance_variable(:@image_base64) if @image_base64
     end
     reload

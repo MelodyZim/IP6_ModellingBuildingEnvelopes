@@ -54,13 +54,13 @@ module Envelop
     def self.add_to_house(entity_a)
       if @house
 
-        # group input        
+        # group input
         if entity_a.is_a? Sketchup::Group
           add_group = entity_a
         else
           add_group = Sketchup.active_model.active_entities.add_group(entity_a)
         end
-        
+
         Materialisation.set_tmp_materials(add_group)
 
         # add operation
@@ -82,7 +82,7 @@ module Envelop
     def self.remove_from_house(entity_a)
       if @house
 
-        # group input        
+        # group input
         if entity_a.is_a? Sketchup::Group
           remove_group = entity_a
         else
@@ -105,6 +105,7 @@ module Envelop
     private
 
     # TODO: this does not work if mark is still present in the scene
+    # TODO: this is obsolete, make the idea of this work again
     def self.try_populate_from_model
       model = Sketchup.active_model
 
@@ -117,7 +118,6 @@ module Envelop
 
     def self.reload
       remove_instance_variable(:@house) if @house
-      try_populate_from_model
     end
     reload
   end

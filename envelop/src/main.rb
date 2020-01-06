@@ -1,6 +1,7 @@
 require_relative 'utils/camera_utils/camera_utils'
 require_relative 'utils/window_utils/window_utils'
 require_relative 'utils/dialog_utils/dialog_utils'
+require_relative 'utils/observer_utils'
 require_relative 'plan/plan_import/plan_import'
 require_relative 'plan/plan_edit/plan_edit'
 require_relative 'plan/plan_position/plan_position'

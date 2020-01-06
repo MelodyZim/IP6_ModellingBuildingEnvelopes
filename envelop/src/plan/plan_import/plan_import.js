@@ -8,7 +8,8 @@ $(function() {
   // When user chooses a PDF file
   $("#file-to-upload").on('change', function() {
 
-    Array.from($("#file-to-upload").get(0).files).forEach(load_file);
+    var ps = Array.from($("#file-to-upload").get(0).files).map(load_file);
+    Promise.all(ps).then(call_save_imported_plans);
   });
 
   sketchup.call_load_imported_plans();
@@ -24,7 +25,7 @@ function load_file(f) {
   // TODO: FS: consider fixing the previews so they have consisnten second border around prf preview
   var pdf_url = URL.createObjectURL(f);
 
-  pdfjsLib.getDocument({
+  return pdfjsLib.getDocument({
     url: pdf_url
   }).promise.then(load_pdf_doc).catch(function(error) {
     alert(error.message);
@@ -32,9 +33,13 @@ function load_file(f) {
 }
 
 function load_pdf_doc(pdf_doc) {
+  var ps = [];
+
   for (i = 1; i <= pdf_doc.numPages; i++) {
-    pdf_doc.getPage(i).then(load_pdf_page);
+    ps.push(pdf_doc.getPage(i).then(load_pdf_page));
   }
+
+  return Promise.all(ps)
 }
 
 function load_pdf_page(page) {
@@ -58,7 +63,7 @@ function load_pdf_page(page) {
   var canvas_quality = canvases[1]; {
     canvas_quality.width = viewport_width;
     canvas_quality.height = viewport_height;
-    page.render({
+    p1 = page.render({
       canvasContext: canvas_quality.getContext('2d'),
       viewport: page.getViewport(scale_one_object)
     });
@@ -72,10 +77,12 @@ function load_pdf_page(page) {
   canvas.height = viewport.height;
 
   // Render the page contents in the canvas
-  page.render({
+  p2 = page.render({
     canvasContext: canvas.getContext('2d'),
     viewport: viewport
   });
+
+  return Promise.all([p1, p2]);
 }
 
 
@@ -91,6 +98,7 @@ function new_canvases() {
 
   $clone.find('button').on('click', function() {
     $clone.remove();
+    call_save_imported_plans();
   });
 
   $("#plan-container").append($clone);

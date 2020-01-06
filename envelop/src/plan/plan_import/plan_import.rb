@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tempfile'
 require_relative '../../vendor/rb/image_size'
 
@@ -6,10 +8,6 @@ module Envelop
     # Public
     def self.show_dialog
       Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
-    end
-
-    def self.save_imported_plans
-      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], 'call_save_imported_plans()')
     end
 
     private
@@ -21,7 +19,7 @@ module Envelop
       title: 'Plan Import',
       id: 'Envelop::PlanImport:PlanImport',
       height: HTML_HEIGHT, width: Envelop::WindowUtils.view_width_pixels,
-      pos_x: 0, pos_y: Envelop::WindowUtils.view_height_pixels - HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height,
+      pos_x: 0, pos_y: Envelop::WindowUtils.view_height_pixels - HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height
     }.freeze
 
     # Methods
@@ -42,13 +40,5 @@ module Envelop
         nil
       end
     end
-
-    # Saving
-    class OnSaveModelSavePlanImportState < Sketchup::ModelObserver
-      def onSaveModel(_model)
-        Envelop::PlanImport.save_imported_plans
-      end
-    end
-    Sketchup.active_model.add_observer(OnSaveModelSavePlanImportState.new)
   end
 end
