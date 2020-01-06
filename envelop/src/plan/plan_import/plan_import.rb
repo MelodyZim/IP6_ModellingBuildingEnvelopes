@@ -9,7 +9,7 @@ module Envelop
     end
 
     def self.save_imported_plans
-      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS, 'call_save_imported_plans()')
+      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], 'call_save_imported_plans()')
     end
 
     private

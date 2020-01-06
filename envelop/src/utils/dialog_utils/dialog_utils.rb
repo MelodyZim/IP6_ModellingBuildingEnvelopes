@@ -1,11 +1,11 @@
 module Envelop
     module DialogUtils
       # Public
-      def self.execute_script(dialog_options, execute_script_parameter)
-        if @dialogs[dialog_options[:id]].nil?
-          warn "Envelop::DialogUtils.execute_script: could not find dialog with ID #{dialog_options[:id]}."
+      def self.execute_script(id, execute_script_parameter)
+        if @dialogs[id].nil?
+          warn "Envelop::DialogUtils.execute_script: could not find dialog with ID #{id}."
         else
-          @dialogs[dialog_options[:id]].execute_script(execute_script_parameter)
+          @dialogs[id].execute_script(execute_script_parameter)
         end
       end
 
