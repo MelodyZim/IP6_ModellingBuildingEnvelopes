@@ -21,7 +21,7 @@ module Envelop
       end
 
       # Private
-      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:)
+      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:, center: false)
         options = {
           dialog_title: title,
           preferences_key: id,
@@ -40,11 +40,14 @@ module Envelop
         dialog.set_size(width, height) # TODO: update this as the main window is resized.
         dialog.set_position(pos_x, pos_y) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
 
+        if center
+          dialog.center
+        end
+
         dialog
       end
 
       def self.reload
-        puts "dialog utils reload"
         if @dialogs
           @dialogs.each_value do |dialog|
             if dialog

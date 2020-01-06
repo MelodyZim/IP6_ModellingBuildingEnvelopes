@@ -21,7 +21,7 @@ module Envelop
       title: 'Plan Import',
       id: 'Envelop::PlanImport:PlanImport',
       height: HTML_HEIGHT, width: Envelop::WindowUtils.view_width_pixels,
-      pos_x: 0, pos_y: Envelop::WindowUtils.view_height_pixels - HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height
+      pos_x: 0, pos_y: Envelop::WindowUtils.view_height_pixels - HTML_HEIGHT + Envelop::WindowUtils.sketchup_menu_and_toolbar_height,
     }.freeze
 
     # Methods
@@ -29,7 +29,7 @@ module Envelop
       dialog.add_action_callback('call_load_imported_plans') do |_action_context|
         imported_plans = Sketchup.active_model.get_attribute('Envelop::PlanImport', 'imported_plans')
         unless imported_plans.nil?
-          Envelop::DialogUtils.execute_script(DIALOG_OPTIONS, "load_imported_plans(#{imported_plans})")
+          Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "load_imported_plans(#{imported_plans})")
         end
         nil
       end
