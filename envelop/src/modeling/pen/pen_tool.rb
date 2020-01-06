@@ -3,8 +3,6 @@
 module Envelop
   module PenTool
     class PenTool
-      PHASES = { BEFORE_FIRST_POINT: 0, BEFORE_SECOND_POINT: 2, ADDITIONAL_POINTS: 3 }.freeze
-
       def initialize; end
 
       def activate
@@ -218,27 +216,22 @@ module Envelop
       #
       # @return [Sketchup::Face, nil]
       def get_common_face(ip1, ip2)
-        face = nil
-        if ip1.edge.nil?
-          if ip2.edge.nil?
-            if ip1.face == ip2.face
-              face = ip1.face
-            end
-          else
-            if ip2.edge.used_by?(ip1.face)
-              face = ip1.face
-            end
-          end
+        faces1 = Set.new
+        faces1.add(ip1.face) unless ip1.face.nil?
+        faces1.merge(ip1.edge.faces) unless ip1.edge.nil?
+        faces1.merge(ip1.vertex.faces) unless ip1.vertex.nil?
+        
+        faces2 = Set.new
+        faces2.add(ip2.face) unless ip2.face.nil?
+        faces2.merge(ip2.edge.faces) unless ip2.edge.nil?
+        faces2.merge(ip2.vertex.faces) unless ip2.vertex.nil?
+        
+        common = faces1 & faces2
+        if common.length == 1
+          return common.to_a()[0]
         else
-          if ip2.edge.nil?
-            if ip1.edge.used_by?(ip2.face)
-              face = ip2.face
-            end
-          else
-            face = ip1.edge.common_face(ip2.edge)
-          end
+          return nil
         end
-        return face
       end
 
       
@@ -330,7 +323,6 @@ module Envelop
       
       def reset_tool
         # reset state
-        @phase = PHASES[:BEFORE_FIRST_POINT]
         @mouse_ip = Sketchup::InputPoint.new
         @points = Array.new
         @force_polygon = false
