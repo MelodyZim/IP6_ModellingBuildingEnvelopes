@@ -10,7 +10,10 @@ module Envelop
       elsif Envelop::Materialisation.house_contains_default_material
         UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
       else
-  			@house = house
+        area = calc_area(house)
+  			@area_json = area.to_json
+        DIALOG_OPTIONS[:height] = 23 + 2 * 21 + area.length * 21 + 20 - 4 # TODO make this work on windows... :/ and ensure width is same on mac and widnows
+        puts DIALOG_OPTIONS[:height]
         Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
       end
 		end
@@ -22,14 +25,14 @@ module Envelop
       path_to_html: File.join(__dir__, 'area_output.html'),
       title: 'Area Output',
       id: 'Envelop::AreaOutput:AreaOutput',
-      height: 255, width: 650,
+      height: 0, width: 650,
       pos_x: 0, pos_y: 0,
       center: true
-    }.freeze
+    }
 
     def self.attach_callbacks(dialog)
       dialog.add_action_callback("call_set_result") { |action_context|
-        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "set_result('#{calc_area(@house).to_json}')")
+        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "set_result('#{@area_json}')")
         nil
       }
       dialog.add_action_callback("getLengthUnit") { |action_context|
@@ -99,7 +102,6 @@ module Envelop
         calc_area(group, transformation, materials)
       end
 
-      puts materials
       return materials
     end
 
@@ -153,7 +155,7 @@ module Envelop
     end
 
     def self.reload
-      remove_instance_variable(:@house) unless @house.nil?
+      remove_instance_variable(:@area_json) unless @area_json.nil?
     end
     reload
   end
