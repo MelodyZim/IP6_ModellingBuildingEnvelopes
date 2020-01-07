@@ -3,7 +3,7 @@ var picker;
 $(function() {
   $("#material-template").hide();
 
-  sketchup.ready();
+  sketchup.call_set_materials();
 });
 
 function setMaterials(materials_as_hash_array) {

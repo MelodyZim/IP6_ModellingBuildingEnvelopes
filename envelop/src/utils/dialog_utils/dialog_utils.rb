@@ -35,14 +35,14 @@ module Envelop
           preferences_key: id,
           min_height: height, # TODO: consider making this window resizeable. TODO: ensure these settings actually work
           max_height: height,
-          min_width: width,
+          min_width: width, # TODO: make some dialogs resizeable if appropriate
           max_width: width,
           style: UI::HtmlDialog::STYLE_UTILITY
         }
         dialog = UI::HtmlDialog.new(options)
         dialog.set_file(path_to_html)
         dialog.set_can_close do
-          false # TODO: this straight up does not work on Mac (Works on Windows)
+          false # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
         end
 
         dialog.set_size(width, height) # TODO: update this as the main window is resized.
