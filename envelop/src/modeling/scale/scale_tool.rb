@@ -72,7 +72,7 @@ module Envelop
         view.invalidate
       end
 
-      def onLButtonDown(flags, x, y, view)
+      def onLButtonDown(_flags, _x, _y, _view)
         # TODO: set first point, set second point, dialog, rescale or back to setting other point. wrap in undo
         if @phase == PHASES[:BEFORE_FIRST_POINT]
           if @mouse_ip.valid?
@@ -91,11 +91,9 @@ module Envelop
             set_status_text
 
             if scale_dialog
-              Envelop::ScaleTool.scaled = true
+              Envelop::ScaleTool.model_is_scaled
               Sketchup.active_model.select_tool(nil)
-              if @proceedToOutput
-                Envelop::AreaOutput.open_dialog
-              end
+              Envelop::AreaOutput.open_dialog if @proceedToOutput
             else
               @phase = PHASES[:BEFORE_SECOND_POINT]
               set_status_text
@@ -106,40 +104,40 @@ module Envelop
         end
       end
 
-        private
+      private
 
-        def m_to_inch(m)
-          return m / 0.0254
-        end
+      def m_to_inch(m)
+        m / 0.0254
+      end
 
-        def scale_dialog
-          input = UI.inputbox(["Line length in Meters: "], ["10.0"], "Scale the Model")
-          if input
-            f = input[0].to_f
+      def scale_dialog
+        input = UI.inputbox(['Line length in Meters: '], ['10.0'], 'Scale the Model')
+        if input
+          f = input[0].to_f
 
-            if f == 0
-              UI.messagebox('Could not extract non 0 length from user input.')
-              return false
-            end
-
-            current_length = @second_point.position.distance(@first_point.position)
-            target_length = m_to_inch(f).to_l
-            ratio = target_length / current_length
-
-            puts "current_length: #{current_length}"
-            puts "target_length: #{target_length}"
-            puts "ratio: #{ratio}"
-
-            trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
-            entities = Sketchup.active_model.entities
-            entities.each { | entity|
-              entity.transform!(trans)
-            }
-            return true
+          if f == 0
+            UI.messagebox('Could not extract non 0 length from user input.')
+            return false
           end
 
-          false
+          current_length = @second_point.position.distance(@first_point.position)
+          target_length = m_to_inch(f).to_l
+          ratio = target_length / current_length
+
+          puts "current_length: #{current_length}"
+          puts "target_length: #{target_length}"
+          puts "ratio: #{ratio}"
+
+          trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
+          entities = Sketchup.active_model.entities
+          entities.each do |entity|
+            entity.transform!(trans)
+          end
+          return true
         end
+
+        false
+      end
 
       def draw_line(view, from, to)
         view.set_color_from_line(from, to)
@@ -169,12 +167,12 @@ module Envelop
       end
     end
 
-    def self.scaled=(value)
-      @scaled = value
+    def self.model_is_scaled
+        Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
     end
 
-    def self.scaled
-      @scaled
+    def self.is_model_scaled
+      Sketchup.active_model.get_attribute('Envelop::ScaleTool', 'modelIsScaled', false)
     end
 
     def self.activate_scale_tool(proceedToOutput = false)
@@ -182,7 +180,6 @@ module Envelop
     end
 
     def self.reload
-      @scaled = false
       Sketchup.active_model.select_tool(nil)
     end
     reload

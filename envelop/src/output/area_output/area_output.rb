@@ -4,7 +4,7 @@ module Envelop
   module AreaOutput
 		# public
 		def self.open_dialog(house = Envelop::Housekeeper.get_house)
-      if !Envelop::ScaleTool.scaled
+      if !Envelop::ScaleTool.is_model_scaled
         UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
         Envelop::ScaleTool.activate_scale_tool(true)
       else
