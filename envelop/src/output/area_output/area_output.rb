@@ -7,6 +7,8 @@ module Envelop
       if !Envelop::ScaleTool.is_model_scaled
         UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
         Envelop::ScaleTool.activate_scale_tool(true)
+      elsif Envelop::Materialisation.house_contains_default_material
+        UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
       else
   			@house = house
         Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }

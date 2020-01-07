@@ -8,6 +8,22 @@ module Envelop
   module Materialisation
     DEFAULT_MATERIAL = 'default'
 
+    def self.house_contains_default_material(entities = nil)
+      entities = Envelop::Housekeeper.get_house.entities if entities.nil? # TODO : this and model_contains_default_material: why active entities and not entities in general
+
+      entities.grep(Sketchup::Face).each do |face|
+        if !face.material.nil? && (face.material.name == DEFAULT_MATERIAL)
+          return true
+        end
+      end
+
+      entities.grep(Sketchup::Group).each do |group|
+        return true if model_contains_default_material(group.entities)
+      end
+
+      false
+    end
+
     # Apply DEFAULT_MATERIAL to all faces without material
     #
     # @param entities [Sketchup::Entities, nil] entities to change material recursively (defaults to Sketchup.active_model.active_entities)
@@ -150,14 +166,14 @@ module Envelop
       while materials["#{id} #{prev_count}"].nil?
         prev_count -= 1
 
-        if prev_count < 1
-          puts 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
-          base_material =  materials["#{id} #{count}"]
-          if base_material.nil?
-            return LAST_MATERIAL_INDEX
-          else
-            return base_material.get_attribute('material', 'index') + 1
-          end
+        next unless prev_count < 1
+
+        puts 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
+        base_material = materials["#{id} #{count}"]
+        if base_material.nil?
+          return LAST_MATERIAL_INDEX
+        else
+          return base_material.get_attribute('material', 'index') + 1
         end
       end
 
@@ -303,8 +319,6 @@ module Envelop
       end
     end
 
-    # This is an example of an observer that watches the
-    # component placement event.
     class PreSaveModelSaveCustomMaterials < Sketchup::ModelObserver
       def onPreSaveModel(_model)
         Envelop::Materialisation.save_custom_materials
@@ -313,7 +327,7 @@ module Envelop
 
     def self.reload
       init_materials
-      
+
       Envelop::ObserverUtils.attach_model_observer(PreSaveModelSaveCustomMaterials)
     end
     reload
