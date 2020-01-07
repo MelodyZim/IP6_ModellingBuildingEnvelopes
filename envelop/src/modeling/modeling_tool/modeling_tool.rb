@@ -20,7 +20,7 @@ module Envelop
     def add_selection
       model = Sketchup.active_model
 
-      model.start_operation('Envelop: Add Selection to House', true)
+      Envelop::OperationUtils.start_operation('Envelop: Add Selection to House')
 
       # return if selection is empty
       if model.selection.empty?
@@ -30,13 +30,13 @@ module Envelop
 
       Envelop::Housekeeper.add_to_house(model.selection.to_a)
 
-      model.commit_operation # TODO: dont if aborted/unsucessfull
+      Envelop::OperationUtils.commit_operation # TODO: dont if aborted/unsucessfull
     end
 
     def subtract_selection
       model = Sketchup.active_model
 
-      model.start_operation('Envelop: Remove Selection from House', true)
+      Envelop::OperationUtils.start_operation('Envelop: Remove Selection from House')
 
       # return if selection is empty
       if model.selection.empty?
@@ -46,7 +46,7 @@ module Envelop
 
       Envelop::Housekeeper.remove_from_house(model.selection.to_a)
 
-      model.commit_operation # TODO: dont if aborted/unsucessfull
+      Envelop::OperationUtils.commit_operation # TODO: dont if aborted/unsucessfull
     end
   end # ModelingTool
 end # Examples

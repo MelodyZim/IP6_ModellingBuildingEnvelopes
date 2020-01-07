@@ -199,12 +199,12 @@ module Envelop
         model = Sketchup.active_model
         transform = transform.inverse
         points = points.map {|p| transform * p }
-        model.start_operation('Edge', true)
+        Envelop::OperationUtils.start_operation('Edge')
         points[0..-2].zip(points[1..-1]).each do |line| 
           edge = entities.add_line(line[0], line[1])
           num_faces += edge.find_faces  # TODO only find_faces if not editing house
         end
-        model.commit_operation
+        Envelop::OperationUtils.commit_operation
         return num_faces
       end
 

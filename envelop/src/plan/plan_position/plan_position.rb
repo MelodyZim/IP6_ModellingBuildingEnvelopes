@@ -4,7 +4,7 @@ module Envelop
     # orientation: 0 = Floor, 1 = North, 2 = East, 3 = South, 4 = West
     def self.add_image(image_base64, orientation)
       model = Sketchup.active_model
-      model.start_operation('Envelop: Import Plan', true) #TODO: consider separating moving and scaling into two operations, or even adding into a third operation
+      Envelop::OperationUtils.start_operation('Envelop: Import Plan') #TODO: consider separating moving and scaling into two operations, or even adding into a third operation
 
       image = import_image(image_base64)
       position_image(image, orientation)
@@ -16,7 +16,7 @@ module Envelop
         Envelop::PlanManager.add_plan(image)
       end
 
-      model.commit_operation # TODO: dont, if aborted/unsucessfull
+      Envelop::OperationUtils.commit_operation # TODO: dont, if aborted/unsucessfull
     end
 
     private
