@@ -114,14 +114,14 @@ module Envelop
       # @param add [Boolean] true adds the resulting volume to the house while false subtracts it
       def push_pull_face(face, direction_vector, add)
         # start undo operation
-        Sketchup.active_model.start_operation("Push/Pull #{add ? 'Add' : 'Subtract'}", false)
+        Envelop::OperationUtils.start_operation("Push/Pull #{add ? 'Add' : 'Subtract'}")
         
         points = face.vertices.map {|v| v.position}
         sign = direction_vector.samedirection?(face.normal) ? 1 : -1
       
         model = Sketchup.active_model
         group = model.active_entities.add_group()
-        group.transformation = @transform
+        #group.transformation = @transform
         face_copy = group.entities.add_face(points)
         
         face_copy.pushpull(sign * direction_vector.length, false)
@@ -135,7 +135,7 @@ module Envelop
         
         # abort if not successful
         if not successful
-          Sketchup.active_model.abort_operation
+          Envelop::OperationUtils.abort_operation
           return
         end
         
@@ -153,8 +153,7 @@ module Envelop
         end
         
         # finally commit operation
-        Sketchup.active_model.commit_operation
-        
+        Envelop::OperationUtils.commit_operation()
       end
       
       # Draw the given points as a continuous line

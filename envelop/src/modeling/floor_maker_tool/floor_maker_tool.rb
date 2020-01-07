@@ -54,11 +54,11 @@ module Envelop
 
         if @mouse_ip.valid?
           model = Sketchup.active_model
-          model.start_operation('Envelop: New floor at mouseclick', true)
+          Envelop::OperationUtils.start_operation('Envelop: New floor at mouseclick')
 
           split_house_at(@mouse_ip.position.z)
 
-          model.commit_operation # TODO: dont if aborted/unsucessfull
+          Envelop::OperationUtils.commit_operation # TODO: dont if aborted/unsucessfull
 
         else
           UI.messagebox('Could not make floor because current mouse position is invalid InputPosition.')
