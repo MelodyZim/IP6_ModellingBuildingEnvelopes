@@ -20,7 +20,7 @@ module Envelop
       path_to_html: File.join(__dir__, 'area_output.html'),
       title: 'Area Output',
       id: 'Envelop::AreaOutput:AreaOutput',
-      height: 255, width: 600,
+      height: 255, width: 650,
       pos_x: 0, pos_y: 0,
       center: true
     }.freeze
@@ -82,9 +82,14 @@ module Envelop
           materials["Total"][direction] = 0
         end
 
+        if materials["Total"]["Total"].nil?
+          materials["Total"]["Total"] = 0
+        end
+
         materials[name][direction] += area
         materials[name]["Total"] += area
         materials["Total"][direction] += area
+        materials["Total"]["Total"] += area
       end
 
       # calculate sub_groups
@@ -92,6 +97,7 @@ module Envelop
         calc_area(group, transformation, materials)
       end
 
+      puts materials
       return materials
     end
 

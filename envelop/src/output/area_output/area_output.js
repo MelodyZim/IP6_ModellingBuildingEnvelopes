@@ -16,7 +16,7 @@ $(function() {
 function set_result(result) {
   var html = '';
   const result_json = getSortedHash(JSON.parse(result));
-  const directions = ["N", "NO", "NW", "SO", "W", "SW", "H", "Total"]
+  const directions = ["N", "NO", "O", "SO", "S", "SW", "W", "NW", "H", "Total"]
 
   // generate header
   html += "<tr><th></th>"
