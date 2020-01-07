@@ -122,7 +122,7 @@ module Envelop
         image.transform!(trans)
 
       else
-        warn 'Envelop::ImportPlan.position_image: called with orientation outside of [0-5]. Image positioned as if 0.'
+        puts 'Envelop::ImportPlan.position_image: called with orientation outside of [0-5]. Image positioned as if 0.'
       end
     end
 

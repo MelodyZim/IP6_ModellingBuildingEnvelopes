@@ -151,7 +151,7 @@ module Envelop
         prev_count -= 1
 
         if prev_count < 1
-          warn 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
+          puts 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
           base_material =  materials["#{id} #{count}"]
           if base_material.nil?
             return LAST_MATERIAL_INDEX

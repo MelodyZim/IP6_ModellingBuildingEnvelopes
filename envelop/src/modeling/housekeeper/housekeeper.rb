@@ -2,82 +2,66 @@
 
 module Envelop
   module Housekeeper
-    # TODO: persist and load @house in save
 
     def self.house_exists?
-      !@house.nil?
+      return (not @house.nil?) && @house.valid?
     end
 
     def self.get_house
-      unless @house
-        warn 'Envelop::Housekeeper.get_house: no house variable, returning nil. This will likely cause issues.'
-        nil
-      end
-
-      @house
+      get_or_find_house
     end
 
     # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to add, must be manifold
     # @param fail_silently [Boolean]
-    def self.create_house(entity_a, fail_silently = false)
+    def self.create_house(entity_a)
       # create a new house with the selection as content
-      if entity_a.is_a? Sketchup::Group
-        house = entity_a
-      else
-        house = Sketchup.active_model.active_entities.add_group(entity_a)
-      end
+      house = if entity_a.is_a? Sketchup::Group
+                entity_a
+              else
+                Sketchup.active_model.active_entities.add_group(entity_a)
+              end
 
       if house.nil?
-        if !fail_silently
-          UI.messagebox('Cannot create house group with supplied argument, as the group would be nil')
-        else
           puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would be nil.'
-        end
-        return
+        return false
       end
 
       if house.manifold?
-        @house = house
+        set_new_house(house)
+        return true
       else
-        # house is not valid
-        house.explode
-
-        if !fail_silently
-          UI.messagebox('Cannot create house group with supplied argument, as the group would not be manifold.')
-        else
           puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would not be manifold.'
-        end
+        return false # undoes groups & stuff
       end
     end
 
     # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to add, must be manifold
     # @return [Boolean] true when the operation was successful, false otherwise
     def self.add_to_house(entity_a)
-      if @house
+      house = get_or_find_house
 
-        # group input
-        if entity_a.is_a? Sketchup::Group
-          add_group = entity_a
-        else
-          add_group = Sketchup.active_model.active_entities.add_group(entity_a)
-        end
+      if house.nil?
+        puts 'No house to add anything to, thus creating house with supplied argument.'
+        return create_house(entity_a) # returns true/false
+      end
 
-        Materialisation.set_tmp_materials(add_group)
+      # group input
+      add_group = if entity_a.is_a? Sketchup::Group
+                    entity_a
+                  else
+                    Sketchup.active_model.active_entities.add_group(entity_a)
+                  end
 
-        # add operation
-        result = @house.outer_shell(add_group)  # TODO fix "reference to deleted Group" (@house group is deleted)
-        if result.nil?
-          UI.messagebox('Cannot add supplied argument to house group, as the result would not be manifold.')
-          add_group.explode
-          return false
-        else
-          Materialisation.unset_tmp_materials(result)
-          @house = result
-          return true
-        end
+      Materialisation.set_tmp_materials(add_group)
+
+      # add operation
+      result = house.outer_shell(add_group)
+      if result.nil?
+        puts 'Cannot add supplied argument to house group, as the result would not be manifold.'
+        return false # undoes tmp material & group
       else
-        puts 'Envelop::Housekeeper.add_to_house: No house yet, thus creating house group with supplied argument.'
-        create_house(entity_a)
+        Materialisation.unset_tmp_materials(result)
+        set_new_house(result)
         return true
       end
     end
@@ -85,47 +69,74 @@ module Envelop
     # @param entity_a [Array<Sketchup::Entity>, Sketchup::Group] entities to subtract, must be manifold
     # @return [Boolean] true when the operation was successful, false otherwise
     def self.remove_from_house(entity_a)
-      if @house
+      house = get_or_find_house
 
-        # group input
-        if entity_a.is_a? Sketchup::Group
-          remove_group = entity_a
-        else
-          remove_group = Sketchup.active_model.active_entities.add_group(entity_a)
-        end
-
-        # add operation
-        result = remove_group.subtract(@house)
-        if result.nil?
-          UI.messagebox('Cannot remove supplied argument from house group, as the result would not be manifold.')
-          remove_group.explode  # TODO this is not the intended behaviour if entity_a was a group
-          return false
-        else
-          @house = result
-          return true
-        end
-      else
-        UI.messagebox('No house to remove anything from, not doing anything...')
+      if house.nil?
+        puts 'No house to remove anything from, not doing anything...'
         return false
+      end
+
+      # group input
+      remove_group = if entity_a.is_a? Sketchup::Group
+                       entity_a
+                     else
+                       Sketchup.active_model.active_entities.add_group(entity_a)
+                     end
+
+      # remove operation
+      result = remove_group.subtract(@house)
+      if result.nil?
+        puts 'Cannot remove supplied argument from house group, as the result would not be manifold.'
+        return false # will undo anything
+      else
+        set_new_house(result)
+        return true
       end
     end
 
     private
 
-    # TODO: this does not work if mark is still present in the scene
-    # TODO: this is obsolete, make the idea of this work again
-    def self.try_populate_from_model
-      model = Sketchup.active_model
+    def self.get_or_find_house
+      if @house.nil? || !@house.valid?
+        puts 'Envelop::Housekeeper.get_or_find_house: @house is nil or not valid, trying to find_house...'
+        find_house
 
-      model.definitions.find_all(&:group?).each do |d|
-        d.instances.each(&:explode)
+        if @house.nil?
+          puts 'Envelop::Housekeeper.get_or_find_house: find_house could not find a entity marked as house. Returning nil'
+        end
       end
 
-      create_house(model.active_entities.to_a, true)
+      @house
+    end
+
+    def self.find_house
+      @house = nil
+
+      Sketchup.active_model.entities.each do |entity|
+        isHouse = entity.get_attribute('Envelop::Housekeeper', 'isHouse')
+        if !isHouse.nil? && isHouse && entity.is_a?(Sketchup::Group)
+          puts "Envelop::Housekeeper.find_house: Entity #{entity} is marked as house, remmebering is as such..."
+          set_new_house(entity)
+        end
+      end
+    end
+
+    def self.set_new_house(house) # assumes house is valid, a group & manifold
+      if !@house.nil? && @house.valid?
+        @house.delete_attribute('Envelop::Housekeeper', 'isHouse')
+      end
+
+      @house = house
+
+      @house.set_attribute('Envelop::Housekeeper', 'isHouse', true)
     end
 
     def self.reload
       remove_instance_variable(:@house) if @house
+
+      @house = nil
+
+      find_house
     end
     reload
   end
