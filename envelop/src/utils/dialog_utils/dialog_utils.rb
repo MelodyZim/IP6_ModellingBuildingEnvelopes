@@ -21,15 +21,17 @@ module Envelop
         if @dialogs[dialog_options[:id]]&.visible?
           @dialogs[dialog_options[:id]].bring_to_front
         else
-          @dialogs[dialog_options[:id]]||= create_dialog(dialog_options)
-          attach_callbacks_callback.call(@dialogs[dialog_options[:id]])
+          if @dialogs[dialog_options[:id]].nil?
+            @dialogs[dialog_options[:id]] =  create_dialog(dialog_options)
+          end
 
+          attach_callbacks_callback.call(@dialogs[dialog_options[:id]])
           @dialogs[dialog_options[:id]].show
         end
       end
 
       # Private
-      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:, center: false)
+      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:, center: false, can_close: false)
         options = {
           dialog_title: title,
           preferences_key: id,
@@ -42,7 +44,7 @@ module Envelop
         dialog = UI::HtmlDialog.new(options)
         dialog.set_file(path_to_html)
         dialog.set_can_close do
-          false # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
+          can_close # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
         end
 
         dialog.set_size(width, height) # TODO: update this as the main window is resized.

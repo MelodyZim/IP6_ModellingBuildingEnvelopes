@@ -19,7 +19,8 @@ module Envelop
       id: 'Envelop::PlanEdit:PlanEdit',
       height: 500, width: 500,
       pos_x: 0, pos_y: 0,
-      center: true
+      center: true,
+      can_close: true
     }.freeze
 
     def self.attach_callbacks(dialog)

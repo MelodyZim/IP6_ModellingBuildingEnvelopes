@@ -27,7 +27,8 @@ module Envelop
       id: 'Envelop::AreaOutput:AreaOutput',
       height: 0, width: 650,
       pos_x: 0, pos_y: 0,
-      center: true
+      center: true,
+      can_close: true
     }
 
     def self.attach_callbacks(dialog)
