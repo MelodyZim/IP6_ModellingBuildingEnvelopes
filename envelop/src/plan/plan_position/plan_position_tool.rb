@@ -41,6 +41,7 @@ module Envelop
       def onCancel(_reason, _view)
         # reset_tool TODO: is removing the image and deactivating the tool the correct behaviour? should it instead just reset before the frist click?
 
+        Envelop::PlanManager.unhide_all_plans
         Sketchup.active_model.select_tool(nil) # this will invalidate view & delete becasue phase will not be FINISHED
       end
 
@@ -83,6 +84,7 @@ module Envelop
         if @phase == PHASES[:BEFORE_FIRST_POINT]
           if @mouse_ip.valid?
             @first_point.copy!(@mouse_ip)
+            Envelop::PlanManager.unhide_all_plans
             puts "first_point to move: #{@first_point.position}"
             @phase = PHASES[:BEFORE_MOVE]
           else
@@ -145,6 +147,8 @@ module Envelop
       def finish
         @phase = PHASES[:FINISHED]
 
+        Envelop::PlanManager.unhide_all_plans
+        
         # register new image at the PlanManager
         Envelop::PlanManager.add_plan(@image_obj)
 
@@ -175,6 +179,9 @@ module Envelop
         @mouse_ip = Sketchup::InputPoint.new
         @first_point = Sketchup::InputPoint.new
         @move_target = Sketchup::InputPoint.new
+
+        # hide other plans to make first click easier
+        Envelop::PlanManager.hide_all_plans
 
         set_status_text
       end

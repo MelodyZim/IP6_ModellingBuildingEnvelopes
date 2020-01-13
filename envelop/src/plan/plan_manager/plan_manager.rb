@@ -18,6 +18,26 @@ module Envelop
       @plans
     end
 
+    def self.hide_all_plans
+      get_plans.each do |plan|
+        plan.hidden = true
+      end
+
+      Envelop::ObserverUtils.dettach_view_observer(PlansVisibilityManager)
+    end
+
+    def self.unhide_all_plans
+      update_plans_visibility
+
+      Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
+    end
+
+    def self.update_plans_visibility(view = Sketchup.active_model.active_view)
+      Envelop::PlanManager.get_plans.each do |plan|
+        plan.hidden = view.camera.direction.dot(plan.normal) > 0
+      end
+    end
+
     private
 
     def self.remove_plan(plan)
@@ -35,9 +55,7 @@ module Envelop
     class PlansVisibilityManager < Sketchup::ViewObserver
       def onViewChanged(view)
         # hide plans that are facing backwards
-        Envelop::PlanManager.get_plans.each do |plan|
-          plan.hidden = view.camera.direction.dot(plan.normal) > 0
-        end
+        Envelop::PlanManager.update_plans_visibility(view)
       end
     end
 
@@ -50,7 +68,7 @@ module Envelop
           Envelop::PlanManager.add_plan(entity)
         end
       end
-      
+
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
     reload
