@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../vendor/rb/os'
+require_relative '../vendor/rb/os'
 
 module Envelop
   module WindowUtils
