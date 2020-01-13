@@ -55,5 +55,15 @@ module Envelop
       Envelop::PlanImport.show_dialog
       Envelop::MaterialisationDialog.show_dialog
     end
+
+    def self.delete_marc
+      Sketchup.active_model.entities.each do |entity|
+        if entity.definition.name == "Marc"
+          entity.erase!
+        end
+      end
+    end
+
+    delete_marc
   end
 end
