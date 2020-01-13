@@ -125,14 +125,15 @@ module Envelop
             parent = @mouse_ip.face&.parent
             if not parent.nil? and parent.is_a? Sketchup::ComponentDefinition and parent.group?
               @entities = parent.entities
+              @transform = @points[0].transformation
             else
               @entities = Sketchup.active_model.active_entities
+              @transform = Geom::Transformation.new
             end
-            @transform = @points[0].transformation
           end
         
           if @points.length == 2 and not @force_polygon
-            # # add new edges at top level if the first two points are not on the same face
+            # add new edges at top level if the first two points are not on the same face
             if get_common_face(@points[0], @points[1]).nil?
               @entities = Sketchup.active_model.active_entities
               @transform = Geom::Transformation.new
