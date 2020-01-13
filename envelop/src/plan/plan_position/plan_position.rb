@@ -47,7 +47,8 @@ module Envelop
       if orientation == 0
         puts('Assuming image is already alligned')
 
-        if @floor_image.nil? || @floor_image.deleted?
+        if @floor_image.nil? or !@floor_image.valid?
+          image.set_attribute('Envelop::PlanPosition', 'isFirstFloor', true)
           @floor_image = image
         end
 
@@ -70,7 +71,7 @@ module Envelop
         image.transform!(trans)
 
         # translate based on floor image if any set yet
-        if @floor_image && !@floor_image.deleted?
+        if !@floor_image.nil? && !@floor_image.deleted?
           vec = Geom::Vector3d.new(Envelop::Main.North)
           vec.length = @floor_image.bounds.height
 
@@ -89,7 +90,7 @@ module Envelop
         image.transform!(trans)
 
         # translate based on floor image if any set yet
-        if @floor_image && !@floor_image.deleted?
+        if @floor_image.nil? && !@floor_image.deleted?
           vec = Geom::Vector3d.new(Envelop::Main.East)
           vec.length = @floor_image.bounds.width
 
@@ -127,8 +128,14 @@ module Envelop
     end
 
     def self.reload
-      if @floor_image
-        remove_instance_variable(:@floor_image)
+      @floor_image = nil
+
+      Sketchup.active_model.entities.each do |entity|
+        isFirstFloor = entity.get_attribute('Envelop::PlanPosition', 'isFirstFloor')
+        if !isFirstFloor.nil? && isFirstFloor && entity.is_a?(Sketchup::Image)
+          @floor_image = entity
+          return nil
+        end
       end
     end
     reload
