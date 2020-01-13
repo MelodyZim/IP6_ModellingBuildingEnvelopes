@@ -141,6 +141,32 @@ module Envelop
 
       cmd
     end
+    
+    def self.hide_plans_command
+      cmd = UI::Command.new('Hide all plans') do
+        Envelop::PlanManager.hide_all_plans
+      end
+      cmd.small_icon = 'hide_plans.svg'
+      cmd.large_icon = 'hide_plans.svg'
+      cmd.tooltip = 'Hide all plans'
+      cmd.status_bar_text = 'Hide all plans'
+      cmd.menu_text = 'Hide all plans'
+
+      cmd
+    end
+    
+    def self.unhide_plans_command
+      cmd = UI::Command.new('Unhide all plans') do
+        Envelop::PlanManager.unhide_all_plans
+      end
+      cmd.small_icon = 'unhide_plans.svg'
+      cmd.large_icon = 'unhide_plans.svg'
+      cmd.tooltip = 'Unhide all plans'
+      cmd.status_bar_text = 'Unhide all plans'
+      cmd.menu_text = 'Unhide all plans'
+
+      cmd
+    end
 
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
@@ -152,6 +178,10 @@ module Envelop
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item scale_tool_command
       @toolbar = @toolbar.add_item area_command
+      
+      @toolbar = @toolbar.add_separator
+      @toolbar = @toolbar.add_item hide_plans_command
+      @toolbar = @toolbar.add_item unhide_plans_command
       
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item modeling_tool_add_command
