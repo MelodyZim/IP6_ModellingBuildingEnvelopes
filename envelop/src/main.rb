@@ -58,7 +58,7 @@ module Envelop
 
     def self.delete_marc
       Sketchup.active_model.entities.each do |entity|
-        if entity.definition.name == "Marc"
+        if entity.is_a?(Sketchup::ComponentInstance) && entity.definition.name == "Marc"
           entity.erase!
         end
       end
