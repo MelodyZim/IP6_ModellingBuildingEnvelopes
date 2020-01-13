@@ -22,7 +22,7 @@ module Envelop
       center: true,
       can_close: true,
       resizeable: true,
-      min_height: 300, min_width: 300
+      min_height: 350, min_width: 350
     }.freeze
 
     def self.attach_callbacks(dialog)
