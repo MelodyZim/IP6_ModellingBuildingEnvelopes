@@ -42,7 +42,8 @@ module Envelop
 
       def draw(view)
         if not @face.nil?
-          points = @face.vertices.map {|v| v.position + @direction_vector}
+          points = @face.vertices.map {|v| @transform * v.position + @direction_vector}
+          @face.vertices.each {|v| draw_lines(view, "Cyan", @transform * v.position, @transform * v.position + @direction_vector) }
           points << points[0]
           draw_lines(view, "Cyan", *points)
         end
@@ -68,7 +69,7 @@ module Envelop
         
         if not @face.nil?        
           n = @face.normal
-          v = @mouse_ip.position - @face.vertices[0].position
+          v = (@mouse_ip.transformation * @mouse_ip.position) - (@transform * @face.vertices[0].position)
 
           s = (v.dot(n) / (n.length ** 2))
           @direction_vector = Geom::Vector3d.new(n.to_a.map{|c| c * s})
@@ -83,7 +84,8 @@ module Envelop
           if @face.nil?
             @face = @mouse_ip.face
             unless @face.nil?
-              @transform = @mouse_ip.transformation
+              @transform = Envelop::PushPullTool.get_global_face_transform(@face)
+              
               view.lock_inference(
                 Sketchup::InputPoint.new(@face.vertices[0]), 
                 Sketchup::InputPoint.new(@face.vertices[0].position + @face.normal))
@@ -116,12 +118,11 @@ module Envelop
         # start undo operation
         Envelop::OperationUtils.start_operation("Push/Pull #{add ? 'Add' : 'Subtract'}")
         
-        points = face.vertices.map {|v| v.position}
+        points = face.vertices.map {|v| @transform * v.position}
         sign = direction_vector.samedirection?(face.normal) ? 1 : -1
-      
+        
         model = Sketchup.active_model
         group = model.active_entities.add_group()
-        #group.transformation = @transform
         face_copy = group.entities.add_face(points)
         
         face_copy.pushpull(sign * direction_vector.length, false)
@@ -183,6 +184,35 @@ module Envelop
 
         set_status_text
       end
+    end
+    
+    # @param face [Sketchup::Face]
+    # @return [Geom::Transformation]
+    def self.get_global_face_transform(face)
+      transform = search_entity_recursive(Sketchup.active_model.entities, face)
+      if transform.nil?
+        warn "Envelop::PushPullTool could not find face #{face}"
+      end
+      return transform
+    end
+    
+    # @param entities [Sketchup::Entities]
+    # @param target [Sketchup::Entity]
+    # @param transform [Geom::Transformation]
+    def self.search_entity_recursive(entities, target, transform=nil)
+      if transform.nil? then transform = Geom::Transformation.new end
+    
+      entities.each do | entity |
+        if entity == target
+          return transform
+        end
+        if entity.is_a? Sketchup::Group or entity.is_a? Sketchup::ComponentInstance
+          result = search_entity_recursive(entity.definition.entities, target, transform * entity.transformation)
+          if not result.nil? then return result end
+        end
+      end
+      
+      return nil
     end
 
     # Activate the custom Push-Pull Tool
