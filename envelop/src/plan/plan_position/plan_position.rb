@@ -9,7 +9,7 @@ module Envelop
       image = import_image(image_base64)
       position_image(image, orientation)
 
-      if Envelop::PlanManager.get_plans.length() > 1
+      if Envelop::PlanManager.get_plans.length() > 0
         Envelop::PlanPositionTool.activate_plan_position_tool(image)
       else
         # register first plan at the PlanManager
