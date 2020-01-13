@@ -36,12 +36,12 @@ $(function() {
 
   $("#rotCCW").on('click', function() {
     centerCropperCanvas();
-    cropper.clear();  // clear the cropbox
+    cropper.clear(); // clear the cropbox
     cropper.rotate(-90);
     zoomCropperCanvas();
   });
   $("#rotCW").on('click', function() {
-    cropper.clear();  // clear the cropbox
+    cropper.clear(); // clear the cropbox
     cropper.rotate(90);
     zoomCropperCanvas();
   });
@@ -64,17 +64,23 @@ $(function() {
     sketchup.cancel();
   });
 
+  $(this).keydown(function(e) {
+    if (e.keyCode == 27) {
+      sketchup.cancel();
+    }
+  });
+
   sketchup.call_set_image();
 })
 
 function place(button) {
-    img = cropper.getCroppedCanvas().toDataURL()
-    orientation = Number(button.val())
+  img = cropper.getCroppedCanvas().toDataURL()
+  orientation = Number(button.val())
 
-    $("#output").attr("src", img);
-    $("#orientation").text(`orientation=${orientation}`);
+  $("#output").attr("src", img);
+  $("#orientation").text(`orientation=${orientation}`);
 
-    sketchup.accept(img, orientation);
+  sketchup.accept(img, orientation);
 }
 
 function setImage(image_base64) {
