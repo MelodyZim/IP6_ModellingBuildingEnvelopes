@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 module Envelop
   module PlanPosition
-
     # orientation: 0 = Floor, 1 = North, 2 = East, 3 = South, 4 = West
     def self.add_image(image_base64, orientation)
       model = Sketchup.active_model
-      Envelop::OperationUtils.start_operation('Envelop: Import Plan') #TODO: consider separating moving and scaling into two operations, or even adding into a third operation
+      Envelop::OperationUtils.start_operation('Envelop: Import Plan') # TODO: consider separating moving and scaling into two operations, or even adding into a third operation
 
       image = import_image(image_base64)
       position_image(image, orientation)
 
-      if Envelop::PlanManager.get_plans.length() > 0
+      if !Envelop::PlanManager.get_plans.empty?
         Envelop::PlanPositionTool.activate_plan_position_tool(image)
       else
         # register first plan at the PlanManager
@@ -47,7 +48,7 @@ module Envelop
       if orientation == 0
         puts('Assuming image is already alligned')
 
-        if @floor_image.nil? or !@floor_image.valid?
+        if @floor_image.nil? || !@floor_image.valid?
           image.set_attribute('Envelop::PlanPosition', 'isFirstFloor', true)
           @floor_image = image
         end
@@ -90,13 +91,13 @@ module Envelop
         image.transform!(trans)
 
         # translate based on floor image if any set yet
-        if @floor_image.nil? && !@floor_image.deleted?
+        if !@floor_image.nil? && !@floor_image.deleted?
           vec = Geom::Vector3d.new(Envelop::Main.East)
           vec.length = @floor_image.bounds.width
 
           trans = Geom::Transformation.translation(vec)
           image.transform!(trans)
-        end
+          end
 
       # South
       elsif orientation == 3
