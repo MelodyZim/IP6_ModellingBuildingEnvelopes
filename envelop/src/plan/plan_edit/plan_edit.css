@@ -2,3 +2,26 @@
   display: block;
   max-width: 100%;
 }
+
+html {
+  height: 100%
+}
+
+body {
+  margin: 10px;
+  height: 100%;
+}
+
+#plan_container {
+  height: calc(100% - 66px);
+}
+
+#buttons_container {
+  position: relative;
+  height: 38px;
+  margin-bottom: 10px;
+}
+
+.buttons_row {
+  margin-top: 5px;
+}

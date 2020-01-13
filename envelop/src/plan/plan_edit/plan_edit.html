@@ -8,21 +8,25 @@
     <link  href="plan_edit.css" rel="stylesheet">
 	</head>
 	<body>
-    <div>
-      <img id="target" height="350"/>
+    <div id="plan_container">
+      <img id="target" height="100%"/>
     </div>
 
-    <div>
-      <button id="rotCCW"><label for="rotCCW">rotate left</label></button>
-      <button id="rotCW"><label for="rotCW">rotate right</label></button>
-      <button id="cancel"><label for="cancel">Cancel</label></button>
-    </div>
+		<div id="buttons_container">
+	    <div class="buttons_row">
+	      <button id="rotCCW"><label for="rotCCW">rotate left</label></button>
+	      <button id="rotCW"><label for="rotCW">rotate right</label></button>
+	      <button id="cancel"><label for="cancel">Cancel</label></button>
+	    </div>
 
-    <button value="0" id="place_F"><label for="place_F">Floor</label></button>
-    <button value="1" id="place_N"><label for="place_N">North</label></button>
-    <button value="2" id="place_E"><label for="place_E">East</label></button>
-    <button value="3" id="place_S"><label for="place_S">South</label></button>
-    <button value="4" id="place_W"><label for="place_W">West</label></button>
+			<div class="buttons_row">
+		    <button value="0" id="place_F"><label for="place_F">Floor</label></button>
+		    <button value="1" id="place_N"><label for="place_N">North</label></button>
+		    <button value="2" id="place_E"><label for="place_E">East</label></button>
+		    <button value="3" id="place_S"><label for="place_S">South</label></button>
+		    <button value="4" id="place_W"><label for="place_W">West</label></button>
+			</div>
+		</div>
 
     <!-- output for debugging purposes -->
     <img id="output" />

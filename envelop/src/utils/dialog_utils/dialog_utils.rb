@@ -31,16 +31,29 @@ module Envelop
       end
 
       # Private
-      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:, center: false, can_close: false)
+      def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:,
+        center: false, can_close: false, resizeable: false, min_height: 0, min_width: 0)
         options = {
           dialog_title: title,
           preferences_key: id,
-          min_height: height, # TODO: consider making this window resizeable. TODO: ensure these settings actually work
-          max_height: height,
-          min_width: width, # TODO: make some dialogs resizeable if appropriate
-          max_width: width,
           style: UI::HtmlDialog::STYLE_UTILITY
         }
+        options_not_resizeable = {
+          min_height: height,
+          max_height: height,
+          min_width: width,
+          max_width: width
+        }
+        if not resizeable
+          options = options_not_resizeable.merge(options)
+        else
+          if min_height != 0
+            options[:min_height] = min_height
+          end
+          if min_width != 0
+            options[:min_width] = min_width
+          end
+        end
         dialog = UI::HtmlDialog.new(options)
         dialog.set_file(path_to_html)
         dialog.set_can_close do

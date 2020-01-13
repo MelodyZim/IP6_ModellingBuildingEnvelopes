@@ -20,7 +20,9 @@ module Envelop
       height: 500, width: 500,
       pos_x: 0, pos_y: 0,
       center: true,
-      can_close: true
+      can_close: true,
+      resizeable: true,
+      min_height: 300, min_width: 300
     }.freeze
 
     def self.attach_callbacks(dialog)
