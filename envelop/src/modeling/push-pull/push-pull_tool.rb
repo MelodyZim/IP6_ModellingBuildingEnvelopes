@@ -153,19 +153,17 @@ module Envelop
             group.entities.add_faces_from_mesh(face_mesh)
             
             # add the vertical walls to the group
-            face.loops.each do | loop |
-              loop.edges.each do | edge |
-                e = transform * edge.end.position
-                s = transform * edge.start.position
-                e_proj = Geom::Point3d.new(e.x, e.y, max_z)
-                s_proj = Geom::Point3d.new(s.x, s.y, max_z)
-                if e.z != max_z and s.z != max_z
-                  group.entities.add_face(e, s, s_proj, e_proj).reverse!
-                elsif e.z == max_z and s.z != max_z
-                  group.entities.add_face(e, s, s_proj).reverse!
-                elsif e.z != max_z and s.z == max_z
-                  group.entities.add_face(e, s, e_proj).reverse!
-                end
+            face.edges.each do | edge |
+              e = transform * edge.end.position
+              s = transform * edge.start.position
+              e_proj = Geom::Point3d.new(e.x, e.y, max_z)
+              s_proj = Geom::Point3d.new(s.x, s.y, max_z)
+              if e.z != max_z and s.z != max_z
+                group.entities.add_face(e, s, s_proj, e_proj).reverse!
+              elsif e.z == max_z and s.z != max_z
+                group.entities.add_face(e, s, s_proj).reverse!
+              elsif e.z != max_z and s.z == max_z
+                group.entities.add_face(e, s, e_proj).reverse!
               end
             end
             
