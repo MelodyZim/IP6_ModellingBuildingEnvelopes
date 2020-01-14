@@ -21,7 +21,8 @@ module Envelop
       pos_x: 0, pos_y: 0,
       center: true,
       can_close: true,
-      resizeable: true,
+      resizeable_width: true,
+      resizeable_height: true,
       min_height: 350, min_width: 350
     }.freeze
 
