@@ -6,27 +6,53 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.step + .step {
+  margin-top: 5px;
+}
+
+.substep + .step {
+  margin-top: 5px;
+}
+
 .step {
   display: flex;
   border: black 1px solid;
   border-radius: 5px;
-  margin-bottom: 5px;
   flex-wrap: nowrap;
   align-items: stretch;
   background-color: lightblue;
+}
+
+.setp_with_substeps {
+  border-bottom-right-radius: 0px;
+}
+
+.substep {
+  display: flex;
+  border: black 1px solid;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  background-color: lightblue;
+  margin-left: calc(2ch + 7px);
+  border-top-width: 0px;
+}
+
+.last_substep {
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .number_container {
   width: 2ch;
   flex-flow: row;
   flex-shrink: 0;
-  margin-right: 5px;
+  margin-right: 3px;
   display: flex;
   align-items: center;
-  padding-right: 5px;
+  padding-right: 3px;
   flex-direction: row-reverse;
   border-right: black 1px solid;
-  margin-left: 5px;
+  margin-left: 3px;
 }
 
 .number {
@@ -34,24 +60,29 @@ body {
   font-weight: bold;
 }
 
+.substep_number_container {
+  width: calc(2ch + 4px);;
+}
+
 .title {
   flex-flow: row;
   flex-grow: 1;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 .questionmark_container {
   flex-shrink: 0;
-  margin-left: 5px;
+  margin-left: 3px;
   flex-flow: row;
+  cursor: pointer;
   border-left: black 1px solid;
-  padding-left: 5px;
-  margin-left: 5PX;
+  padding-left: 3px;
+  margin-left: 3px;
   display: flex;
   align-items:  center;
 }
 
 .questionmark {
-  padding-right: 5px;
+  padding-right: 3px;
 }
