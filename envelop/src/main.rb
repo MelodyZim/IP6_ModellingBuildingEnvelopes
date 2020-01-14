@@ -18,6 +18,7 @@ require_relative 'modeling/scale/scale_tool'
 require_relative 'modeling/pen/pen_tool'
 require_relative 'modeling/push-pull/push-pull_tool'
 require_relative 'output/area_output/area_output'
+require_relative 'ui/wizard/wizard'
 require_relative 'ui/toolbar/toolbar'
 
 module Envelop

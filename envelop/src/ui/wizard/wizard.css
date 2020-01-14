@@ -1,0 +1,7 @@
+body {
+  width: 180px;
+  margin: 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-family: Arial, Helvetica, sans-serif;
+}

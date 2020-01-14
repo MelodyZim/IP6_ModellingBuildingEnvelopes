@@ -102,7 +102,7 @@ module Envelop
 
       cmd
     end
-    
+
     def self.pen_tool_command
       cmd = UI::Command.new('Pen Tool') do
         Envelop::PenTool.activate_pen_tool
@@ -115,7 +115,7 @@ module Envelop
 
       cmd
     end
-    
+
     def self.pushpull_add_command
       cmd = UI::Command.new('Push-Pull Add Tool') do
         Envelop::PushPullTool.activate_pushpull_tool(true)
@@ -128,7 +128,7 @@ module Envelop
 
       cmd
     end
-    
+
     def self.pushpull_subtract_command
       cmd = UI::Command.new('Push-Pull Subtract Tool') do
         Envelop::PushPullTool.activate_pushpull_tool(false)
@@ -141,7 +141,7 @@ module Envelop
 
       cmd
     end
-    
+
     def self.hide_plans_command
       cmd = UI::Command.new('Hide all plans') do
         Envelop::PlanManager.hide_all_plans
@@ -154,7 +154,7 @@ module Envelop
 
       cmd
     end
-    
+
     def self.unhide_plans_command
       cmd = UI::Command.new('Unhide all plans') do
         Envelop::PlanManager.unhide_all_plans
@@ -168,24 +168,42 @@ module Envelop
       cmd
     end
 
+    def self.open_wizard_command
+      cmd = UI::Command.new('Open Wizard') do
+        Envelop::Wizard.open_dialog
+      end
+      cmd.small_icon = 'todo.svg'
+      cmd.large_icon = 'todo.svg'
+      cmd.tooltip = 'Open Wizard'
+      cmd.status_bar_text = 'Open Wizard'
+      cmd.menu_text = 'Open Wizard'
+
+      cmd
+    end
+
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
 
+      @toolbar = @toolbar.add_item open_wizard_command
+
+      @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item pen_tool_command
       @toolbar = @toolbar.add_item pushpull_add_command
       @toolbar = @toolbar.add_item pushpull_subtract_command
       @toolbar = @toolbar.add_item floor_maker_command
+
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item scale_tool_command
       @toolbar = @toolbar.add_item area_command
-      
+
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item hide_plans_command
       @toolbar = @toolbar.add_item unhide_plans_command
-      
+
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item modeling_tool_add_command
       @toolbar = @toolbar.add_item modeling_tool_subtract_command
+
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item reload_command
 

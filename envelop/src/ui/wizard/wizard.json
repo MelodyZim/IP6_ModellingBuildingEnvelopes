@@ -1,0 +1,67 @@
+{
+  "steps": [{
+      "number": 1,
+      "title": "Pläne Importieren"
+    },
+    {
+      "number": 2,
+      "title": "Tiefster Bodenplan Einfügen"
+    },
+    {
+      "number": 3,
+      "title": "Grundriss Zeichnen"
+    },
+    {
+      "number": 4,
+      "title": "Eine Aufsicht Einfügen"
+    },
+    {
+      "number": 5,
+      "title": "Ein Stockwerk Hochziehen"
+    },
+    {
+      "number": 6,
+      "title": "Alle Stockwerke Erstellen",
+      "sublist": [{
+        "number": 1,
+        "title": "Nächster Bodenplan Einfügen"
+      }, {
+        "number": 2,
+        "title": "Stockwerk Hochziehen"
+      }, {
+        "number": 3,
+        "title": "Wiederholen Bis Unter Dach"
+      }]
+    },
+    {
+      "number": 7,
+      "title": "Dach Erstellen",
+      "sublist": [{
+        "number": 1,
+        "title": "Seitenansicht Zeichnen"
+      }, {
+        "number": 2,
+        "title": "Dach Über Gebäude Ziehen"
+      }, {
+        "number": 3,
+        "title": "Wiederholen Bis Dach Fertig"
+      }]
+    },
+    {
+      "number": 8,
+      "title": "Restliche Aufsichten Einfügen"
+    },
+    {
+      "number": 9,
+      "title": "Fenster und Lukarnen Einzeichnen"
+    },
+    {
+      "number": 10,
+      "title": "Oberflächen Materialisieren"
+    },
+    {
+      "number": 11,
+      "title": "Skalieren"
+    }
+  ]
+}
