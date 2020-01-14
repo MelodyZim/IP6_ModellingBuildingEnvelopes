@@ -11,10 +11,10 @@ module Envelop
       Sketchup.active_model.start_operation(name, true)
       puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\""
       if yield
-        puts "Envelop::OperationUtils.operation_block commit_operation"
+        puts "Envelop::OperationUtils.operation_block commit_operation \"#{name}\""
         Sketchup.active_model.commit_operation
       else
-        puts "Envelop::OperationUtils.operation_block abort_operation"
+        puts "Envelop::OperationUtils.operation_block abort_operation \"#{name}\""
         Sketchup.active_model.abort_operation
       end
     end
@@ -27,13 +27,13 @@ module Envelop
       
       lambdas.each do | lambda |
         if not lambda.call()
-          puts "Envelop::OperationUtils.operation_chain abort_operation"
+          puts "Envelop::OperationUtils.operation_chain abort_operation \"#{name}\""
           Sketchup.active_model.abort_operation
           return
         end
       end
       
-      puts "Envelop::OperationUtils.operation_chain commit_operation"
+      puts "Envelop::OperationUtils.operation_chain commit_operation \"#{name}\""
       Sketchup.active_model.commit_operation
     end
 
