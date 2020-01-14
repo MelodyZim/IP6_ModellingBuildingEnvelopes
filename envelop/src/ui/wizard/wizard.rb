@@ -20,7 +20,8 @@ module Envelop
       id: 'Envelop::Wizard:Wizard',
       height: HTML_HEIGHT, width: HTML_WIDTH,
       pos_x: 0, pos_y: Envelop::WindowUtils.sketchup_menu_and_toolbar_height,
-      can_close: true
+      can_close: true,
+      resizeable: true
     }
 
     def self.attach_callbacks(dialog)
