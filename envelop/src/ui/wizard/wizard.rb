@@ -1,3 +1,6 @@
+
+require 'json'
+
 module Envelop
   module Wizard
 		# public
@@ -22,7 +25,7 @@ module Envelop
 
     def self.attach_callbacks(dialog)
       dialog.add_action_callback("call_set_content") { |action_context|
-        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "set_content('#{load_content}')")
+        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "set_content('#{load_content().to_json}')")
         nil
       }
       dialog.add_action_callback("close") { |action_context|

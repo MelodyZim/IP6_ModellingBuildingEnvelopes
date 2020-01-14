@@ -5,3 +5,53 @@ body {
   overflow-y: scroll;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.step {
+  display: flex;
+  border: black 1px solid;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  background-color: lightblue;
+}
+
+.number_container {
+  width: 2ch;
+  flex-flow: row;
+  flex-shrink: 0;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  padding-right: 5px;
+  flex-direction: row-reverse;
+  border-right: black 1px solid;
+  margin-left: 5px;
+}
+
+.number {
+  text-align: right;
+  font-weight: bold;
+}
+
+.title {
+  flex-flow: row;
+  flex-grow: 1;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.questionmark_container {
+  flex-shrink: 0;
+  margin-left: 5px;
+  flex-flow: row;
+  border-left: black 1px solid;
+  padding-left: 5px;
+  margin-left: 5PX;
+  display: flex;
+  align-items:  center;
+}
+
+.questionmark {
+  padding-right: 5px;
+}
