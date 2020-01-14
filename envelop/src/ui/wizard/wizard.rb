@@ -42,6 +42,7 @@ module Envelop
         nil
       }
       dialog.add_action_callback("show_detail") { |action_context, number|
+        Envelop::DialogUtils.close_dialog(DETAIL_DIALOG_OPTIONS[:id])
         Envelop::DialogUtils.show_dialog(DETAIL_DIALOG_OPTIONS) { |dialog| attach_detail_callbacks(number, dialog) }
         nil
       }
