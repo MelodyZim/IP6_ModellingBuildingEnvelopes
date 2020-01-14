@@ -63,5 +63,94 @@
       "number": 11,
       "title": "Skalieren"
     }
+  ],
+  "details": [{
+      "forNumber": 1,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 2,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 3,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 4,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 5,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 6,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 7,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 8,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 9,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 10,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    },
+    {
+      "forNumber": 11,
+      "title": "Lorem ipsum title",
+      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
+        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      ],
+      "video": "mov_bbb.mp4"
+    }
   ]
 }

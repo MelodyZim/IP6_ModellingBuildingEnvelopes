@@ -16,6 +16,12 @@ function add_step(step) {
   step_div.find('.number').html(step.number);
   step_div.find('.title').html(step.title);
 
+  step_div.find('.questionmark_container').on('click', function(local_number) {
+    return function() {
+      sketchup.show_detail(local_number);
+    }
+  }(step.number));
+
   if (step.hasOwnProperty("sublist")) {
     step_div.addClass("setp_with_substeps");
 
