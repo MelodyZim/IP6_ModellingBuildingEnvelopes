@@ -102,6 +102,79 @@ module Envelop
         
         set_status_text
       end
+      
+      def onLButtonDoubleClick(flags, x, y, view)
+        puts 'Envelop::PushPullTool.onLButtonDoubleClick called'
+      
+        if @mouse_ip.valid?
+          face = @mouse_ip.face
+          unless face.nil?
+            # extrude the face to create a flat plateau in the x/y plane
+
+            max_z = face.vertices[0].position.z
+            min_z = max_z
+            
+            face.vertices.each do |v| 
+              if v.position.z > max_z
+                max_z = v.position.z
+              elsif v.position.z < min_z
+                min_z = v.position.z
+              end
+            end
+            
+            if max_z == min_z
+              # face is already level, nothing to do
+              return
+            end
+            
+            Envelop::OperationUtils.start_operation("Lukarne")
+            
+            # create a group that will contain the new geometry
+            group = Sketchup.active_model.active_entities.add_group()
+            
+            # add the starting face to the group
+            face_mesh = face.mesh()
+            group.entities.add_faces_from_mesh(face_mesh)
+            
+            # add the top face to the group by modifying the mesh of the starting face
+            (1..face_mesh.count_points()).each do |i|
+              p = face_mesh.point_at(i)
+              face_mesh.set_point(i, Geom::Point3d.new(p.x, p.y, max_z))
+            end
+            group.entities.add_faces_from_mesh(face_mesh)
+            
+            # add the vertical walls to the group
+            face.loops.each do | loop |
+              loop.edges.each do | edge |
+                e = edge.end.position
+                s = edge.start.position
+                e_proj = Geom::Point3d.new(e.x, e.y, max_z)
+                s_proj = Geom::Point3d.new(s.x, s.y, max_z)
+                if e.z != max_z and s.z != max_z
+                  group.entities.add_face(e, s, s_proj, e_proj)
+                elsif e.z == max_z and s.z != max_z
+                  group.entities.add_face(e, s, s_proj)
+                elsif e.z != max_z and s.z == max_z
+                  group.entities.add_face(e, s, e_proj)
+                end
+              end
+            end
+            
+            # add the group to the house
+            success = Envelop::Housekeeper.add_to_house(group)
+            
+            if success
+              Envelop::Materialisation.apply_default_material
+              Envelop::OperationUtils.commit_operation()
+            else
+              Envelop::OperationUtils.abort_operation()
+            end
+            
+          end
+        end
+        
+        reset_tool
+      end
 
       def set_status_text
         if @face.nil?
