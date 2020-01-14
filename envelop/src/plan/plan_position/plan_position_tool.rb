@@ -84,7 +84,6 @@ module Envelop
         if @phase == PHASES[:BEFORE_FIRST_POINT]
           if @mouse_ip.valid?
             @first_point.copy!(@mouse_ip)
-            Envelop::PlanManager.unhide_all_plans
             puts "first_point to move: #{@first_point.position}"
             @phase = PHASES[:BEFORE_MOVE]
           else
@@ -148,7 +147,7 @@ module Envelop
         @phase = PHASES[:FINISHED]
 
         Envelop::PlanManager.unhide_all_plans
-        
+
         # register new image at the PlanManager
         Envelop::PlanManager.add_plan(@image_obj)
 
