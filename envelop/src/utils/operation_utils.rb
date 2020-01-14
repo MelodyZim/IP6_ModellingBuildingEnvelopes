@@ -8,7 +8,7 @@ module Envelop
     def self.start_operation(name)
       if not @is_operation_active
         @is_operation_active = true
-        Sketchup.active_model.start_operation(name, true, true)
+        Sketchup.active_model.start_operation(name, true)
         return true
       else
         warn 'Envelop::OperationUtils.start_operation: start_operation called but there is already an operation active'
