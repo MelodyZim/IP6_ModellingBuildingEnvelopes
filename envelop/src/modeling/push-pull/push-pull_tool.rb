@@ -84,7 +84,7 @@ module Envelop
           if @face.nil?
             @face = @mouse_ip.face
             unless @face.nil?
-              @transform = Envelop::PushPullTool.get_global_face_transform(@face)
+              @transform = Envelop::GeometryUtils.search_entity_transform_recursive(@face) or Geom::Transformation.new
               
               view.lock_inference(
                 Sketchup::InputPoint.new(@face.vertices[0]), 
@@ -111,7 +111,7 @@ module Envelop
           unless face.nil?
             # extrude the face to create a flat plateau in the x/y plane
             
-            transform = Envelop::PushPullTool.get_global_face_transform(face)
+            transform = Envelop::GeometryUtils.search_entity_transform_recursive(face) or Geom::Transformation.new
 
             max_z = (transform * face.vertices[0].position).z
             min_z = max_z
@@ -266,35 +266,6 @@ module Envelop
 
         set_status_text
       end
-    end
-    
-    # @param face [Sketchup::Face]
-    # @return [Geom::Transformation]
-    def self.get_global_face_transform(face)
-      transform = search_entity_recursive(Sketchup.active_model.entities, face)
-      if transform.nil?
-        warn "Envelop::PushPullTool could not find face #{face}"
-      end
-      return transform
-    end
-    
-    # @param entities [Sketchup::Entities]
-    # @param target [Sketchup::Entity]
-    # @param transform [Geom::Transformation]
-    def self.search_entity_recursive(entities, target, transform=nil)
-      if transform.nil? then transform = Geom::Transformation.new end
-    
-      entities.each do | entity |
-        if entity == target
-          return transform
-        end
-        if entity.is_a? Sketchup::Group or entity.is_a? Sketchup::ComponentInstance
-          result = search_entity_recursive(entity.definition.entities, target, transform * entity.transformation)
-          if not result.nil? then return result end
-        end
-      end
-      
-      return nil
     end
 
     # Activate the custom Push-Pull Tool
