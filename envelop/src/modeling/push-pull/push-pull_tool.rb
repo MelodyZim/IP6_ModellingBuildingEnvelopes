@@ -196,45 +196,39 @@ module Envelop
       # @param add [Boolean] true adds the resulting volume to the house while false subtracts it
       def push_pull_face(face, direction_vector, add)
         # start undo operation
-        Envelop::OperationUtils.start_operation("Push/Pull #{add ? 'Add' : 'Subtract'}")
-        
-        points = face.vertices.map {|v| @transform * v.position}
-        sign = direction_vector.samedirection?(face.normal) ? 1 : -1
-        
-        model = Sketchup.active_model
-        group = model.active_entities.add_group()
-        face_copy = group.entities.add_face(points)
-        
-        face_copy.pushpull(sign * direction_vector.length, false)
-                
-        # Add newly created group to house
-        if add
-          successful = Envelop::Housekeeper.add_to_house(group)
-        else
-          successful = Envelop::Housekeeper.remove_from_house(group)
-        end
-        
-        # abort if not successful
-        if not successful
-          Envelop::OperationUtils.abort_operation
-          return
-        end
-        
-        Envelop::Materialisation.apply_default_material
-        
-        # delete original face
-        if not face.deleted?
-          edges = face.edges
-          face.erase!
-          edges.each do |e|
-            if e.faces.length == 0
-              e.erase!
+        Envelop::OperationUtils.operation_chain "Push/Pull #{add ? 'Add' : 'Subtract'}", ->do
+          points = face.vertices.map {|v| @transform * v.position}
+          sign = direction_vector.samedirection?(face.normal) ? 1 : -1
+          
+          model = Sketchup.active_model
+          group = model.active_entities.add_group()
+          face_copy = group.entities.add_face(points)
+          
+          face_copy.pushpull(sign * direction_vector.length, false)
+                  
+          # Add newly created group to house
+          if add
+            Envelop::Housekeeper.add_to_house(group)
+          else
+            Envelop::Housekeeper.remove_from_house(group)
+          end
+        end, ->do
+          Envelop::Materialisation.apply_default_material
+          
+          # delete original face
+          if not face.deleted?
+            edges = face.edges
+            face.erase!
+            edges.each do |e|
+              if e.faces.length == 0
+                e.erase!
+              end
             end
           end
+          
+          # return true to commit operation
+          true
         end
-        
-        # finally commit operation
-        Envelop::OperationUtils.commit_operation()
       end
       
       # Draw the given points as a continuous line
