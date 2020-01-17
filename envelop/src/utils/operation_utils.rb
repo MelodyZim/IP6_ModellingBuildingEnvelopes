@@ -5,8 +5,14 @@ module Envelop
 
     @is_operation_active = false
     
+    #
     # start an operation and execute the implicit block, if it returns true 
     # the operation is committed otherwise it is aborted
+    #
+    # @param name [String] the name of the operation
+    #
+    # @yieldreturn [Boolean] whether the operation was successful and should get commited
+    #
     def self.operation_block(name)
       Sketchup.active_model.start_operation(name, true)
       puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\""
@@ -19,8 +25,19 @@ module Envelop
       end
     end
     
+    #
     # start an operation and then execute a list of lambdas.
     # if a lambda returns false the operation is aborted and the following lambdas are not executed
+    # 
+    # @example
+    #   Envelop::OperationUtils.operation_chain "Operation", -> do
+    #     puts "First part"
+    #     return true
+    #   end, -> do
+    #     puts "Second part"
+    #     return true
+    #   end
+    #
     def self.operation_chain(name, *lambdas)
       Sketchup.active_model.start_operation(name, true)
       puts "Envelop::OperationUtils.operation_chain start_operation \"#{name}\""

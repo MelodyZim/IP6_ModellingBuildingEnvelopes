@@ -112,71 +112,43 @@ module Envelop
             # extrude the face to create a flat plateau in the x/y plane
             
             transform = Envelop::GeometryUtils.search_entity_transform_recursive(face) or Geom::Transformation.new
+            max_z = face.vertices.map {|v| (transform * v.position).z}.max
+            
+            Envelop::OperationUtils.operation_chain "Lukarne", ->do
+              # only continue if face is not level
+              not face.normal.parallel?(Geom::Vector3d.new(0, 0, 1))
+            end, ->do
+              # create a group that will contain the new geometry
+              group = Sketchup.active_model.active_entities.add_group()
+              
+              # add the starting face to the group
+              start_face = Envelop::GeometryUtils.copy_face(face, group.entities, transform)
+              start_face.reverse! if start_face.normal.samedirection?(face.normal)
 
-            max_z = (transform * face.vertices[0].position).z
-            min_z = max_z
-            
-            face.vertices.each do |v| 
-              p = transform * v.position
-              if p.z > max_z
-                max_z = p.z
-              elsif p.z < min_z
-                min_z = p.z
+              # add the top face to the group
+              Envelop::GeometryUtils.copy_face(face, group.entities, transform) {|p| Geom::Point3d.new(p.x, p.y, max_z)}
+              
+              # add the vertical walls to the group
+              start_face.edges.each do |edge|
+                e = edge.end.position
+                s = edge.start.position
+                e_proj = Geom::Point3d.new(e.x, e.y, max_z)
+                s_proj = Geom::Point3d.new(s.x, s.y, max_z)
+                if e.z != max_z and s.z != max_z
+                  group.entities.add_face(e, s, s_proj, e_proj)
+                elsif e.z == max_z and s.z != max_z
+                  group.entities.add_face(e, s, s_proj)
+                elsif e.z != max_z and s.z == max_z
+                  group.entities.add_face(e, s, e_proj)
+                end
               end
-            end
-            
-            if max_z == min_z
-              # face is already level, nothing to do
-              return
-            end
-            
-            Envelop::OperationUtils.start_operation("Lukarne")
-            
-            # create a group that will contain the new geometry
-            group = Sketchup.active_model.active_entities.add_group()
-            
-            # move the mesh points to global space
-            face_mesh = face.mesh()
-            (1..face_mesh.count_points()).each do |i|
-              p = face_mesh.point_at(i)
-              face_mesh.set_point(i, transform * p)
-            end
-            
-            # add the starting face to the group
-            group.entities.add_faces_from_mesh(face_mesh)
-            
-            # add the top face to the group by modifying the mesh of the starting face
-            (1..face_mesh.count_points()).each do |i|
-              p = face_mesh.point_at(i)
-              face_mesh.set_point(i, Geom::Point3d.new(p.x, p.y, max_z))
-            end
-            group.entities.add_faces_from_mesh(face_mesh)
-            
-            # add the vertical walls to the group
-            face.edges.each do | edge |
-              e = transform * edge.end.position
-              s = transform * edge.start.position
-              e_proj = Geom::Point3d.new(e.x, e.y, max_z)
-              s_proj = Geom::Point3d.new(s.x, s.y, max_z)
-              if e.z != max_z and s.z != max_z
-                group.entities.add_face(e, s, s_proj, e_proj).reverse!
-              elsif e.z == max_z and s.z != max_z
-                group.entities.add_face(e, s, s_proj).reverse!
-              elsif e.z != max_z and s.z == max_z
-                group.entities.add_face(e, s, e_proj).reverse!
-              end
-            end
-            
-            # add the group to the house
-            success = Envelop::Housekeeper.add_to_house(group)
-            
-            if success
+
+              # add the group to the house
+              Envelop::Housekeeper.add_to_house(group)
+            end, ->do
               Envelop::Materialisation.apply_default_material
-              Envelop::OperationUtils.commit_operation()
-            else
-              Envelop::OperationUtils.abort_operation()
+              true
             end
-            
           end
         end
         
