@@ -36,6 +36,10 @@ module Envelop
         Sketchup.active_model.select_tool(nil)
       end
 
+      def enableVCB?
+        !@face.nil?
+      end
+
       def draw(view)
         unless @face.nil?
           color = @pushpull_vector.valid? && @pushpull_vector.samedirection?(@direction) ? 'Cyan' : 'Magenta'
@@ -91,6 +95,21 @@ module Envelop
         end
 
         view.invalidate
+        set_status_text
+      end
+
+      def onUserText(text, _view)
+        # parse the input text
+        distance = text.to_l
+
+        # set the @pushpull_vector according to distance
+        @pushpull_vector = @direction
+        @pushpull_vector.length = distance.to_f
+
+        # finish operation
+        finish_pushpull
+      rescue ArgumentError
+        Sketchup.status_text = 'Invalid length'
       end
 
       def onLButtonDown(_flags, x, y, view)
@@ -102,31 +121,35 @@ module Envelop
             @direction = Envelop::GeometryUtils.normal_transformation(@transform) * @face.normal
           end
         else
-          Envelop::OperationUtils.operation_chain "Push/Pull #{@add ? 'Add' : 'Subtract'}", lambda {
-            @pushpull_vector.valid?
-          }, lambda  {
-            group = Envelop::GeometryUtils.pushpull_face(@face, transform: @transform) { |p| p + @pushpull_vector }
-
-            # Add newly created group to house
-            if @add
-              Envelop::Housekeeper.add_to_house(group)
-            else
-              Envelop::Housekeeper.remove_from_house(group)
-            end
-          }, lambda  {
-            Envelop::Materialisation.apply_default_material
-
-            # delete original face
-            Envelop::GeometryUtils.erase_face(@face) unless @face.deleted?
-
-            # return true to commit operation
-            true
-          }
-
-          reset_tool
+          finish_pushpull
         end
 
         set_status_text
+      end
+
+      def finish_pushpull
+        Envelop::OperationUtils.operation_chain "Push/Pull #{@add ? 'Add' : 'Subtract'}", lambda {
+          @pushpull_vector.valid?
+        }, lambda  {
+          group = Envelop::GeometryUtils.pushpull_face(@face, transform: @transform) { |p| p + @pushpull_vector }
+
+          # Add newly created group to house
+          if @add
+            Envelop::Housekeeper.add_to_house(group)
+          else
+            Envelop::Housekeeper.remove_from_house(group)
+          end
+        }, lambda  {
+          Envelop::Materialisation.apply_default_material
+
+          # delete original face
+          Envelop::GeometryUtils.erase_face(@face) unless @face.deleted?
+
+          # return true to commit operation
+          true
+        }
+
+        reset_tool
       end
 
       def onLButtonDoubleClick(_flags, x, y, view)
@@ -153,6 +176,7 @@ module Envelop
             Envelop::Housekeeper.add_to_house(group)
           }, lambda  {
             Envelop::Materialisation.apply_default_material
+            Envelop::GeometryUtils.erase_face(@face) unless @face.deleted?
             true
           }
         end
@@ -161,11 +185,25 @@ module Envelop
       end
 
       def set_status_text
+        # Value Control Box label
+        Sketchup.vcb_label = 'Distance'
+
         if @face.nil?
           Sketchup.status_text = 'Select a Face to push or pull. Double click a sloped Face to create a dormer'
         else
           Sketchup.status_text = 'Click to accept preview'
+          Sketchup.vcb_value = get_distance
         end
+      end
+
+      def get_distance
+        if @pushpull_vector.valid?
+          sign = @pushpull_vector.samedirection?(@direction) ? 1 : -1
+          distance = @pushpull_vector.length * sign
+        else
+          distance = 0
+        end
+        distance.to_l.to_s
       end
 
       def reset_tool
