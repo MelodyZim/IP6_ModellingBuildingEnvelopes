@@ -30,13 +30,13 @@ module Envelop
     # if a lambda returns false the operation is aborted and the following lambdas are not executed
     # 
     # @example
-    #   Envelop::OperationUtils.operation_chain "Operation", -> do
+    #   Envelop::OperationUtils.operation_chain "Operation", lambda  {
     #     puts "First part"
     #     return true
-    #   end, -> do
+    #   }, lambda  {
     #     puts "Second part"
     #     return true
-    #   end
+    #   }
     #
     def self.operation_chain(name, *lambdas)
       Sketchup.active_model.start_operation(name, true)

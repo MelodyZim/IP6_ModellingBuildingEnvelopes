@@ -129,8 +129,7 @@ module Envelop
 
     # determine the cardinal direction of the normal, returns a string for example "N" for North
     def self.get_direction(normal)
-      z_axis = Geom::Vector3d.new(0,0,1)
-      pitch_angle = z_axis.angle_between(normal).radians
+      pitch_angle = Z_AXIS.angle_between(normal).radians
       if pitch_angle < 45
         return "R" #Roof
       elsif pitch_angle < 135

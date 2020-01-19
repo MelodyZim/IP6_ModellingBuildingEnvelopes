@@ -51,9 +51,9 @@ module Envelop
         end
       
         if rectangle
-          draw_lines(view, "Cyan", *p)
+          Envelop::GeometryUtils.draw_lines(view, "Cyan", *p)
         elsif p.length >= 2
-          draw_lines(view, nil, *p)
+          Envelop::GeometryUtils.draw_lines(view, nil, *p)
         end
 
         @mouse_ip.draw(view) if @mouse_ip.display?
@@ -168,26 +168,6 @@ module Envelop
         end
       end
       
-      
-      # Draw the given points as a continuous line
-      # if color is nil the default Sketchup axis colors are used
-      #
-      # @param view [Sketchup::View]
-      # @param color [Sketchup::Color, String, nil]
-      # @param points [Array<Sketchup::Point3d>]
-      def draw_lines(view, color, *points)
-        if color.nil?
-          for i in 1..points.length-1 do
-            view.set_color_from_line(points[i - 1], points[i])
-            view.draw_line(points[i - 1], points[i])
-          end
-        else
-          view.drawing_color= color
-          view.draw_polyline points
-        end
-      end
-      
-      
       # Create Sketchup::Edges as children of the specified Sketchup::Entities that form a line
       #
       # @param entities [Sketchup::Entities] the entities that will contain the added edges
@@ -254,17 +234,13 @@ module Envelop
           return Array.new
         end
         
-        x_axis = Geom::Vector3d.new(1,0,0)
-        y_axis = Geom::Vector3d.new(0,1,0)
-        z_axis = Geom::Vector3d.new(0,0,1)
-        
         # try to get a common face from the input points
         face = get_common_face(ip1, ip2)
         
-        if face.nil? or z_axis.cross(face.normal).length == 0
+        if face.nil? or Z_AXIS.cross(face.normal).length == 0
         
           # check if ip1 and ip2 form a line parallel to a basic axis
-          if line.parallel?(x_axis) or line.parallel?(y_axis) or line.parallel?(z_axis)
+          if line.parallel?(X_AXIS) or line.parallel?(Y_AXIS) or line.parallel?(Z_AXIS)
             return [ip1.position, ip2.position]
           else
             # form a rectangle on the plane perpendicular to the axis with the smallest absolute difference
@@ -299,7 +275,7 @@ module Envelop
           end
         else
           # axes on the face (perpendicular to the face normal)
-          right_axis = z_axis.cross(face.normal)
+          right_axis = Z_AXIS.cross(face.normal)
           up_axis = right_axis.cross(face.normal)
           
           # check if the line is parallel to a face axis
