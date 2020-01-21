@@ -164,23 +164,9 @@ module Envelop
         end
       end
 
-      PickResult = Struct.new(:entity, :transform, :parent) do
-        def hash
-          entity.hash
-        end
-
-        def eql?(other)
-          entity.eql? other.entity
-        end
-      end
-
       # @return [Set<PickResult>] a set with all faces, their transform and parent at x, y position
       def pick_all_faces(view, x, y)
-        ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
-        Set.new (0..ph.count - 1)
-          .map { |i| PickResult.new(ph.leaf_at(i), ph.transformation_at(i), ph.path_at(i)[-2]) }
-          .select { |p| p.entity.is_a? Sketchup::Face }
-          .select { |p| p.parent.nil? || !p.parent.is_a?(Sketchup::Image) }
+        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
       end
 
       #

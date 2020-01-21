@@ -262,8 +262,7 @@ module Envelop
     end
 
     #
-    # Retrieve an entity of the given type using a Sketchup::PickHelper
-    # Entities closer to the root of the hierarchy are prefered
+    # Retrieve all entities of the given type using a Sketchup::PickHelper
     # The entities inside a Sketchup::Image are omitted
     #
     # @param view [Sketchup::View]
@@ -271,31 +270,26 @@ module Envelop
     # @param y [Integer]
     # @param type [Class]
     #
-    # @return [Array(Sketchup::Entity, Sketchup::Transformation), nil] The found entity and its transformation or nil if nothing was found
+    # @return [Array<PickResult>] The found pick results
     #
-    def self.pick_entity(view, x, y, type)
-      # pickhelper guide: http://www.thomthom.net/thoughts/2013/01/pickhelper-a-visual-guide/
+    # @see http://www.thomthom.net/thoughts/2013/01/pickhelper-a-visual-guide/ PickHelper guide
+    #
+    def self.pick_all_entity(view, x, y, type)
+      ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
+      (0..ph.count - 1)
+        .map { |i| PickResult.new(ph.leaf_at(i), ph.transformation_at(i), ph.path_at(i)[-2], ph.depth_at(i)) }
+        .select { |p| p.entity.is_a? type }
+        .select { |p| p.parent.nil? || !p.parent.is_a?(Sketchup::Image) }
+    end
 
-      entity = nil
-      transform = nil
-      depth = nil
-
-      ph = view.pick_helper(x, y)
-      ph.count.times do |i|
-        leaf = ph.leaf_at(i)
-        next unless leaf.is_a? type
-
-        # ignore Sketchup::Image content
-        path = ph.path_at(i)
-        next if (path.length >= 2) && path[-2].is_a?(Sketchup::Image)
-
-        if depth.nil? || ph.depth_at(i) < depth
-          entity = leaf
-          transform = ph.transformation_at(i)
-        end
+    PickResult = Struct.new(:entity, :transform, :parent, :depth) do
+      def hash
+        entity.hash
       end
 
-      entity.nil? ? nil : [entity, transform]
+      def eql?(other)
+        entity.eql? other.entity
+      end
     end
 
     #
