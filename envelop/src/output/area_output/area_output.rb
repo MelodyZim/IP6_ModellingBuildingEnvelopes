@@ -28,7 +28,8 @@ module Envelop
       height: 0, width: 650,
       pos_x: 0, pos_y: 0,
       center: true,
-      can_close: true
+      can_close: true,
+      resizeable_height: true, resizeable_width: true
     }
 
     def self.attach_callbacks(dialog)
