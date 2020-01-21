@@ -172,11 +172,24 @@ module Envelop
       cmd = UI::Command.new('Open Wizard') do
         Envelop::Wizard.open_dialog
       end
-      cmd.small_icon = 'todo.svg'
+      cmd.small_icon = 'todo.svg' # TODO: make a image
       cmd.large_icon = 'todo.svg'
       cmd.tooltip = 'Open Wizard'
       cmd.status_bar_text = 'Open Wizard'
       cmd.menu_text = 'Open Wizard'
+
+      cmd
+    end
+
+    def self.plan_manager_tool_command
+      cmd = UI::Command.new('Plan Manager Tool') do
+        Envelop::PlanManagerTool.activate_plan_manager_tool
+      end
+      cmd.small_icon = 'todo.svg' # TODO: make a image
+      cmd.large_icon = 'todo.svg'
+      cmd.tooltip = 'Plan Manager Tool'
+      cmd.status_bar_text = 'Move and Hide Plans'
+      cmd.menu_text = 'Plan Manager Tool'
 
       cmd
     end
@@ -197,6 +210,7 @@ module Envelop
       @toolbar = @toolbar.add_item area_command
 
       @toolbar = @toolbar.add_separator
+      @toolbar = @toolbar.add_item plan_manager_tool_command
       @toolbar = @toolbar.add_item hide_plans_command
       @toolbar = @toolbar.add_item unhide_plans_command
 
