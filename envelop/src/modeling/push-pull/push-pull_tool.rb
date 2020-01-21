@@ -33,7 +33,7 @@ module Envelop
       end
 
       def onCancel(_reason, _view)
-        Sketchup.active_model.select_tool(nil)
+        reset_tool
       end
 
       def enableVCB?
