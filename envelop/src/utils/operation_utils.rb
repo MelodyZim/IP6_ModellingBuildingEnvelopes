@@ -13,29 +13,35 @@ module Envelop
     #
     # @yieldreturn [Boolean] whether the operation was successful and should get commited
     #
+    # @return [Boolean] true if the operation was commited, false otherwise
+    #
     def self.operation_block(name)
       Sketchup.active_model.start_operation(name, true)
       puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\""
       if yield
         puts "Envelop::OperationUtils.operation_block commit_operation \"#{name}\""
         Sketchup.active_model.commit_operation
+        true
       else
         puts "Envelop::OperationUtils.operation_block abort_operation \"#{name}\""
         Sketchup.active_model.abort_operation
+        false
       end
     end
     
     #
     # start an operation and then execute a list of lambdas.
     # if a lambda returns false the operation is aborted and the following lambdas are not executed
+    #
+    # @return [Boolean] true if the operation was commited, false otherwise
     # 
     # @example
     #   Envelop::OperationUtils.operation_chain "Operation", lambda  {
     #     puts "First part"
-    #     return true
+    #     true
     #   }, lambda  {
     #     puts "Second part"
-    #     return true
+    #     true
     #   }
     #
     def self.operation_chain(name, *lambdas)
@@ -43,15 +49,16 @@ module Envelop
       puts "Envelop::OperationUtils.operation_chain start_operation \"#{name}\""
       
       lambdas.each do | lambda |
-        if not lambda.call()
-          puts "Envelop::OperationUtils.operation_chain abort_operation \"#{name}\""
-          Sketchup.active_model.abort_operation
-          return
-        end
+        next if lambda.call
+
+        puts "Envelop::OperationUtils.operation_chain abort_operation \"#{name}\""
+        Sketchup.active_model.abort_operation
+        return false
       end
       
       puts "Envelop::OperationUtils.operation_chain commit_operation \"#{name}\""
       Sketchup.active_model.commit_operation
+      true
     end
 
     def self.start_operation(name)
