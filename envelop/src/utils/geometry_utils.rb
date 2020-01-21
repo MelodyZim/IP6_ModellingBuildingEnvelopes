@@ -292,6 +292,20 @@ module Envelop
       end
     end
 
+    def self.pick_image(view, x, y)
+      ph = view.pick_helper(x, y)
+      ph.count.times do |i|
+        #leaf = ph.leaf_at(i)
+        root = ph.element_at(i)
+        if root.is_a? Sketchup::Image
+          return root
+        end
+
+      end
+
+      nil
+    end
+
     #
     # Draw the given points as a continuous line
     # if color is nil the default Sketchup axis colors are used

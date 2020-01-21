@@ -20,13 +20,15 @@ module Envelop
 
     def self.hide_all_plans
       get_plans.each do |plan|
-        plan.hidden = true
+        hide_plan(plan)
       end
 
       Envelop::ObserverUtils.dettach_view_observer(PlansVisibilityManager)
     end
 
     def self.unhide_all_plans
+      @hidden_plans = []
+
       update_plans_visibility
 
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
@@ -34,8 +36,15 @@ module Envelop
 
     def self.update_plans_visibility(view = Sketchup.active_model.active_view)
       Envelop::PlanManager.get_plans.each do |plan|
-        plan.hidden = view.camera.direction.dot(plan.normal) > 0
+        if not   @hidden_plans.include?(plan)
+          plan.hidden = view.camera.direction.dot(plan.normal) > 0
+        end
       end
+    end
+
+    def self.hide_plan(plan)
+        plan.hidden = true
+        @hidden_plans.push(plan)
     end
 
     private
@@ -61,6 +70,7 @@ module Envelop
 
     def self.reload
       @plans = []
+      @hidden_plans = []
 
       Sketchup.active_model.entities.each do |entity|
         isPlan = entity.get_attribute('Envelop::PlanManager', 'isPlan')

@@ -32,8 +32,12 @@ class ATool
   end
 
   def onKeyDown(key, repeat, flags, view)
-    if key == 13
-      @counter_target = -1
+    puts ("pressed key #{key}")
+    if key == 63233
+      @cursor_id -= 1
+    end
+    if key == 63232
+      @cursor_id -= 1
     end
   end
 
