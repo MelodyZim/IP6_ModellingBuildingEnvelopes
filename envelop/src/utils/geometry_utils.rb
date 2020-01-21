@@ -158,6 +158,8 @@ module Envelop
     #
     # @param transform [Geom::Transformation]
     #
+    # @return [Geom::Transformation]
+    #
     def self.normal_transformation(transform)
       transpose! transform.inverse
     end
@@ -167,6 +169,8 @@ module Envelop
     #
     # @param transform [Geom::Transformation] Transformation Matrix to transpose
     #
+    # @return [Geom::Transformation]
+    #
     def self.transpose!(transform)
       original = transform.to_a
       transpose = Array.new(16) { |i| original[(i % 4) * 4 + (i / 4)] }
@@ -174,8 +178,93 @@ module Envelop
     end
 
     #
+    # Create Sketchup::Edges as children of the specified Sketchup::Entities that form a line
+    #
+    # @param entities [Sketchup::Entities] the entities that will contain the added edges
+    # @param transform [Geom::Transformation] the transformation to apply to the points
+    # @param points [Array<Geom::Point3d>] Array of the points of a continuous line
+    # @param add_all_faces [Boolean] whether all adjacent faces should be added, if false
+    #   Sketchup::Edge.find_faces is only called for edges with no initial faces
+    #
+    # @return [Numeric] the number of faces created
+    #
+    def self.create_line(entities, transform, points, add_all_faces: true)
+      points = points.map { |p| transform * p }
+      edges_to_check = []
+      points[0..-2].zip(points[1..-1]).each do |line|
+        edge = entities.add_line(line[0], line[1])
+        edges_to_check << edge if edge && (edge.faces.empty? || add_all_faces)
+      end
+
+      # add faces and return the total count of faces created
+      edges_to_check.map(&:find_faces).sum
+    end
+
+    #
+    # Construct a rectangle from two points. The input points are on the
+    # diagonal of the resulting rectangle. One side of the rectangle is
+    # always perpendicular to the Z-Axis. If p1 and p2 form a line parallel
+    # to an axis then the result is nil.
+    #
+    # @param p1 [Geom::Point3d] the first Point
+    # @param p2 [Geom::Point3d] the second Point
+    # @param face_normal [Geom::Vector3d, nil] the normal of the plane in which
+    #   the rectangle lies, if nil the closest plane X/Y, X/Z or Y/Z is used
+    #
+    # @return [Array<Geom::Point3d>, nil] an array of points of length 4
+    #   that make up a rectangle or nil if no rectangle was found
+    #
+    def self.construct_rectangle(p1, p2, face_normal = nil)
+      # determine the face_normal
+      if face_normal.nil?
+        # form the rectangle on the plane perpendicular to the axis with the smallest absolute difference
+        abs_diagonal = (p2 - p1).to_a.map(&:abs)
+        face_normal = [X_AXIS, Y_AXIS, Z_AXIS][abs_diagonal.index(abs_diagonal.min)]
+      end
+
+      # project the second point on the plane defined by the first point and the normal vector
+      p2 = p2.project_to_plane([p1, face_normal])
+      diagonal = p2 - p1
+
+      # return if the points are at the same location
+      return nil unless diagonal.valid?
+
+      if Z_AXIS.cross(face_normal).valid?
+        # axes on the face (perpendicular to the face normal)
+        right_axis = Z_AXIS.cross(face_normal)
+        up_axis = right_axis.cross(face_normal)
+
+        # check if the diagonal is parallel to a face axis
+        if diagonal.parallel?(right_axis) || diagonal.parallel?(up_axis)
+          nil
+        else
+          # decompose diagonal vector into v_up and v_right
+          # right_axis.z is always zero because it is perpendicular to Z_AXIS
+          s = (diagonal.z / up_axis.z)
+          v_up = Geom::Vector3d.new(up_axis.to_a.map { |c| c * s })
+          v_right = diagonal - v_up
+
+          [p1, p1 + v_right, p2, p1 + v_up]
+        end
+      else
+        # check if p1 and p2 form a line parallel to a basic axis
+        if diagonal.parallel?(X_AXIS) || diagonal.parallel?(Y_AXIS)
+          nil
+        else
+          [
+            p1,
+            Geom::Point3d.new(p1.x, p2.y, p1.z),
+            Geom::Point3d.new(p2.x, p2.y, p1.z),
+            Geom::Point3d.new(p2.x, p1.y, p1.z)
+          ]
+        end
+      end
+    end
+
+    #
     # Retrieve an entity of the given type using a Sketchup::PickHelper
     # Entities closer to the root of the hierarchy are prefered
+    # The entities inside a Sketchup::Image are omitted
     #
     # @param view [Sketchup::View]
     # @param x [Integer]
@@ -195,6 +284,10 @@ module Envelop
       ph.count.times do |i|
         leaf = ph.leaf_at(i)
         next unless leaf.is_a? type
+
+        # ignore Sketchup::Image content
+        path = ph.path_at(i)
+        next if (path.length >= 2) && path[-2].is_a?(Sketchup::Image)
 
         if depth.nil? || ph.depth_at(i) < depth
           entity = leaf
