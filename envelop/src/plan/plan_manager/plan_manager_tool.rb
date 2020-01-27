@@ -68,7 +68,7 @@ module Envelop
         view.invalidate
       end
 
-      CLICK_DRAG_THRESHOLD_MS = 300
+      CLICK_DRAG_THRESHOLD_MS = 300 # TODO: make global
       def onLButtonUp(_flags, _x, _y, _view)
         if @phase == PHASES[:DRAGGING]
           elapsed_ms_since_lbuttondown_time = (Time.now - @lbuttondown_time) * 1000.0
@@ -100,6 +100,9 @@ module Envelop
       end
 
       def onLButtonDoubleClick(_flags, x, y, view)
+        @plan.transform!(@pushpull_vector.reverse) unless @pushpull_vector.nil?
+        reset_dragging_state
+        
         pick_res = Envelop::GeometryUtils.pick_image(view, x, y)
         if !pick_res.nil?
           Envelop::PlanManager.hide_plan(pick_res.parent)
