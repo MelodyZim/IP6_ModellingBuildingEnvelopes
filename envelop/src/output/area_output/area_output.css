@@ -24,11 +24,8 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
-  min-width: 629px
-}
-
-tr {
-  height: 21px;
+  min-width: 629px;
+  line-height: 18px;
 }
 
 td {
