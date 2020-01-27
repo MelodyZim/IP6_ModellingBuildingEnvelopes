@@ -102,9 +102,9 @@ module Envelop
       end
 
       def onLButtonDoubleClick(_flags, x, y, view)
-        image = Envelop::GeometryUtils.pick_image(view, x, y)
-        if !image.nil?
-          Envelop::PlanManager.hide_plan(image)
+        pick_res = Envelop::GeometryUtils.pick_image(view, x, y)
+        if !pick_res.nil?
+          Envelop::PlanManager.hide_plan(pick_res.parent)
         else
           puts 'Envelop::PlanMangerTool::PlanManagerTool.onLButtonDoubleClick: could not pick image from onLButtonDoubleClick.'
         end
