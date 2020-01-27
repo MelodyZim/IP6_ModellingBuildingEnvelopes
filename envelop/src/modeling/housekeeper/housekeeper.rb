@@ -138,6 +138,10 @@ module Envelop
 
       find_house
     end
-    reload
+
+    Envelop::OperationUtils.operation_block("reload #{File.basename(__FILE__)}") do
+      reload
+      true
+    end
   end
 end

@@ -87,6 +87,10 @@ module Envelop
 
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
-    reload
+
+    Envelop::OperationUtils.operation_block("reload #{File.basename(__FILE__)}") do
+      reload
+      true
+    end
   end
 end
