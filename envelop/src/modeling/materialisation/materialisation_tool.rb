@@ -34,7 +34,6 @@ module Envelop
       end
 
       def draw(view)
-        @mouse_ip.draw(view) if @mouse_ip.display?
       end
 
       # TODO: consider having a custom cursor like: CURSOR_PENCIL = UI.create_cursor(cursor_path, 0, 0)
@@ -43,18 +42,12 @@ module Envelop
         UI.set_cursor(CURSOR_BUCKET) # TODO: this totally doesn't work reliably
       end
 
-      def onMouseMove(flags, x, y, view)
-        @mouse_ip.pick(view, x, y)
-        view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
-        view.invalidate
-      end
-
       def onLButtonDown(flags, x, y, view)
         puts "Envelop::MaterialisationTool::MaterialisationTool.onLButtonDown: ..."
 
-        face = @mouse_ip.face
-        unless face.nil?
-          face.material = @material
+        faces = Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face).map { |pr| pr.entity}
+        if faces.length > 0
+          faces[0].material = @material
         end
 
     		view.invalidate
@@ -64,7 +57,6 @@ module Envelop
 
       def reset_tool
         # reset state
-        @mouse_ip = Sketchup::InputPoint.new
 
         set_status_text
       end
