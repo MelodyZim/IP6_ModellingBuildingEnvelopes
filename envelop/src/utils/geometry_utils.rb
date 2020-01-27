@@ -294,10 +294,10 @@ module Envelop
 
     def self.pick_image(view, x, y)
       ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
-      i_res =(0..ph.count - 1).find(ifnone = nil) { |i| ph.path_at(i).any? {|e| e.is_a?(Sketchup::Image)} }
+      i_res =(0..ph.count - 1).find(ifnone = nil) { |i| ph.leaf_at(i).is_a?(Sketchup::Face) &&  ph.path_at(i)[-2].is_a?(Sketchup::Image) }
 
       if not i_res.nil?
-        PickResult.new(ph.leaf_at(i_res), ph.transformation_at(i_res), ph.path_at(i_res)[-2], ph.depth_at(i_res)) 
+        PickResult.new(ph.leaf_at(i_res), ph.transformation_at(i_res), ph.path_at(i_res)[-2], ph.depth_at(i_res))
       else
         nil
       end

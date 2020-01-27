@@ -28,9 +28,7 @@ module Envelop
       end
 
       def onCancel(_reason, _view)
-        unless @pushpull_vector.nil?
-          @plan.transform!(@pushpull_vector.reverse)
-        end
+        @plan.transform!(@pushpull_vector.reverse) unless @pushpull_vector.nil?
         Sketchup.active_model.select_tool(nil) # this will invalidate view & deactivate tool
       end
 
@@ -72,7 +70,7 @@ module Envelop
 
       CLICK_DRAG_THRESHOLD_MS = 300
       def onLButtonUp(_flags, _x, _y, _view)
-        if  @phase == PHASES[:DRAGGING]
+        if @phase == PHASES[:DRAGGING]
           elapsed_ms_since_lbuttondown_time = (Time.now - @lbuttondown_time) * 1000.0
           if elapsed_ms_since_lbuttondown_time > CLICK_DRAG_THRESHOLD_MS
             reset_dragging_state
@@ -90,7 +88,7 @@ module Envelop
           if !pick_res.nil?
             @phase = PHASES[:DRAGGING]
             @plan = pick_res.parent
-            @origin = pick_res.transform * pick_res.entity.bounds.center
+            @origin =  @mouse_ip.position
             @direction = Envelop::GeometryUtils.normal_transformation(pick_res.transform) * pick_res.entity.normal
           else
             reset_dragging_state
@@ -138,15 +136,15 @@ module Envelop
           Sketchup.status_text = 'Move cursor to move plan. Click to confirm new position. "Esc" to abort.'
         end
       end
+    end
 
-      def self.activate_plan_manager_tool
-        Sketchup.active_model.select_tool(Envelop::PlanManagerTool::PlanManagerTool.new)
-      end
+    def self.activate_plan_manager_tool
+      Sketchup.active_model.select_tool(Envelop::PlanManagerTool::PlanManagerTool.new)
+    end
 
-      def self.reload
-        Sketchup.active_model.select_tool(nil)
-      end
-      reload
+    def self.reload
+      Sketchup.active_model.select_tool(nil)
+    end
+    reload
     end
   end
-end
