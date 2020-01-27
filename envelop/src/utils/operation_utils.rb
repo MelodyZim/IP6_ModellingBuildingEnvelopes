@@ -18,13 +18,13 @@ module Envelop
     #
     def self.operation_block(name, transparent: false)
       Sketchup.active_model.start_operation(name, true, false, transparent)
-      puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\""
+      puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\"" unless transparent
       if yield
-        puts "Envelop::OperationUtils.operation_block commit_operation \"#{name}\""
+        puts "Envelop::OperationUtils.operation_block commit_operation \"#{name}\"" unless transparent
         Sketchup.active_model.commit_operation
         true
       else
-        puts "Envelop::OperationUtils.operation_block abort_operation \"#{name}\""
+        puts "Envelop::OperationUtils.operation_block abort_operation \"#{name}\"" unless transparent
         Sketchup.active_model.abort_operation
         false
       end

@@ -36,15 +36,21 @@ module Envelop
 
     def self.update_plans_visibility(view = Sketchup.active_model.active_view)
       Envelop::PlanManager.get_plans.each do |plan|
-        if not   @hidden_plans.include?(plan)
+        next if @hidden_plans.include?(plan)
+
+        Envelop::OperationUtils.operation_block('Update plan visibility', transparent: true) do
           plan.hidden = view.camera.direction.dot(plan.normal) > 0
+          true
         end
       end
     end
 
     def self.hide_plan(plan)
+      Envelop::OperationUtils.operation_block('Hide plan', transparent: true) do
         plan.hidden = true
-        @hidden_plans.push(plan)
+        true
+      end
+      @hidden_plans.push(plan)
     end
 
     private
