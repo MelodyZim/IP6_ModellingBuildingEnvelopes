@@ -21,7 +21,7 @@ module Envelop
 
     # settings
     BASE_HEIGHT = 10 + 23 + 2 + 21 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
-    MIN_WIDTH = 100 + 20 + Envelop::WindowUtils.html_window_horirontal_scrollbar_width
+    MIN_WIDTH = 150 + 20 + Envelop::WindowUtils.html_window_horirontal_scrollbar_width
 
     DIALOG_OPTIONS = {
       path_to_html: File.join(__dir__, 'area_output.html'),
