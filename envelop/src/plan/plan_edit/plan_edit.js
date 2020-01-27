@@ -15,23 +15,28 @@ $(function() {
     scalable: false,
     movable: true,
     zoomable: true,
-    zoomOnWheel: false, // prevent manual zooming
-    zoomOnTouch: false, // prevent manual zooming
     toggleDragModeOnDblclick: false, // prevent manual moving
     autoCrop: false, // start without a cropbox
   });
 
+  mode_select = true;
+  $("#switchMode").on('click', function() {
+    if (mode_select) {
+      cropper.setDragMode("move");
+      $("#switchLabel").html("Select Square");
+      mode_select = false;
+    } else {
+      cropper.setDragMode("crop");
+      $("#switchLabel").html("Move Plan");
+        mode_select = true;
+    }
+  });
+
   $("#rotCCW").on('click', function() {
-    centerCropperCanvas();
-    cropper.clear(); // clear the cropbox
     cropper.rotate(-90);
-    zoomCropperCanvas();
   });
   $("#rotCW").on('click', function() {
-    centerCropperCanvas();
-    cropper.clear(); // clear the cropbox
     cropper.rotate(90);
-    zoomCropperCanvas();
   });
   $('#place_F').on('click', function() {
     place($(this));
