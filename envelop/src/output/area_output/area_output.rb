@@ -12,8 +12,7 @@ module Envelop
       else
         area = calc_area(house)
   			@area_json = area.to_json
-        DIALOG_OPTIONS[:height] = 23 + 2 * 21 + area.length * 21 + 20 - 4 # TODO make this work on windows... :/ and ensure width is same on mac and widnows
-        puts DIALOG_OPTIONS[:height]
+        DIALOG_OPTIONS[:height] = BASE_HEIGHT + area.length * 21
         Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
       end
 		end
@@ -21,6 +20,8 @@ module Envelop
 		private
 
     # settings
+    BASE_HEIGHT = 10 + 23 + 2 + 21 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
+
     DIALOG_OPTIONS = {
       path_to_html: File.join(__dir__, 'area_output.html'),
       title: 'Area Output',
@@ -29,6 +30,7 @@ module Envelop
       pos_x: 0, pos_y: 0,
       center: true,
       can_close: true,
+      min_height: BASE_HEIGHT, min_width: 150,
       resizeable_height: true, resizeable_width: true
     }
 
