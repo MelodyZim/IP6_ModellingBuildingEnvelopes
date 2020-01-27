@@ -10,13 +10,14 @@ module Envelop
     # the operation is committed otherwise it is aborted
     #
     # @param name [String] the name of the operation
+    # @param transparent [Boolean] if set to true, this operation will append to the previous operation
     #
     # @yieldreturn [Boolean] whether the operation was successful and should get commited
     #
     # @return [Boolean] true if the operation was commited, false otherwise
     #
-    def self.operation_block(name)
-      Sketchup.active_model.start_operation(name, true)
+    def self.operation_block(name, transparent: false)
+      Sketchup.active_model.start_operation(name, true, false, transparent)
       puts "Envelop::OperationUtils.operation_block start_operation \"#{name}\""
       if yield
         puts "Envelop::OperationUtils.operation_block commit_operation \"#{name}\""
