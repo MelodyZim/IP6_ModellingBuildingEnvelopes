@@ -274,7 +274,7 @@ module Envelop
     # @return [Array(Sketchup::Entity, Sketchup::Transformation), nil] The found entity and its transformation or nil if nothing was found
     #
     def self.pick_entity(view, x, y, type)
-      # pickhelper guide: http://www.thomthom.net/thoughts/2013/01/pickhelper-a-visual-guide/
+      # pickhelper guide: http://www.thomthom.net/thoughts/wp-content/uploads/2013/01/PickHelper-Rev3.2-18-03-2013.pdf
 
       entity = nil
       transform = nil
@@ -301,10 +301,9 @@ module Envelop
     def self.pick_image(view, x, y)
       ph = view.pick_helper(x, y)
       ph.count.times do |i|
-        #leaf = ph.leaf_at(i)
         root = ph.element_at(i)
         if root.is_a? Sketchup::Image
-          return root
+          return [root, ph.transformation_at(i)]
         end
 
       end
