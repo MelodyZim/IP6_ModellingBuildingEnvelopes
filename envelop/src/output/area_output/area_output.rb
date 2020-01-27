@@ -20,7 +20,7 @@ module Envelop
 		private
 
     # settings
-    BASE_HEIGHT = 10 + 23 + 2 + 21 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
+    BASE_HEIGHT = 10 + 23 + 2 + 22 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
     MIN_WIDTH = 150 + 20 + Envelop::WindowUtils.html_window_horirontal_scrollbar_width
 
     DIALOG_OPTIONS = {
