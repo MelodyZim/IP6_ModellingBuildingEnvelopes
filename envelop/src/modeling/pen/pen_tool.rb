@@ -33,9 +33,13 @@ module Envelop
         # puts 'suspending PenTool...'
       end
 
-      def onCancel(reason, _view)
+      def onCancel(_reason, _view)
         finish_operation(@points) if @points.length >= 2
         reset_tool
+      end
+
+      def enableVCB?
+        !@points.empty?
       end
 
       def draw(view)
@@ -43,9 +47,7 @@ module Envelop
         if (@points.length == 1) && !@force_polygon
           # draw rectangle preview
           if @mouse_ip.valid?
-            pick_face = @pick_faces_preview.length == 1 ? @pick_faces_preview.to_a[0] : false
-            face_normal = pick_face ? Envelop::GeometryUtils.normal_transformation(pick_face.transform) * pick_face.entity.normal : nil
-            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, face_normal)
+            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
             if p
               Envelop::GeometryUtils.draw_lines(view, 'Cyan', *p, p[0])
               rectangle_drawn = true
@@ -85,6 +87,7 @@ module Envelop
 
         view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
         view.invalidate
+        set_status_text
       end
 
       def onReturn(_view)
@@ -102,6 +105,7 @@ module Envelop
           view.lock_inference(@mouse_ip)
         elsif (key == VK_CONTROL) || (key == VK_ALT)
           @force_polygon = true
+          set_status_text
         end
 
         view.invalidate
@@ -113,9 +117,56 @@ module Envelop
           view.lock_inference
         elsif (key == VK_CONTROL) || (key == VK_ALT)
           @force_polygon = false
+          set_status_text
         end
 
         view.invalidate
+      end
+
+      def onUserText(text, _view)
+        # TODO: reduce code duplication (similarities to onLButtonDown, set_status_text)
+        if @mouse_ip.valid?
+          rectangle = false
+
+          if @points.length == 1 && !@force_polygon
+            # get rectangle points
+            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
+
+            unless p.nil?
+              rectangle = true
+
+              # expect up to two values
+              input_list = text.split(/\s*[; ]\s*/).map { |s| s.empty? ? nil : s.to_l.to_f }
+
+              # calculate new points based on input
+              v1 = p[1] - p[0]
+              v2 = p[2] - p[1]
+              v1.length = input_list[0] unless input_list[0].nil?
+              v2.length = input_list[1] unless input_list[0].nil?
+
+              p_new = [p[0], p[0] + v1, p[0] + v1 + v2, p[0] + v2, p[0]]
+
+              # finish operation
+              finish_operation(p_new)
+            end
+          end
+
+          if !@points.empty? && !rectangle
+            distance = text.to_l
+
+            vector = @mouse_ip.position - @points[-1]
+            vector.length = distance.to_f
+            @points << @points[-1] + vector
+
+            add_construction_geometry
+
+            if @points[0..-2].include? @points[-1]
+              finish_operation(@points)
+            end
+          end
+        end
+      rescue ArgumentError
+        Sketchup.status_text = 'Invalid length'
       end
 
       def onLButtonDown(_flags, _x, _y, _view)
@@ -125,14 +176,7 @@ module Envelop
           @pick_faces = @pick_faces_preview
 
           # create construction point and edges
-          Envelop::OperationUtils.operation_block 'Guide' do
-            # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
-            @construction_entities << Sketchup.active_model.entities.add_cpoint(@mouse_ip.position)
-            if @points.length > 1
-              @construction_entities << Sketchup.active_model.entities.add_cline(@points[-2], @points[-1])
-            end
-            true
-          end
+          add_construction_geometry
 
           if (@points.length == 2) && !@force_polygon
             # try to create a rectangle
@@ -155,6 +199,25 @@ module Envelop
       end
 
       def set_status_text
+        # Value Control Box label
+        Sketchup.vcb_label = 'Distance'
+        unless @points.empty?
+          rectangle = false
+          if @points.length == 1 && !@force_polygon
+            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
+            unless p.nil?
+              rectangle = true
+              v1 = p[1] - p[0]
+              v2 = p[2] - p[1]
+              Sketchup.vcb_value = "#{v1.length.to_l}; #{v2.length.to_l}"
+            end
+          end
+
+          unless rectangle
+            Sketchup.vcb_value = @mouse_ip.position.distance(@points[-1]).to_l.to_s
+          end
+        end
+
         if @points.empty?
           Sketchup.status_text = 'Select start point'
         elsif @points.length == 1
@@ -164,23 +227,26 @@ module Envelop
         end
       end
 
-      PickResult = Struct.new(:entity, :transform, :parent) do
-        def hash
-          entity.hash
+      def add_construction_geometry
+        Envelop::OperationUtils.operation_block 'Guide' do
+          # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
+          @construction_entities << Sketchup.active_model.entities.add_cpoint(@points[-1])
+          if @points.length > 1
+            @construction_entities << Sketchup.active_model.entities.add_cline(@points[-2], @points[-1])
+          end
+          true
         end
+      end
 
-        def eql?(other)
-          entity.eql? other.entity
-        end
+      # @return [Geom::Vector3d]
+      def get_face_normal_preview
+        pick_face = @pick_faces_preview.length == 1 ? @pick_faces_preview.first : false
+        pick_face ? Envelop::GeometryUtils.normal_transformation(pick_face.transform) * pick_face.entity.normal : nil
       end
 
       # @return [Set<PickResult>] a set with all faces, their transform and parent at x, y position
       def pick_all_faces(view, x, y)
-        ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
-        Set.new (0..ph.count - 1)
-          .map { |i| PickResult.new(ph.leaf_at(i), ph.transformation_at(i), ph.path_at(i)[-2]) }
-          .select { |p| p.entity.is_a? Sketchup::Face }
-          .select { |p| p.parent.nil? || !p.parent.is_a?(Sketchup::Image) }
+        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
       end
 
       #

@@ -33,7 +33,7 @@ module Envelop
       end
 
       def onCancel(_reason, _view)
-        Sketchup.active_model.select_tool(nil)
+        reset_tool
       end
 
       def enableVCB?
@@ -114,7 +114,7 @@ module Envelop
 
       def onLButtonDown(_flags, x, y, view)
         if @face.nil?
-          @face, @transform = Envelop::GeometryUtils.pick_entity(view, x, y, Sketchup::Face)
+          @face, @transform = pick_best_face(view, x, y)
 
           unless @face.nil?
             @origin = @transform * @face.bounds.center
@@ -155,7 +155,7 @@ module Envelop
       def onLButtonDoubleClick(_flags, x, y, view)
         puts 'Envelop::PushPullTool.onLButtonDoubleClick called'
 
-        face, transform = Envelop::GeometryUtils.pick_entity(view, x, y, Sketchup::Face)
+        face, transform = pick_best_face(view, x, y)
         unless face.nil?
           # extrude the face to create a flat plateau in the x/y plane
 
@@ -194,6 +194,13 @@ module Envelop
           Sketchup.status_text = 'Click to accept preview'
           Sketchup.vcb_value = get_distance
         end
+      end
+
+      def pick_best_face(view, x, y)
+        Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
+          .sort_by(&:depth)
+          .map { |p| [p.entity, p.transform] }
+          .first
       end
 
       def get_distance
