@@ -37,7 +37,7 @@ class ATool
       @cursor_id -= 1
     end
     if key == 63232
-      @cursor_id -= 1
+      @cursor_id += 1
     end
   end
 
