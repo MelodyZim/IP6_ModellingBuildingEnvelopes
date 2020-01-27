@@ -21,16 +21,17 @@ module Envelop
 
     # settings
     BASE_HEIGHT = 10 + 23 + 2 + 21 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
+    MIN_WIDTH = 100 + 20 + Envelop::WindowUtils.html_window_horirontal_scrollbar_width
 
     DIALOG_OPTIONS = {
       path_to_html: File.join(__dir__, 'area_output.html'),
       title: 'Area Output',
       id: 'Envelop::AreaOutput:AreaOutput',
-      height: 0, width: 650,
+      height: 0, width: 650 + Envelop::WindowUtils.html_window_horirontal_scrollbar_width,
       pos_x: 0, pos_y: 0,
       center: true,
       can_close: true,
-      min_height: BASE_HEIGHT, min_width: 150,
+      min_height: BASE_HEIGHT, min_width: MIN_WIDTH,
       resizeable_height: true, resizeable_width: true
     }
 
