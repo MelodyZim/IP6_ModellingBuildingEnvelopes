@@ -49,7 +49,7 @@ module Envelop
         if (@phase == PHASES[:DRAGGING]) || (@phase == PHASES[:MOVING])
           line = [@origin, @direction]
 
-          if @mouse_ip.edge.nil? && @mouse_ip.vertex.nil?
+          if @mouse_ip.edge.nil? && @mouse_ip.vertex.nil? && @mouse_ip.face.nil?
             camera_ray = view.pickray(x, y)
             target = Geom.closest_points(line, camera_ray)[0]
           else
