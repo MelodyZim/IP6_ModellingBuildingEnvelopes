@@ -173,7 +173,9 @@ module Envelop
     end
 
     def self.model_is_scaled
+      Envelop::OperationUtils.operation_block("Remember Scale", transparent:true) {
         Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
+      }
     end
 
     def self.is_model_scaled
