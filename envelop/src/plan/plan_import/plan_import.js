@@ -16,23 +16,87 @@ $(function() {
 });
 
 function load_file(f) {
-  // Validate whether PDF
-  if (['application/pdf'].indexOf(f.type) == -1) {
-    alert('Error : Not a PDF');
-    return;
+  // if pdf
+  if (f.type.includes('application/pdf')) {
+    var pdf_url = URL.createObjectURL(f);
+
+    return pdfjsLib.getDocument({
+      url: pdf_url
+    }).promise.then(load_pdf_doc).catch(function(error) {
+      alert(error.message);
+    });
+
+  } else if (f.type.includes('image/')){
+    return load_image_file(f);
+
+  } else {
+    window.alert("Plan Import can import pdf files and image files, however, you select a file of type '" + f.type + "'");
+    return Promise.resolve(true);
+  }
+}
+
+function load_image_file(image_file) {
+  console.log("load_image_file");
+
+  return new Promise((resolve, reject) => {
+     var fr = new FileReader();
+     fr.onload = () => {
+        load_image_data(fr.result, resolve);
+      };
+     fr.readAsDataURL(image_file);
+   });
+}
+
+function load_image_data(image_data, resolve) {
+  console.log("load_image_data");
+
+  var img = new Image();
+  img.onload = () => {
+      load_image_object(img, resolve);
+  };
+  img.src = image_data;
+ }
+
+function load_image_object(image_object,resolve) {
+  console.log("load_image_object");
+
+  var canvases = new_canvases();
+
+  var image_width = image_object.width;
+  var image_height = image_object.height;
+
+  {
+    var canvas_quality = canvases[1];
+
+    canvas_quality.width = image_width / 4.0;
+    canvas_quality.height = image_height / 4.0;
+
+    var ctx = canvas_quality.getContext("2d");
+    ctx.drawImage(image_object, 0, 0, image_width / 4.0, image_height / 4.0);
   }
 
-  // TODO: FS: consider fixing the previews so they have consisnten second border around prf preview
-  var pdf_url = URL.createObjectURL(f);
+  {
+    var canvas = canvases[0];
 
-  return pdfjsLib.getDocument({
-    url: pdf_url
-  }).promise.then(load_pdf_doc).catch(function(error) {
-    alert(error.message);
-  });
+    var width_bigger =  image_width > image_height;
+    if (width_bigger) {
+      scale = canvas.width / image_width;
+      canvas.height = image_height * scale;
+    } else {
+      scale = canvas.height / image_height;
+      canvas.width = image_width * scale;
+    }
+
+    ctx = canvas.getContext("2d");
+    ctx.drawImage(image_object, 0, 0, image_width * scale, image_height * scale);
+  }
+
+  resolve(true);
 }
 
 function load_pdf_doc(pdf_doc) {
+  // TODO: FS: consider fixing the previews so they have consisnten second border around prf preview
+
   var ps = [];
 
   for (i = 1; i <= pdf_doc.numPages; i++) {
@@ -116,6 +180,8 @@ function new_canvases() {
 }
 
 function call_save_imported_plans() {
+  console.log("call_save_imported_plans");
+
   imageDataURLs = $("#plan-container").children().map(function(i, el) {
     original_quality = $(el).find(".original-quality")[0].toDataURL();
     preview_quality = $(el).find(".preview-quality")[0].toDataURL();
