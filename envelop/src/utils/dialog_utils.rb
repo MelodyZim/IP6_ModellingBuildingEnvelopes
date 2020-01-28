@@ -42,28 +42,28 @@ module Envelop
     def self.exists_preferences_key_file(id)
       path = preferences_key_file_path(id)
 
-      # if OS.mac?
-      #   @existing_preferences_key_files.include?(path)
-      # else
+      if OS.mac?
+        @existing_preferences_key_files.include?(path)
+      else
         File.exist?(path)
-      # end
+      end
     end
 
     def self.create_preferences_key_file(id)
       path = preferences_key_file_path(id)
 
-      # if OS.mac?
-      #   # mac only saves these settings per session
-      #   unless @existing_preferences_key_files.include?(path)
-      #     @existing_preferences_key_files.push(path)
-      #   end
-      #
-      # else
+      if OS.mac?
+        # mac only saves these settings per session
+        unless @existing_preferences_key_files.include?(path)
+          @existing_preferences_key_files.push(path)
+        end
+
+      else
         dir = File.dirname(path)
         Dir.mkdir(dir) unless Dir.exist?(dir)
 
         File.open(path, 'w') {} unless File.exist?(path)
-      # end
+      end
     end
 
     def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:,
