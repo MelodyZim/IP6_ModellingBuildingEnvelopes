@@ -32,7 +32,8 @@ module Envelop
       center: true,
       can_close: true,
       min_height: BASE_HEIGHT, min_width: MIN_WIDTH,
-      resizeable_height: true, resizeable_width: true
+      resizeable_height: true, resizeable_width: true,
+      dont_save_prefs: true
     }
 
     def self.attach_callbacks(dialog)

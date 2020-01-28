@@ -36,31 +36,44 @@ module Envelop
 
     # Private
     def self.preferences_key_file_path(id)
-        File.join(__dir__, 'prefs', id.gsub(/[^0-9A-Z]/i, '_') + '.exists')
+      File.join(__dir__, 'prefs', id.gsub(/[^0-9A-Z]/i, '_') + '.exists')
+    end
+
+    def self.exists_preferences_key_file(id)
+      path = preferences_key_file_path(id)
+
+      # if OS.mac?
+      #   @existing_preferences_key_files.include?(path)
+      # else
+        File.exist?(path)
+      # end
     end
 
     def self.create_preferences_key_file(id)
       path = preferences_key_file_path(id)
 
-      dir = File.dirname(path)
-      if not Dir.exist?(dir)
-        Dir.mkdir(dir)
-      end
+      # if OS.mac?
+      #   # mac only saves these settings per session
+      #   unless @existing_preferences_key_files.include?(path)
+      #     @existing_preferences_key_files.push(path)
+      #   end
+      #
+      # else
+        dir = File.dirname(path)
+        Dir.mkdir(dir) unless Dir.exist?(dir)
 
-      if not File.exist?(path)
-        File.open(path, "w") {}
-      end
+        File.open(path, 'w') {} unless File.exist?(path)
+      # end
     end
 
     def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:,
-                           center: false, can_close: false, resizeable_height: false, resizeable_width: false, min_height: 0, min_width: 0)
+                           center: false, can_close: false, resizeable_height: false, resizeable_width: false, min_height: 0, min_width: 0, dont_save_prefs: false)
       options = {
-        width: width, height: height,
-        left: pos_x, top: pos_y,
         dialog_title: title,
-        preferences_key: id,
         style: UI::HtmlDialog::STYLE_UTILITY
       }
+
+      options[:preferences_key] = id unless dont_save_prefs
 
       options_not_resizeable_height = {
         min_height: height,
@@ -80,9 +93,7 @@ module Envelop
       if resizeable_height && (min_height != 0)
         options[:min_height] = min_height
       end
-      if resizeable_width && (min_width != 0)
-        options[:min_width] = min_width
-      end
+      options[:min_width] = min_width if resizeable_width && (min_width != 0)
 
       dialog = UI::HtmlDialog.new(options)
       dialog.set_file(path_to_html)
@@ -90,28 +101,32 @@ module Envelop
         can_close # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
       end
 
-      if not File.exist?(preferences_key_file_path(id)) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+      if dont_save_prefs || !exists_preferences_key_file(id) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
         dialog.set_size(width, height)
         dialog.set_position(pos_x, pos_y)
       end
 
       dialog.center if center
 
-      create_preferences_key_file(id)
+      create_preferences_key_file(id) unless dont_save_prefs
 
       dialog
     end
 
     def self.reload
-      if @dialogs
-        @dialogs.each_value do |dialog|
-          dialog&.close
-        end
-        remove_instance_variable(:@dialogs)
+      @dialogs&.each_value do |dialog|
+        dialog&.close
       end
 
       @dialogs = {}
     end
     reload
+
+    unless file_loaded?(__FILE__)
+      puts "resetting @existing_preferences_key_files"
+      @existing_preferences_key_files = [] if OS.mac?
+
+      file_loaded(__FILE__)
+    end
   end
 end
