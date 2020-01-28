@@ -35,6 +35,23 @@ module Envelop
     end
 
     # Private
+    def self.preferences_key_file_path(id)
+        File.join(__dir__, 'prefs', id.gsub(/[^0-9A-Z]/i, '_') + '.exists')
+    end
+
+    def self.create_preferences_key_file(id)
+      path = preferences_key_file_path(id)
+
+      dir = File.dirname(path)
+      if not Dir.exist?(dir)
+        Dir.mkdir(dir)
+      end
+
+      if not File.exist?(path)
+        File.open(path, "w") {}
+      end
+    end
+
     def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:,
                            center: false, can_close: false, resizeable_height: false, resizeable_width: false, min_height: 0, min_width: 0)
       options = {
@@ -62,8 +79,10 @@ module Envelop
 
       if resizeable_height && (min_height != 0)
         options[:min_height] = min_height
-        end
-      options[:min_width] = min_width if resizeable_width && (min_width != 0)
+      end
+      if resizeable_width && (min_width != 0)
+        options[:min_width] = min_width
+      end
 
       dialog = UI::HtmlDialog.new(options)
       dialog.set_file(path_to_html)
@@ -71,12 +90,14 @@ module Envelop
         can_close # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
       end
 
-      if OS.mac? # Tradeoff: on mac, setting these things through options does not work - however, with this the saved settings in preferences_key will be ignored. this is the prefered behaviour.
-        dialog.set_size(width, height) # TODO: update this as the main window is resized.
-        dialog.set_position(pos_x, pos_y) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+      if not File.exist?(preferences_key_file_path(id)) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+        dialog.set_size(width, height)
+        dialog.set_position(pos_x, pos_y)
       end
 
       dialog.center if center
+
+      create_preferences_key_file(id)
 
       dialog
     end
