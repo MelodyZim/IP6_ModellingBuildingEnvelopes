@@ -78,12 +78,16 @@ module Envelop
       @plans = []
       @hidden_plans = []
 
-      Sketchup.active_model.entities.each do |entity|
+      model = Sketchup.active_model
+
+      model.entities.each do |entity|
         isPlan = entity.get_attribute('Envelop::PlanManager', 'isPlan')
         if !isPlan.nil? && isPlan && entity.is_a?(Sketchup::Image)
           Envelop::PlanManager.add_plan(entity)
         end
       end
+
+      Envelop::PlanManager.update_plans_visibility(model.active_view)
 
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
