@@ -130,9 +130,14 @@ module Envelop
 
           trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
           entities = Sketchup.active_model.entities
-          entities.each do |entity|
-            entity.transform!(trans)
-          end
+
+          Envelop::OperationUtils.operation_block("Scale") {
+            group = entities.add_group(*entities)
+            group.transform!(trans)
+            group.explode
+            true
+          }
+
           return true
         end
 
