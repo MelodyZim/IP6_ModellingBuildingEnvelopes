@@ -13,8 +13,8 @@ module Envelop
       def deactivate(view)
         puts 'deactivating PenTool...'
 
-        # reset tool to clean up left over construction entities
-        reset_tool
+        # clean up left over construction entities
+        erase_construction_geometry
 
         # release inference locks
         view.lock_inference
@@ -34,7 +34,11 @@ module Envelop
       end
 
       def onCancel(_reason, _view)
-        finish_operation(@points) if @points.length >= 2
+        if @points.length >= 2
+          finish_operation(@points)
+        else
+          erase_construction_geometry
+        end
         reset_tool
       end
 
@@ -228,13 +232,26 @@ module Envelop
       end
 
       def add_construction_geometry
-        Envelop::OperationUtils.operation_block 'Guide' do
+        Envelop::OperationUtils.operation_block('Guide', transparent: true) do
           # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
           @construction_entities << Sketchup.active_model.entities.add_cpoint(@points[-1])
           if @points.length > 1
             @construction_entities << Sketchup.active_model.entities.add_cline(@points[-2], @points[-1])
           end
           true
+        end
+      end
+
+      #
+      # remove all construction lines and points
+      #
+      def erase_construction_geometry
+        unless @construction_entities.empty?
+          Envelop::OperationUtils.operation_block('Pen Tool cleanup', transparent: true) do
+            @construction_entities&.each(&:erase!)
+            @construction_entities = []
+            true
+          end
         end
       end
 
@@ -269,6 +286,9 @@ module Envelop
         points = yield face_normal if block_given?
 
         if points
+          # clear construction geometry before creating actual lines to get a clean undo history
+          erase_construction_geometry
+
           # try to add edges to picked face without destroying the manifoldness of the faces parent
           if pick_face
             pick_face = Envelop::OperationUtils.operation_block('Pen Tool on Face') do
@@ -299,12 +319,6 @@ module Envelop
       end
 
       def reset_tool
-        # remove all construction lines and points
-        Envelop::OperationUtils.operation_block 'Pen Tool cleanup' do
-          @construction_entities&.each(&:erase!)
-          true
-        end
-
         # reset state
         @mouse_ip = Sketchup::InputPoint.new
         @points = []
