@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../vendor/rb/os'
+
 module Envelop
   module DialogUtils
     # Public
@@ -36,6 +38,8 @@ module Envelop
     def self.create_dialog(path_to_html:, title:, id:, height:, width:, pos_x:, pos_y:,
                            center: false, can_close: false, resizeable_height: false, resizeable_width: false, min_height: 0, min_width: 0)
       options = {
+        width: width, height: height,
+        left: pos_x, top: pos_y,
         dialog_title: title,
         preferences_key: id,
         style: UI::HtmlDialog::STYLE_UTILITY
@@ -67,8 +71,10 @@ module Envelop
         can_close # TODO: this straight up does not work on Mac (Works on Windows) #TODO allow some dialogs to be closeable if appropriate
       end
 
-      dialog.set_size(width, height) # TODO: update this as the main window is resized.
-      dialog.set_position(pos_x, pos_y) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+      if OS.mac? # Tradeoff: on mac, setting these things through options does not work - however, with this the saved settings in preferences_key will be ignored. this is the prefered behaviour.
+        dialog.set_size(width, height) # TODO: update this as the main window is resized.
+        dialog.set_position(pos_x, pos_y) # TODO: update this as the main window is resized. # TODO: ensure window cannot be repositioned, but it needs to be able to be managed/hidden in some way
+      end
 
       dialog.center if center
 
