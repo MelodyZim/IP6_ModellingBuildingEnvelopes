@@ -63,7 +63,7 @@ function load_pdf_page(page) {
   var canvas_quality = canvases[1]; {
     viewport_quality = page.getViewport({scale: 2});
     canvas_quality.width = viewport_quality.width;
-    canvas_quality.height = viewport_quality.width;
+    canvas_quality.height = viewport_quality.height;
     p1 = page.render({
       canvasContext: canvas_quality.getContext('2d'),
       viewport: viewport_quality
