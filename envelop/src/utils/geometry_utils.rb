@@ -193,6 +193,18 @@ module Envelop
     end
 
     #
+    # multiply a vector by a number
+    #
+    # @param vector [Geom::Point3d, Geom::Vector3d, Array(Number, Number, Number)] vector to stretch
+    # @param n [Number] number to multiply the vector by
+    # 
+    # @return [Geom::Vector3d] new vector
+    #
+    def self.vec_mul(vector, n)
+      Geom::Vector3d.new(vector.to_a.map { |e| e * n })
+    end
+
+    #
     # Create Sketchup::Edges as children of the specified Sketchup::Entities that form a line
     #
     # @param entities [Sketchup::Entities] the entities that will contain the added edges
