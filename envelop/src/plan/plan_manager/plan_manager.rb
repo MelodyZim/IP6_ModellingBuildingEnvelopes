@@ -6,7 +6,7 @@ module Envelop
   module PlanManager
     # If the angle between a plans flipped normal and the cameras view vector is larger
     # than HIDE_THRESHOLD, the plan gets hidden
-    HIDE_THRESHOLD = 80
+    HIDE_THRESHOLD = 75
 
     def self.add_plan(plan)
       if plan.is_a? Sketchup::Image
