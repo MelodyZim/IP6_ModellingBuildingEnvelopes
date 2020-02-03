@@ -316,6 +316,13 @@ module Envelop
       end
     end
 
+    def self.pick_best_face(view, x, y)
+      pick_all_entity(view, x, y, Sketchup::Face)
+                            .sort_by(&:depth)
+                            .map { |p| [p.entity, p.transform] }
+                            .first
+    end
+
     #
     # Draw the given points as a continuous line
     # if color is nil the default Sketchup axis colors are used
