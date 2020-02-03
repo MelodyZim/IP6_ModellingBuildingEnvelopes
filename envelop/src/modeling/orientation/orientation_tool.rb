@@ -39,17 +39,54 @@ module Envelop
       end
 
       def draw(view)
+        main_color = "Blue"
         if @first_point.valid?
-          Envelop::GeometryUtils.draw_lines(view, "Cyan", *get_transformed_indicator_points)
+          Envelop::GeometryUtils.draw_lines(view, main_color, *get_transformed_indicator_points)
+          north = compute_north(@first_point, @mouse_ip)
+
+          # circle
+          subdivision = 40
+          size = north.length.to_f
+          circle_Points = Array.new(subdivision) do |i| 
+            angle = (i * Math::PI * 2) / subdivision
+            Geom::Point3d.new(Math.cos(angle) * size, Math.sin(angle) * size, 0)
+          end
+          circle_Points = circle_Points.map { |p| p + @first_point.position.to_a }
+          Envelop::GeometryUtils.draw_lines(view, main_color, *circle_Points, circle_Points[0])
+
+          # snapping lines
+          draw_snap_lines(view, 16, 0.1, main_color)
+          draw_snap_lines(view, 4, 0.25, nil)
+
         end
 
         @mouse_ip.draw(view) if @mouse_ip.display?
       end
 
+      def draw_snap_lines(view, count, length, color)
+        size = compute_north(@first_point, @mouse_ip).length.to_f
+        snap_line = [[1, 0], [1 - length, 0]]
+        count.times.each do |i|
+          angle = (i * Math::PI * 2) / count
+          rotated = snap_line.map do |p|
+            sin = Math.sin(angle)
+            cos = Math.cos(angle)
+            Geom::Point3d.new((p[0] * cos + p[1] * -sin) * size, (p[0] * sin + p[1] * cos) * size, 0)
+          
+          end
+          translated = rotated.map { |p| p + @first_point.position.to_a }
+
+          Envelop::GeometryUtils.draw_lines(view, color, *translated)
+        end
+      end
+
       def getExtents
         if @first_point.valid?
           bb = Geom::BoundingBox.new
-          bb.add(get_transformed_indicator_points)
+          north = compute_north(@first_point, @mouse_ip)
+          east = Geom::Vector3d.new(north.y, -north.x, 0)
+          center = @first_point.position
+          bb.add(center + north + east, center + north - east, center - north + east, center - north - east)
           bb
         end
       end
