@@ -93,8 +93,19 @@ module Envelop
       def compute_north(ip1, ip2)
         a = ip1.position
         b = ip2.position
+
+        # project second point to x/y plane
         b.z = a.z
-        b - a
+
+        vector = b - a
+        angle = Math.atan2(vector.y, vector.x)
+        length = vector.length.to_f
+
+        # snap to 22.5 degree increments
+        n = 1 / 22.5.degrees
+        angle = (angle * n).round / n
+
+        Geom::Vector3d.new(Math.cos(angle) * length, Math.sin(angle) * length, vector.z)
       end
 
       def get_transformed_indicator_points
