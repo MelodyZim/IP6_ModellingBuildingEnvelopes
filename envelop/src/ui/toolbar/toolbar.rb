@@ -37,46 +37,6 @@ module Envelop
       cmd
     end
 
-    def self.modeling_tool_add_command
-      cmd = UI::Command.new('Add') do
-        Envelop::ModelingTool.add_selection
-      end
-      cmd.set_validation_proc do
-        if Sketchup.active_model.selection.empty?
-          MF_GRAYED
-        else
-          MF_ENABLED
-        end
-      end
-      cmd.small_icon = 'add_selection.svg'
-      cmd.large_icon = 'add_selection.svg'
-      cmd.tooltip = 'Add Selection'
-      cmd.status_bar_text = 'Add selection to house'
-      cmd.menu_text = 'Add'
-
-      cmd
-    end
-
-    def self.modeling_tool_subtract_command
-      cmd = UI::Command.new('Subtract') do
-        Envelop::ModelingTool.subtract_selection
-      end
-      cmd.set_validation_proc do
-        if Sketchup.active_model.selection.empty?
-          MF_GRAYED
-        else
-          MF_ENABLED
-        end
-      end
-      cmd.small_icon = 'subtract_selection.svg'
-      cmd.large_icon = 'subtract_selection.svg'
-      cmd.tooltip = 'Subtract Selection'
-      cmd.status_bar_text = 'Subtract selection from house'
-      cmd.menu_text = 'Subtract'
-
-      cmd
-    end
-
     def self.scale_tool_command
       cmd = UI::Command.new('Scale') do
         Envelop::ScaleTool.activate_scale_tool
@@ -116,28 +76,15 @@ module Envelop
       cmd
     end
 
-    def self.pushpull_add_command
-      cmd = UI::Command.new('Push-Pull Add Tool') do
-        Envelop::PushPullTool.activate_pushpull_tool(true)
+    def self.pushpull_command
+      cmd = UI::Command.new('Push-Pull Tool') do
+        Envelop::PushPullTool.activate_pushpull_tool()
       end
-      cmd.small_icon = 'pushpull_add.svg'
-      cmd.large_icon = 'pushpull_add.svg'
-      cmd.tooltip = 'Push-Pull Add'
-      cmd.status_bar_text = 'Extrude a face into a volume and add to house'
-      cmd.menu_text = 'Push-Pull Add Tool'
-
-      cmd
-    end
-
-    def self.pushpull_subtract_command
-      cmd = UI::Command.new('Push-Pull Subtract Tool') do
-        Envelop::PushPullTool.activate_pushpull_tool(false)
-      end
-      cmd.small_icon = 'pushpull_subtract.svg'
-      cmd.large_icon = 'pushpull_subtract.svg'
-      cmd.tooltip = 'Push-Pull Subtract'
-      cmd.status_bar_text = 'Extrude a face into a volume and subtract from house'
-      cmd.menu_text = 'Push-Pull Subtract Tool'
+      cmd.small_icon = 'pushpull.svg'
+      cmd.large_icon = 'pushpull.svg'
+      cmd.tooltip = 'Push-Pull'
+      cmd.status_bar_text = 'Extrude a face into a volume and add to or remove from house'
+      cmd.menu_text = 'Push-Pull Tool'
 
       cmd
     end
@@ -201,8 +148,7 @@ module Envelop
 
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item pen_tool_command
-      @toolbar = @toolbar.add_item pushpull_add_command
-      @toolbar = @toolbar.add_item pushpull_subtract_command
+      @toolbar = @toolbar.add_item pushpull_command
       @toolbar = @toolbar.add_item floor_maker_command
 
       @toolbar = @toolbar.add_separator
@@ -213,10 +159,6 @@ module Envelop
       @toolbar = @toolbar.add_item plan_manager_tool_command
       @toolbar = @toolbar.add_item hide_plans_command
       @toolbar = @toolbar.add_item unhide_plans_command
-
-      @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item modeling_tool_add_command
-      @toolbar = @toolbar.add_item modeling_tool_subtract_command
 
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item reload_command
