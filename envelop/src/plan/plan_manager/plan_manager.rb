@@ -4,6 +4,10 @@ require 'sketchup.rb'
 
 module Envelop
   module PlanManager
+    # If the angle between a plans flipped normal and the cameras view vector is larger
+    # than HIDE_THRESHOLD, the plan gets hidden
+    HIDE_THRESHOLD = 75
+
     def self.add_plan(plan)
       if plan.is_a? Sketchup::Image
         Envelop::ObserverUtils.attach_entity_observer(RemovePlanFromManagerUponErase, plan)
@@ -39,7 +43,9 @@ module Envelop
         next if @hidden_plans.include?(plan)
 
         Envelop::OperationUtils.operation_block('Update plan visibility', transparent: true) do
-          plan.hidden = view.camera.direction.dot(plan.normal) > 0
+          # TODO: calculate angle correct even if camera is set to perspective
+          normal_flipped = Geom::Vector3d.new((ORIGIN - plan.normal).to_a)
+          plan.hidden = Math.acos(view.camera.direction.dot(normal_flipped)).radians > HIDE_THRESHOLD
           true
         end
       end
