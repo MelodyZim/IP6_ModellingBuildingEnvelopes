@@ -54,11 +54,12 @@ module Envelop
 
         if @mouse_ip.valid?
           model = Sketchup.active_model
-          Envelop::OperationUtils.start_operation('Envelop: New floor at mouseclick')
 
-          split_house_at(@mouse_ip.position.z)
+          Envelop::OperationUtils.operation_chain('Envelop: New floor at mouseclick', lambda {
 
-          Envelop::OperationUtils.commit_operation # TODO: dont if aborted/unsucessfull
+            return split_house_at(@mouse_ip.position.z)
+
+          })
 
         else
           UI.messagebox('Could not make floor because current mouse position is invalid InputPosition.')
@@ -77,9 +78,12 @@ module Envelop
         entities = Sketchup.active_model.active_entities
 
         intersect_plane = entities.add_face([FOR_SURE_OUTSIDE_MODEL, FOR_SURE_OUTSIDE_MODEL, height], [FOR_SURE_OUTSIDE_MODEL, -FOR_SURE_OUTSIDE_MODEL, height], [-FOR_SURE_OUTSIDE_MODEL, -FOR_SURE_OUTSIDE_MODEL, height], [-FOR_SURE_OUTSIDE_MODEL, FOR_SURE_OUTSIDE_MODEL, height])
+        return false if intersect_plane.nil?
+
         intersect_group = entities.add_group(intersect_plane)
 
         house_group = Envelop::Housekeeper.get_house
+        return false if house_group.nil?
 
         house_group.entities.intersect_with(true, house_group.transformation, house_group.entities, house_group.transformation, true, intersect_group)
 

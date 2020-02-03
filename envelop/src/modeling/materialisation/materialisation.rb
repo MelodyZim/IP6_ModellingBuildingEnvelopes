@@ -331,9 +331,9 @@ module Envelop
       Envelop::ObserverUtils.attach_model_observer(PreSaveModelSaveCustomMaterials)
     end
 
-    Envelop::OperationUtils.operation_block("reload #{File.basename(__FILE__)}") do
+    Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", lambda {
       reload
       true
-    end
+    })
   end
 end

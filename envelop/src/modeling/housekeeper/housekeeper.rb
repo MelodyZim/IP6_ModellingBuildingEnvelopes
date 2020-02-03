@@ -85,7 +85,7 @@ module Envelop
 
       Materialisation.set_tmp_materials(house)
       Materialisation.set_tmp_materials(remove_group)
-      
+
       # remove operation
       result = remove_group.subtract(@house)
       if result.nil?
@@ -107,6 +107,7 @@ module Envelop
 
         if @house.nil?
           puts 'Envelop::Housekeeper.get_or_find_house: find_house could not find a entity marked as house. Returning nil'
+          return nil
         end
       end
 
@@ -143,9 +144,9 @@ module Envelop
       find_house
     end
 
-    Envelop::OperationUtils.operation_block("reload #{File.basename(__FILE__)}") do
+    Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", lambda {
       reload
       true
-    end
+    })
   end
 end

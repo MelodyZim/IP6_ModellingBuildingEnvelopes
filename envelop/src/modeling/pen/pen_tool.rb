@@ -232,14 +232,14 @@ module Envelop
       end
 
       def add_construction_geometry
-        Envelop::OperationUtils.operation_block('Guide', transparent: true) do
+        Envelop::OperationUtils.operation_chain('Guide', transparent: true, lambda {
           # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
           @construction_entities << Sketchup.active_model.entities.add_cpoint(@points[-1])
           if @points.length > 1
             @construction_entities << Sketchup.active_model.entities.add_cline(@points[-2], @points[-1])
           end
           true
-        end
+        })
       end
 
       #
@@ -247,7 +247,7 @@ module Envelop
       #
       def erase_construction_geometry
         unless @construction_entities.empty?
-          Envelop::OperationUtils.operation_block('Pen Tool cleanup', transparent: true) do
+          Envelop::OperationUtils.operation_chain('Pen Tool cleanup', transparent: true) do
             @construction_entities&.each(&:erase!)
             @construction_entities = []
             true
@@ -291,7 +291,7 @@ module Envelop
 
           # try to add edges to picked face without destroying the manifoldness of the faces parent
           if pick_face
-            pick_face = Envelop::OperationUtils.operation_block('Pen Tool on Face') do
+            pick_face = Envelop::OperationUtils.operation_chain('Pen Tool on Face', lambda {
               # remember if the parent of the picked face is manifold
               manifold_before = !pick_face.parent.nil? && pick_face.parent.manifold?
 
@@ -300,15 +300,15 @@ module Envelop
 
               # check if the parent of the picked face is still manifold if it was before
               !manifold_before || pick_face.parent.manifold?
-            end
+            })
           end
 
           # either there was no face or the atempt with the picked face failed
           unless pick_face
-            Envelop::OperationUtils.operation_block('Pen Tool') do
+            Envelop::OperationUtils.operation_chain('Pen Tool', lambda {
               Envelop::GeometryUtils.create_line(Sketchup.active_model.entities, IDENTITY, points, add_all_faces: true)
               true
-            end
+            })
           end
 
           reset_tool

@@ -167,8 +167,9 @@ module Envelop
 
       def to_add?
         res = true
+
         Envelop::ToolUtils.silenced do
-          Envelop::OperationUtils.operation_block('Intersection Test') do
+          Envelop::OperationUtils.operation_chain('Intersection Test' , lambda  {
             group = pushpull_group
             return false if group.nil?
 
@@ -180,8 +181,8 @@ module Envelop
             intersection = house.intersect(group)
 
             res = (intersection.nil? || (group_volume - intersection.volume).abs >= 0.001)
-            false
-          end
+            return false
+           })
         end
         if @alternate_mode
           not res
@@ -193,7 +194,7 @@ module Envelop
       def finish_pushpull
         to_add = to_add?
 
-        Envelop::OperationUtils.operation_block("Push/Pull #{to_add ? 'Add' : 'Subtract'}") do
+        Envelop::OperationUtils.operation_chain("Push/Pull #{to_add ? 'Add' : 'Subtract'}", lambda {
           group = pushpull_group
 
           return false if group.nil?
@@ -212,7 +213,7 @@ module Envelop
 
           # return true to commit operation
           true
-        end
+        })
 
         reset_tool
       end

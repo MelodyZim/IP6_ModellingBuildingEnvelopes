@@ -131,12 +131,12 @@ module Envelop
           trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
           entities = Sketchup.active_model.entities
 
-          Envelop::OperationUtils.operation_block("Scale") {
+          Envelop::OperationUtils.operation_chain("Scale", lambda {
             group = entities.add_group(*entities)
             group.transform!(trans)
             group.explode
             true
-          }
+          })
 
           return true
         end
@@ -173,9 +173,9 @@ module Envelop
     end
 
     def self.model_is_scaled
-      Envelop::OperationUtils.operation_block("Remember Scale", transparent:true) {
+      Envelop::OperationUtils.operation_chain("Remember Scale", transparent:true, lambda ({
         Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
-      }
+      })
     end
 
     def self.is_model_scaled
