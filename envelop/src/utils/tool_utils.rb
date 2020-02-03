@@ -124,7 +124,7 @@ module Envelop
       end
 
       def reset_tool
-        puts "resetting tool"
+        puts "resetting #{@name}..."
 
         @phase = @phases.first[1] unless @phases.nil?
 
@@ -141,11 +141,12 @@ module Envelop
     end
 
     def self.silenced
+      prev_stdout = $stdout
       $stdout = StringIO.new
 
       yield
     ensure
-      $stdout = STDOUT
+      $stdout = prev_stdout
     end
   end
 end
