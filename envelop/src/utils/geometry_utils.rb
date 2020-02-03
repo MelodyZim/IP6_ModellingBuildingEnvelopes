@@ -154,6 +154,21 @@ module Envelop
     end
 
     #
+    # Compute the matrix that transfroms world space to camera space
+    # in camera space, the camera is at the center and looks towards the negative z-axis
+    #
+    # @param camera [Sketchup::Camera]
+    # @return [Geom::Transformation]
+    #
+    def self.compute_look_at(camera = Sketchup.active_model.active_view.camera)
+      e_x = camera.direction.cross(camera.up).normalize
+      e_y = e_x.cross(camera.direction)
+      e_z = ORIGIN - camera.direction
+
+      Geom::Transformation.new(e_x.to_a + [0] + e_y.to_a + [0] + e_z.to_a + [0] + camera.eye.to_a + [1])
+    end
+
+    #
     # Retrieve the transformation matrix for normal vectors
     #
     # @param transform [Geom::Transformation]
@@ -294,12 +309,10 @@ module Envelop
 
     def self.pick_image(view, x, y)
       ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
-      i_res =(0..ph.count - 1).find(ifnone = nil) { |i| ph.leaf_at(i).is_a?(Sketchup::Face) &&  ph.path_at(i)[-2].is_a?(Sketchup::Image) }
+      i_res = (0..ph.count - 1).find(ifnone = nil) { |i| ph.leaf_at(i).is_a?(Sketchup::Face) && ph.path_at(i)[-2].is_a?(Sketchup::Image) }
 
-      if not i_res.nil?
+      unless i_res.nil?
         PickResult.new(ph.leaf_at(i_res), ph.transformation_at(i_res), ph.path_at(i_res)[-2], ph.depth_at(i_res))
-      else
-        nil
       end
     end
 
