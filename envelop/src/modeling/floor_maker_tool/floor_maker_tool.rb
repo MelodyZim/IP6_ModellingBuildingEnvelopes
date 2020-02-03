@@ -55,7 +55,7 @@ module Envelop
         if @mouse_ip.valid?
           model = Sketchup.active_model
 
-          Envelop::OperationUtils.operation_chain('Envelop: New floor at mouseclick', lambda {
+          Envelop::OperationUtils.operation_chain('Envelop: New floor at mouseclick', false, lambda {
 
             return split_house_at(@mouse_ip.position.z)
 

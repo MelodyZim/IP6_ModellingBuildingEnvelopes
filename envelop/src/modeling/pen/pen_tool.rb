@@ -232,7 +232,7 @@ module Envelop
       end
 
       def add_construction_geometry
-        Envelop::OperationUtils.operation_chain('Guide', transparent: true, lambda {
+        Envelop::OperationUtils.operation_chain('Guide', true, lambda {
           # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
           @construction_entities << Sketchup.active_model.entities.add_cpoint(@points[-1])
           if @points.length > 1
@@ -247,11 +247,11 @@ module Envelop
       #
       def erase_construction_geometry
         unless @construction_entities.empty?
-          Envelop::OperationUtils.operation_chain('Pen Tool cleanup', transparent: true) do
+          Envelop::OperationUtils.operation_chain('Pen Tool cleanup', true, lambda {
             @construction_entities&.each(&:erase!)
             @construction_entities = []
             true
-          end
+          })
         end
       end
 
@@ -291,7 +291,7 @@ module Envelop
 
           # try to add edges to picked face without destroying the manifoldness of the faces parent
           if pick_face
-            pick_face = Envelop::OperationUtils.operation_chain('Pen Tool on Face', lambda {
+            pick_face = Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
               # remember if the parent of the picked face is manifold
               manifold_before = !pick_face.parent.nil? && pick_face.parent.manifold?
 
@@ -305,7 +305,7 @@ module Envelop
 
           # either there was no face or the atempt with the picked face failed
           unless pick_face
-            Envelop::OperationUtils.operation_chain('Pen Tool', lambda {
+            Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
               Envelop::GeometryUtils.create_line(Sketchup.active_model.entities, IDENTITY, points, add_all_faces: true)
               true
             })

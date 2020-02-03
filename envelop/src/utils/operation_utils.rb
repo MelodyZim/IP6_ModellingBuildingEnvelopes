@@ -12,7 +12,7 @@ module Envelop
     # @return [Boolean] true if the operation was commited, false otherwise
     #
     # @example
-    #   Envelop::OperationUtils.operation_chain "Operation", lambda  {
+    #   Envelop::OperationUtils.operation_chain "Operation", false, lambda  {
     #     puts "First part"
     #     true
     #   }, lambda  {
@@ -20,7 +20,7 @@ module Envelop
     #     true
     #   }
     #
-    def self.operation_chain(name, transparent: false, *lambdas) # TODO: what happens if another operation chain is started within the chain
+    def self.operation_chain(name, transparent, *lambdas) # TODO: what happens if another operation chain is started within the chain
       Sketchup.active_model.start_operation(name, true, false, transparent)
       puts "Envelop::OperationUtils.operation_chain start_operation \"#{name}\"" unless transparent
 

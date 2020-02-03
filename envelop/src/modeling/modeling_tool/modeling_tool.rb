@@ -20,7 +20,7 @@ module Envelop
     def add_selection
       model = Sketchup.active_model
 
-      Envelop::OperationUtils.operation_chain('Envelop: Add Selection to House', lambda {
+      Envelop::OperationUtils.operation_chain('Envelop: Add Selection to House', false, lambda {
         # return if selection is empty
         if model.selection.empty?
           UI.messagebox('Selection is empty')
@@ -34,7 +34,7 @@ module Envelop
     def subtract_selection
       model = Sketchup.active_model
 
-      Envelop::OperationUtils.operation_chain('Envelop: Remove Selection from House', lambda {
+      Envelop::OperationUtils.operation_chain('Envelop: Remove Selection from House', false, lambda {
         # return if selection is empty
         if model.selection.empty?
           UI.messagebox('Selection is empty')

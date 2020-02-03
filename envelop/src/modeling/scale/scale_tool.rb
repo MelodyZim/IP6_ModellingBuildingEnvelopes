@@ -131,7 +131,7 @@ module Envelop
           trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
           entities = Sketchup.active_model.entities
 
-          Envelop::OperationUtils.operation_chain("Scale", lambda {
+          Envelop::OperationUtils.operation_chain("Scale", false, lambda {
             group = entities.add_group(*entities)
             group.transform!(trans)
             group.explode
@@ -173,7 +173,7 @@ module Envelop
     end
 
     def self.model_is_scaled
-      Envelop::OperationUtils.operation_chain("Remember Scale", transparent:true, lambda ({
+      Envelop::OperationUtils.operation_chain("Remember Scale", true, lambda {
         Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
       })
     end

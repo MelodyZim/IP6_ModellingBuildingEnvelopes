@@ -145,7 +145,8 @@ module Envelop
       $stdout = StringIO.new
 
       yield
-
+      
+    ensure
       $stdout = prev_stdout
     end
   end
