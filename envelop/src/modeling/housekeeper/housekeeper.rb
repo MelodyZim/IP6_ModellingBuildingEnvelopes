@@ -2,9 +2,8 @@
 
 module Envelop
   module Housekeeper
-
     def self.house_exists?
-      return (not @house.nil?) && @house.valid?
+      !@house.nil? && @house.valid?
     end
 
     def self.get_house
@@ -22,7 +21,7 @@ module Envelop
               end
 
       if house.nil?
-          puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would be nil.'
+        puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would be nil.'
         return false
       end
 
@@ -30,7 +29,7 @@ module Envelop
         set_new_house(house)
         return true
       else
-          puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would not be manifold.'
+        puts 'Envelop::Housekeeper.create_house: Cannot create house group with supplied argument, as the group would not be manifold.'
         return false # undoes groups & stuff
       end
     end
@@ -52,6 +51,7 @@ module Envelop
                     Sketchup.active_model.active_entities.add_group(entity_a)
                   end
 
+      Materialisation.set_tmp_materials(house)
       Materialisation.set_tmp_materials(add_group)
 
       # add operation
@@ -83,12 +83,16 @@ module Envelop
                        Sketchup.active_model.active_entities.add_group(entity_a)
                      end
 
+      Materialisation.set_tmp_materials(house)
+      Materialisation.set_tmp_materials(remove_group)
+      
       # remove operation
       result = remove_group.subtract(@house)
       if result.nil?
         puts 'Cannot remove supplied argument from house group, as the result would not be manifold.'
         return false # will undo anything
       else
+        Materialisation.unset_tmp_materials(result)
         set_new_house(result)
         return true
       end
