@@ -138,6 +138,9 @@ module Envelop
             true
           })
 
+          # Refresh housekeeper
+          Envelop::Housekeeper.get_house
+
           return true
         end
 
