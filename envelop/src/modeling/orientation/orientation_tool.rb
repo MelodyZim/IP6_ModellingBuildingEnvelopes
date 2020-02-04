@@ -34,7 +34,7 @@ module Envelop
         # puts 'suspending ScaleTool...'
       end
 
-      def onCancel(_reason, _view)
+      def onCancel(_reason, view)
         reset_tool
         view.invalidate
       end

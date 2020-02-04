@@ -138,8 +138,10 @@ module Envelop
       if pitch_angle < 45
         return "R" #Roof
       elsif pitch_angle < 135
-        direction = Math.atan2(normal.y, normal.x).radians
-        return ["W", "SW", "S", "SE", "E", "NE", "N", "NW", "W"][((direction + 180) / 45).round]
+        north = Sketchup.active_model.get_attribute("Envelop::OrientationTool", "northAngle", Math::PI / 2).radians
+        direction = Math.atan2(normal.y, normal.x).radians  # -180 .. 180
+        direction -= north
+        return ["N", "NW", "W", "SW", "S", "SE", "E", "NE"][(((direction * (1 / 45.0)).round / (1 / 45.0)) / 45.0) % 8]
       else
         return "F" #Floor
       end
