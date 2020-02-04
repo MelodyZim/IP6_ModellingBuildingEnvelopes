@@ -56,7 +56,7 @@ module Envelop
 
       def set_status_text
         if @phase == PHASES[:FACE_SELECTED]
-          Sketchup.status_text = 'Click/Release or `Enter` to accept preview, cyan adds, magenta removes. Input manual distance to the right. `Alt` to switch add mode. `Esc` to abort.'
+          Sketchup.status_text = 'Click/Release or `Enter` to accept preview, cyan adds, magenta removes. Input manual distance in the textfield. `Alt` to switch add mode. `Esc` to abort.'
           Sketchup.vcb_value = get_distance
 
         else

@@ -17,6 +17,7 @@ module Envelop
 
       def onCancel(reason, view)
         if @phase == PHASES[:MULTIPLE_POINTS]
+          @target_faces = @prev_target_faces
           finish_with_points(@prev_points)
         else
           erase_construction_geometry
@@ -97,6 +98,7 @@ module Envelop
 
             finish_with_point(@ip.position) if @prev_points.length == 2
 
+            @target_faces = @prev_target_faces
             finish_with_point(@prev_points[0])
           end
         end
@@ -108,17 +110,17 @@ module Envelop
           Sketchup.vcb_value = ''
 
         elsif @phase == PHASES[:FIRST_POINT]
-          Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish to the right. `Enter` to finish with next point or confirm rectangle. `Alt` to disable rectangle mode. `Esc` to abort.'
+          Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish in the textfield. `Enter` to finish with next point or confirm rectangle. `Alt` to disable rectangle mode. `Esc` to abort.'
           Sketchup.vcb_value = try_get_triangle_distances || get_distance
 
         else
-          if (@prev_points.length == 2)
-            enterText = '`Enter` to finish with next point.'
-          else
-            enterText = '`Enter` to complete polygon with first point.'
-          end
+          enterText = if @prev_points.length == 2
+                        '`Enter` to finish with next point.'
+                      else
+                        '`Enter` to complete polygon with first point.'
+                      end
 
-          Sketchup.status_text = 'Click to select next point, on previous point to finish. Input manual distance to finish to the right. ' + enterText + ' `Esc` to confirm previously selected points.'
+          Sketchup.status_text = 'Click to select next point, on previous point to finish. Input manual distance to finish in the textfield. ' + enterText + ' `Esc` to confirm previously selected points.'
           Sketchup.vcb_value = get_distance
         end
       end
@@ -155,6 +157,7 @@ module Envelop
 
             ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
 
+            @target_faces = @prev_target_faces
             finish_with_points(ps)
             return
           end
@@ -166,6 +169,7 @@ module Envelop
           v.length = distances[0]
           p = @prev_points[-1] + v
 
+          @target_faces = @prev_target_faces
           finish_with_point(p)
         end
       end
@@ -173,24 +177,24 @@ module Envelop
       # internal
 
       def try_get_triangle_distances
-        if not @alternate_mode
-            ps = try_get_rectangle_points
-            unless ps.nil?
-              v1 = ps[1] - ps[0]
-              v2 = ps[2] - ps[1]
-              return "#{v1.length.to_l}, #{v2.length.to_l}"
-            end
+        unless @alternate_mode
+          ps = try_get_rectangle_points
+          unless ps.nil?
+            v1 = ps[1] - ps[0]
+            v2 = ps[2] - ps[1]
+            return "#{v1.length.to_l}, #{v2.length.to_l}"
+          end
         end
 
         nil
       end
 
       def get_distance
-        if @ip.valid?
-          distance = @ip.position.distance(@prev_points[-1])
-        else
-          distance = 0
-        end
+        distance = if @ip.valid?
+                     @ip.position.distance(@prev_points[-1])
+                   else
+                     0
+                   end
         distance.to_l.to_s
       end
 
@@ -228,18 +232,19 @@ module Envelop
         # try to add edges to picked face without destroying the manifoldness of the faces parent
         face = try_get_target_face
 
-        if (!face.nil?) && Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
-                                                                                               # remember if the parent of the picked face is manifold
-                                                                                               manifold_before = !face.parent.nil? && face.parent.manifold?
+        if !face.nil? &&
+           Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
+                                                                                # remember if the parent of the picked face is manifold
+                                                                                manifold_before = !face.parent.nil? && face.parent.manifold?
 
-                                                                                               entities = (face.parent&.definition || Sketchup.active_model).entities
+                                                                                entities = (face.parent&.definition || Sketchup.active_model).entities
 
-                                                                                               Envelop::GeometryUtils.create_line(entities, face.transform.inverse, ps, add_all_faces: false)
+                                                                                Envelop::GeometryUtils.create_line(entities, face.transform.inverse, ps, add_all_faces: false)
 
-                                                                                               # check if the parent of the picked face is still manifold if it was before
-                                                                                               !manifold_before || face.parent.manifold?
-                                                                                             })
-          # ok
+                                                                                # check if the parent of the picked face is still manifold if it was before
+                                                                                !manifold_before || face.parent.manifold?
+                                                                              })
+        # ok
 
         # either there was no face or the atempt with the picked face failed
         else
