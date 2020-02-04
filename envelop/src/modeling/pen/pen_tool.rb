@@ -2,244 +2,196 @@
 
 module Envelop
   module PenTool
-    class PenTool
-      def initialize; end
+    class PenTool < Envelop::ToolUtils::AbstractTool
+      PHASES = { INITIAL: 0, FIRST_POINT: 1, MULTIPLE_POINTS: 2 }.freeze
 
-      def activate
-        puts 'activating PenTool...'
-        reset_tool
+      def initialize
+        super(PenTool, phases: PHASES, cursor_id: Envelop::ToolUtils::CURSOR_PENCIL)
       end
 
       def deactivate(view)
-        puts 'deactivating PenTool...'
+        super(view)
 
-        # clean up left over construction entities
         erase_construction_geometry
-
-        # release inference locks
-        view.lock_inference
-
-        view.invalidate
       end
 
-      def resume(view)
-        # puts 'resuming PenTool...'
-
-        set_status_text
-        view.invalidate
-      end
-
-      def suspend(_view)
-        # puts 'suspending PenTool...'
-      end
-
-      def onCancel(_reason, _view)
-        if @points.length >= 2
-          finish_operation(@points)
+      def onCancel(reason, view)
+        if @phase == PHASES[:MULTIPLE_POINTS]
+          finish_with_points(@prev_points)
         else
           erase_construction_geometry
         end
-        reset_tool
+
+        super(reason, view)
       end
 
       def enableVCB?
-        !@points.empty?
+        @phase != PHASES[:INITIAL]
       end
 
       def draw(view)
-        rectangle_drawn = false
-        if (@points.length == 1) && !@force_polygon
-          # draw rectangle preview
-          if @mouse_ip.valid?
-            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
-            if p
-              Envelop::GeometryUtils.draw_lines(view, 'Cyan', *p, p[0])
-              rectangle_drawn = true
-            end
-          end
-        end
+        super(view)
 
-        if @points.length >= 1 && !rectangle_drawn
-          # draw line preview
-          Envelop::GeometryUtils.draw_lines(view, nil, *@points, @mouse_ip.position)
-        end
-
-        @mouse_ip.draw(view) if @mouse_ip.display?
+        draw_preview(view) if @phase != PHASES[:INITIAL] && @ip.valid?
       end
 
-      def getExtents
-        bb = Geom::BoundingBox.new
-        bb.add(@mouse_ip) if @mouse_ip.valid?
-        @points.each { |p|; bb.add(p) }
-        bb
-      end
-
-      # TODO: consider having a custom cursor like: CURSOR_PENCIL = UI.create_cursor(cursor_path, 0, 0)
-      CURSOR_PENCIL = 632
-      def onSetCursor
-        UI.set_cursor(CURSOR_PENCIL)
-      end
-
-      def onMouseMove(_flags, x, y, view)
-        if !@points.empty?
-          @mouse_ip.pick(view, x, y, Sketchup::InputPoint.new(@points[-1]))
-          @pick_faces_preview = @pick_faces & pick_all_faces(view, x, y)
+      def onMouseMove(flags, x, y, view)
+        if @phase != PHASES[:INITIAL]
+          super(flags, x, y, view, @prev_points[-1])
         else
-          @mouse_ip.pick(view, x, y)
-          @pick_faces_preview = pick_all_faces(view, x, y)
+          super(flags, x, y, view)
         end
 
-        view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
-        view.invalidate
-        set_status_text
+        @target_faces = if @phase != PHASES[:INITIAL]
+                          @prev_target_faces & pick_all_faces_set(view, x, y)
+                        else
+                          pick_all_faces_set(view, x, y)
+                        end
+      end
+
+      def onLButtonDown(flags, x, y, view)
+        super(flags, x, y, view)
+
+        if @ip.valid?
+
+          if @phase == PHASES[:INITIAL]
+            add_construction_geometry(nil, @ip.position)
+            update_prev_state(@ip.position)
+            @phase = PHASES[:FIRST_POINT]
+
+          elsif @phase == PHASES[:FIRST_POINT]
+
+            return if try_finish_rectangle
+
+            add_construction_geometry(@prev_points[-1], @ip.position)
+            update_prev_state(@ip.position)
+            @phase = PHASES[:MULTIPLE_POINTS]
+
+          elsif @phase == PHASES[:MULTIPLE_POINTS]
+
+            if @prev_points.include? @ip.position
+              finish_with_point(@ip.position)
+            end
+
+            add_construction_geometry(@prev_points[-1], @ip.position)
+            update_prev_state(@ip.position)
+          end
+
+          redraw
+        end
       end
 
       def onReturn(_view)
-        if @points.length >= 3
-          # close shape
-          @points << @points[0]
+        if @ip.valid?
+          if @phase == PHASES[:INITIAL]
+            add_construction_geometry(nil, @ip.position)
+            update_prev_state(@ip.position)
+            @phase = PHASES[:FIRST_POINT]
 
-          finish_operation(@points)
+          elsif @phase == PHASES[:FIRST_POINT]
+            return if try_finish_rectangle
+
+            finish_with_point(@ip.position)
+
+          elsif @phase == PHASES[:MULTIPLE_POINTS]
+
+            finish_with_point(@ip.position) if @prev_points.length == 2
+
+            finish_with_point(@prev_points[0])
+          end
         end
       end
 
-      def onKeyDown(key, _repeat, _flags, view)
-        if key == CONSTRAIN_MODIFIER_KEY
-          # locks the inference based on @mouse_ip input point
-          view.lock_inference(@mouse_ip)
-        elsif (key == VK_CONTROL) || (key == VK_ALT)
-          @force_polygon = true
-          set_status_text
+      def onUserDistances(distances) # TODO: test this
+        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode && distances.length >= 2
+          ps = try_get_rectangle_points
+          unless ps.nil?
+
+            # calculate new points based on input
+            v1 = ps[1] - ps[0]
+            v2 = ps[2] - ps[1]
+            v1.length = distances[0]
+            v2.length = distances[1]
+
+            ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
+
+            finish_with_points(ps)
+            return
+          end
         end
 
-        view.invalidate
+        if @phase != PHASES[:INITIAL]
+
+          v = @ip.position - @prev_points[-1]
+          v.length = distances[0]
+          p = @prev_points[-1] + v
+
+          finish_with_point(p)
+        end
       end
 
-      def onKeyUp(key, _repeat, _flags, view)
-        if key == CONSTRAIN_MODIFIER_KEY
-          # unlock inference
-          view.lock_inference
-        elsif (key == VK_CONTROL) || (key == VK_ALT)
-          @force_polygon = false
-          set_status_text
-        end
+      def set_status_text # TODO: update this$
+        if @phase == PHASES[:INITIAL]
+          Sketchup.status_text = 'Click/`Enter` to select start point.'
+          Sketchup.vcb_value = ''
 
-        view.invalidate
-      end
+        elsif @phase == PHASES[:FIRST_POINT]
+          Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish to the right. `Enter` to finish with next point or confirm rectangle. `Alt` to disable rectangle mode. `Esc` to abort.'
+          Sketchup.vcb_value = try_get_triangle_distances || get_distance
 
-      def onUserText(text, _view)
-        # TODO: reduce code duplication (similarities to onLButtonDown, set_status_text)
-        if @mouse_ip.valid?
-          rectangle = false
-
-          if @points.length == 1 && !@force_polygon
-            # get rectangle points
-            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
-
-            unless p.nil?
-              rectangle = true
-
-              # expect up to two values
-              input_list = text.split(/\s*[; ]\s*/).map { |s| s.empty? ? nil : s.to_l.to_f }
-
-              # calculate new points based on input
-              v1 = p[1] - p[0]
-              v2 = p[2] - p[1]
-              v1.length = input_list[0] unless input_list[0].nil?
-              v2.length = input_list[1] unless input_list[0].nil?
-
-              p_new = [p[0], p[0] + v1, p[0] + v1 + v2, p[0] + v2, p[0]]
-
-              # finish operation
-              finish_operation(p_new)
-            end
-          end
-
-          if !@points.empty? && !rectangle
-            distance = text.to_l
-
-            vector = @mouse_ip.position - @points[-1]
-            vector.length = distance.to_f
-            @points << @points[-1] + vector
-
-            add_construction_geometry
-
-            if @points[0..-2].include? @points[-1]
-              finish_operation(@points)
-            end
-          end
-        end
-      rescue ArgumentError
-        Sketchup.status_text = 'Invalid length'
-      end
-
-      def onLButtonDown(_flags, _x, _y, _view)
-        if @mouse_ip.valid?
-          # append mouse position to points array
-          @points << @mouse_ip.position
-          @pick_faces = @pick_faces_preview
-
-          # create construction point and edges
-          add_construction_geometry
-
-          if (@points.length == 2) && !@force_polygon
-            # try to create a rectangle
-            finish_operation do |face_normal|
-              rectangle = Envelop::GeometryUtils.construct_rectangle(@points[0], @points[1], face_normal)
-              if rectangle
-                # add the starting point to the end to close the shape
-                rectangle << rectangle[0]
-              end
-              rectangle
-            end
-          elsif @points.length >= 2
-            # TODO: find better finish condition
-            # if last point is equal to one of the previous points, the shape is close and the tool finishes
-            finish_operation(@points) if @points[0..-2].include? @points[-1]
-          end
-        end
-
-        set_status_text
-      end
-
-      def set_status_text
-        # Value Control Box label
-        Sketchup.vcb_label = 'Distance'
-        unless @points.empty?
-          rectangle = false
-          if @points.length == 1 && !@force_polygon
-            p = Envelop::GeometryUtils.construct_rectangle(@points[0], @mouse_ip.position, get_face_normal_preview)
-            unless p.nil?
-              rectangle = true
-              v1 = p[1] - p[0]
-              v2 = p[2] - p[1]
-              Sketchup.vcb_value = "#{v1.length.to_l}; #{v2.length.to_l}"
-            end
-          end
-
-          unless rectangle
-            Sketchup.vcb_value = @mouse_ip.position.distance(@points[-1]).to_l.to_s
-          end
-        end
-
-        if @points.empty?
-          Sketchup.status_text = 'Select start point'
-        elsif @points.length == 1
-          Sketchup.status_text = 'Select next point. Ctrl = toggle between rectangle and line'
         else
-          Sketchup.status_text = 'Select next point'
+          if (@prev_points.length == 2)
+            enterText = '`Enter` to finish with next point.'
+          else
+            enterText = '`Enter` to complete polygon with first point.'
+          end
+
+          Sketchup.status_text = 'Click to select next point, on previous point to finish. Input manual distance to finish to the right. ' + enterText + ' `Esc` to confirm previously selected points.'
+          Sketchup.vcb_value = get_distance
         end
       end
 
-      def add_construction_geometry
-        Envelop::OperationUtils.operation_chain('Guide', true, lambda {
-          # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
-          @construction_entities << Sketchup.active_model.entities.add_cpoint(@points[-1])
-          if @points.length > 1
-            @construction_entities << Sketchup.active_model.entities.add_cline(@points[-2], @points[-1])
-          end
-          true
-        })
+      private
+
+      # inherited
+
+      def reset_tool
+        @prev_points = []
+        @construction_entities = []
+
+        @target_faces = Set.new
+        @prev_target_faces = Set.new
+
+        super
+      end
+
+      def populateExtents(boundingBox)
+        boundingBox.add(@ip) if @ip.valid?
+        @prev_points.each { |p|; boundingBox.add(p) }
+      end
+
+      # internal
+
+      def try_get_triangle_distances
+        if not @alternate_mode
+            ps = try_get_rectangle_points
+            unless ps.nil?
+              v1 = ps[1] - ps[0]
+              v2 = ps[2] - ps[1]
+              return "#{v1.length.to_l}, #{v2.length.to_l}"
+            end
+        end
+
+        nil
+      end
+
+      def get_distance
+        if @ip.valid?
+          distance = @ip.position.distance(@prev_points[-1])
+        else
+          distance = 0
+        end
+        distance.to_l.to_s
       end
 
       #
@@ -255,80 +207,105 @@ module Envelop
         end
       end
 
-      # @return [Geom::Vector3d]
-      def get_face_normal_preview
-        pick_face = @pick_faces_preview.length == 1 ? @pick_faces_preview.first : false
-        pick_face ? Envelop::GeometryUtils.normal_transformation(pick_face.transform) * pick_face.entity.normal : nil
-      end
-
-      # @return [Set<PickResult>] a set with all faces, their transform and parent at x, y position
-      def pick_all_faces(view, x, y)
-        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
-      end
-
-      #
-      # Finish the pen tool operation
-      #
-      # @param points [Array<Geom::Point3d>, nil] points that make up the line
-      #
-      # @yield [face_normal] the normal of the face where the points are on or nil
-      #
-      # @yieldreturn [Array<Geom::Point3d>, nil] an array of points that define a continuous line or nil to abort
-      #
-      # @return [Boolean] whether the operation was successfully finished
-      #
-      def finish_operation(points = nil)
-        # check if there is an appropriate face to put all edges on
-        pick_face = @pick_faces.length == 1 ? @pick_faces.to_a[0] : false
-        face_normal = pick_face ? Envelop::GeometryUtils.normal_transformation(pick_face.transform) * pick_face.entity.normal : nil
-
-        # get the points
-        points = yield face_normal if block_given?
-
-        if points
-          # clear construction geometry before creating actual lines to get a clean undo history
-          erase_construction_geometry
-
-          # try to add edges to picked face without destroying the manifoldness of the faces parent
-          if pick_face
-            pick_face = Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
-              # remember if the parent of the picked face is manifold
-              manifold_before = !pick_face.parent.nil? && pick_face.parent.manifold?
-
-              entities = (pick_face.parent&.definition || Sketchup.active_model).entities
-              Envelop::GeometryUtils.create_line(entities, pick_face.transform.inverse, points, add_all_faces: false)
-
-              # check if the parent of the picked face is still manifold if it was before
-              !manifold_before || pick_face.parent.manifold?
-            })
+      def draw_preview(view)
+        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode
+          ps = try_get_rectangle_points
+          unless ps.nil?
+            Envelop::GeometryUtils.draw_lines(view, 'Cyan', *ps, ps[0])
+            return
           end
+        end
 
-          # either there was no face or the atempt with the picked face failed
-          unless pick_face
-            Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
-              Envelop::GeometryUtils.create_line(Sketchup.active_model.entities, IDENTITY, points, add_all_faces: true)
-              true
-            })
-          end
-
-          reset_tool
-          true
-        else
-          false
+        if @phase != PHASES[:INITIAL]
+          Envelop::GeometryUtils.draw_lines(view, nil, @prev_points[-1], @ip.position)
         end
       end
 
-      def reset_tool
-        # reset state
-        @mouse_ip = Sketchup::InputPoint.new
-        @points = []
-        @construction_entities = []
-        @force_polygon = false
+      def finish_with_points(ps)
+        # clear construction geometry before creating actual lines to get a clean undo history
+        erase_construction_geometry
 
-        @pick_faces = Set.new
-        @pick_faces_preview = Set.new
+        # try to add edges to picked face without destroying the manifoldness of the faces parent
+        face = try_get_target_face
 
-        set_status_text
+        if (!face.nil?) && Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
+                                                                                               # remember if the parent of the picked face is manifold
+                                                                                               manifold_before = !face.parent.nil? && face.parent.manifold?
+
+                                                                                               entities = (face.parent&.definition || Sketchup.active_model).entities
+
+                                                                                               Envelop::GeometryUtils.create_line(entities, face.transform.inverse, ps, add_all_faces: false)
+
+                                                                                               # check if the parent of the picked face is still manifold if it was before
+                                                                                               !manifold_before || face.parent.manifold?
+                                                                                             })
+          # ok
+
+        # either there was no face or the atempt with the picked face failed
+        else
+          Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
+            Envelop::GeometryUtils.create_line(Sketchup.active_model.entities, IDENTITY, ps, add_all_faces: true)
+            true
+          })
+        end
+
+        reset_tool
+        redraw
+      end
+
+      def finish_with_point(point)
+        @prev_points << point
+        finish_with_points(@prev_points)
+      end
+
+      def try_finish_rectangle
+        unless @alternate_mode
+          ps = try_get_rectangle_points # could use result from previw if performance becomes an issue
+
+          unless ps.nil?
+            ps << ps[0]
+            finish_with_points(ps)
+            return true
+          end
+        end
+
+        false
+      end
+
+      def update_prev_state(point)
+        @prev_points << point
+        @prev_target_faces = @target_faces
+      end
+
+      def add_construction_geometry(last_point, new_point)
+        Envelop::OperationUtils.operation_chain('Guide', true, lambda {
+          # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
+          @construction_entities << Sketchup.active_model.entities.add_cpoint(new_point)
+
+          unless last_point.nil?
+            @construction_entities << Sketchup.active_model.entities.add_cline(last_point, new_point)
+          end
+          true
+        })
+      end
+
+      def try_get_rectangle_points
+        normal = try_get_target_faces_normal
+        Envelop::GeometryUtils.construct_rectangle(@prev_points[-1], @ip.position, normal)
+      end
+
+      def try_get_target_face
+        @target_faces.length == 1 ? @target_faces.first : nil
+      end
+
+      def try_get_target_faces_normal
+        face = try_get_target_face
+        face ? Envelop::GeometryUtils.normal_transformation(face.transform) * face.entity.normal : nil
+      end
+
+      # @return [Set<PickResult>] a set with all faces, their transform and parent at x, y position
+      def pick_all_faces_set(view, x, y)
+        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
       end
     end
 

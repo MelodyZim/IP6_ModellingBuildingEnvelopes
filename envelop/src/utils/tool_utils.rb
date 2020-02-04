@@ -26,14 +26,14 @@ module Envelop
 
         # no need to reset_tool, tool instance will be discarded after this
 
-        view.invalidate
+        view.lock_inference
+        view.invalidate # don't call redraw because that also sets status text
       end
 
       def resume(view)
         puts "resuming #{@name}..."
 
-        set_status_text
-        view.invalidate
+        redraw
       end
 
       def suspend(_view)
@@ -41,6 +41,7 @@ module Envelop
       end
 
       def onCancel(_reason, _view)
+
         reset_tool
         redraw
       end
@@ -62,25 +63,38 @@ module Envelop
         UI.set_cursor(@cursor_id) unless @cursor_id.nil?
       end
 
-      def onMouseMove(_flags, x, y, view)
-        @mouse_ip.pick(view, x, y)
+      def onMouseMove(_flags, x, y, view, last_point = nil)
+        if last_point.nil?
+          @mouse_ip.pick(view, x, y)
+        else
+          @mouse_ip.pick(view, x, y, Sketchup::InputPoint.new(last_point))
+        end
+
         if @mouse_ip.valid?
           @ip.copy! @mouse_ip
-          view.invalidate
         end
+
+        redraw
       end
 
       def onUserText(text, _view)
-        # parse the input text
-        distance = text.to_l
+        if text.include?(",") or text.include?(" ")
+          distances = text.split(/\s*[, ]\s*/).select{ |s| not s.empty?}.map { |s| s.to_l.to_f }
+        else
+          distances = [text.to_l]
+        end
 
-        onUserDistance(distance) if defined? onUserDistance
+        onUserDistances(distances) if defined? onUserDistances
       rescue ArgumentError
         Sketchup.status_text = 'Invalid length'
       end
 
-      def onKeyDown(key, _repeat, _flags, _view)
-        if (key == VK_ALT) || (key == VK_COMMAND) || (key == VK_CONTROL) || (key == VK_SHIFT)
+      def onKeyDown(key, _repeat, _flags, view)
+        if (key == CONSTRAIN_MODIFIER_KEY)
+          view.lock_inference(@mouse_ip)
+          redraw
+
+        elsif (key == VK_ALT) || (key == VK_COMMAND) || (key == VK_CONTROL) || (key == VK_SHIFT)
           @alternate_mode_key = key
           @alternate_mode_key_down_time = Time.now
           @alternate_mode = !@alternate_mode
@@ -88,8 +102,12 @@ module Envelop
         end
       end
 
-      def onKeyUp(key, _repeat, _flags, _view)
-        if key == @alternate_mode_key
+      def onKeyUp(key, _repeat, _flags, view)
+        if (key == CONSTRAIN_MODIFIER_KEY)
+          view.lock_inference
+          redraw
+
+        elsif key == @alternate_mode_key
           elapsed_ms_since_alternate_mode_key_down = (Time.now - @alternate_mode_key_down_time) * 1000.0
           if elapsed_ms_since_alternate_mode_key_down > TAP_HOLD_THRESHOLD_MS
             @alternate_mode = !@alternate_mode
@@ -120,6 +138,7 @@ module Envelop
       private
 
       def redraw
+        set_status_text
         Sketchup.active_model.active_view.invalidate
       end
 
@@ -130,6 +149,7 @@ module Envelop
 
         @mouse_ip = Sketchup::InputPoint.new
         @ip = Sketchup::InputPoint.new
+        Sketchup.active_model.active_view.lock_inference
 
         @alternate_mode = false
         @alternate_mode_key = nil
@@ -137,6 +157,9 @@ module Envelop
 
         @lbutton_down_time = nil
         @dragged = false
+
+
+        set_status_text
       end
     end
 
@@ -145,7 +168,7 @@ module Envelop
       $stdout = StringIO.new
 
       yield
-      
+
     ensure
       $stdout = prev_stdout
     end

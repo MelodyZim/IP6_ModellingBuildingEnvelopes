@@ -28,7 +28,7 @@ module Envelop
           finish_pushpull
         end
 
-        set_status_text
+        redraw
       end
 
       def onLButtonUp(flags, x, y, view)
@@ -36,21 +36,27 @@ module Envelop
 
         if @dragged
           finish_pushpull
-          set_status_text
+          redraw
         end
+      end
+
+      def onReturn(_view)
+        if @phase != PHASES[:INITIAL]
+          finish_pushpull
+        end
+
+        redraw
       end
 
       def onMouseMove(flags, x, y, view)
         super(flags, x, y, view)
 
         update_pushpull_vector(view, x, y) if @phase == PHASES[:FACE_SELECTED]
-
-        set_status_text
       end
 
       def set_status_text
         if @phase == PHASES[:FACE_SELECTED]
-          Sketchup.status_text = 'Click/Release to accept preview, cyan adds, magenta removes. Enter manual distance to the right. `Shift` to switch add mode. `Esc` to abort.'
+          Sketchup.status_text = 'Click/Release or `Enter` to accept preview, cyan adds, magenta removes. Input manual distance to the right. `Alt` to switch add mode. `Esc` to abort.'
           Sketchup.vcb_value = get_distance
 
         else
@@ -68,11 +74,24 @@ module Envelop
         end
 
         reset_tool
+        redraw
       end
 
       private
 
       # inherited
+
+      def reset_tool
+        @face = nil
+        @transform = nil
+        @origin = nil
+        @direction = nil
+        @line = nil
+
+        @pushpull_vector = Geom::Vector3d.new
+
+        super
+      end
 
       def populateExtents(boundingBox)
         if @phase == PHASES[:FACE_SELECTED]
@@ -81,10 +100,10 @@ module Envelop
         end
       end
 
-      def onUserDistance(distance)
+      def onUserDistances(distances)
         # set the @pushpull_vector according to distance
         @pushpull_vector = @direction
-        @pushpull_vector.length = distance.to_f
+        @pushpull_vector.length = distances[0].to_f
 
         # finish operation
         finish_pushpull
@@ -226,20 +245,6 @@ module Envelop
           distance = 0
         end
         distance.to_l.to_s
-      end
-
-      def reset_tool
-        super
-
-        @face = nil
-        @transform = nil
-        @origin = nil
-        @direction = nil
-        @line = nil
-
-        @pushpull_vector = Geom::Vector3d.new
-
-        set_status_text
       end
     end
 
