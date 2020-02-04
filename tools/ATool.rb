@@ -9,6 +9,10 @@ class ATool
     puts 'activating ATool...'
   end
 
+  def onCancel(reason, view)
+    puts "ATool was canceled for reason ##{reason} in view: #{view}"
+  end
+
   def deactivate(view)
     puts 'deactivating ATool...'
     view.invalidate
@@ -40,7 +44,7 @@ class ATool
     puts 'is VK_ALT' if key == VK_ALT
     puts 'is VK_COMMAND' if key == VK_COMMAND
     puts 'is VK_CONTROL' if key == VK_CONTROL
-    puts 'is VK_CONTROL' if key == VK_SHIFT
+    puts 'is VK_SHIFT' if key == VK_SHIFT
 
     puts 'is ALT_MODIFIER_KEY' if key == ALT_MODIFIER_KEY
     puts 'is COPY_MODIFIER_KEY' if key == COPY_MODIFIER_KEY
