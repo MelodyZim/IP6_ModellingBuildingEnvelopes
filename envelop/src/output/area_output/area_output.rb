@@ -19,23 +19,23 @@ module Envelop
       if Envelop::Materialisation.house_contains_default_material
         UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
       else
-        check_scale
-      end
-    end
-    
-    def self.check_scale
-      if !Envelop::ScaleTool.is_model_scaled
-        UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
-        Envelop::ScaleTool.activate_scale_tool { check_orientation }
-      else
         check_orientation
       end
     end
-
+    
     def self.check_orientation
       if !Envelop::OrientationTool.is_model_oriented
         UI.messagebox('The north direction must be set before outputting area measurements. Starting orientation tool...')
-        Envelop::OrientationTool.activate_orientation_tool { output_area }
+        Envelop::OrientationTool.activate_orientation_tool { check_scale }
+      else
+        check_scale
+      end
+    end
+
+    def self.check_scale
+      if !Envelop::ScaleTool.is_model_scaled
+        UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
+        Envelop::ScaleTool.activate_scale_tool { output_area }
       else
         output_area
       end

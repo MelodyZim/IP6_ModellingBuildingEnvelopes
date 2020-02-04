@@ -121,8 +121,8 @@ module Envelop
             reset_tool
             view.invalidate
 
-            @complete_callback.call unless @complete_callback.nil?
             Sketchup.active_model.select_tool(nil)
+            @complete_callback.call unless @complete_callback.nil?
           else
             # set start point
             @first_point.copy!(@mouse_ip)
