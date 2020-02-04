@@ -34,8 +34,9 @@ module Envelop
         # puts 'suspending ScaleTool...'
       end
 
-      def onCancel(_reason, _view)
+      def onCancel(_reason, view)
         reset_tool
+        view.invalidate
       end
 
       def draw(view)
@@ -109,11 +110,19 @@ module Envelop
             # finish
 
             north = compute_north(@first_point, @mouse_ip).normalize
-            puts "north: #{north}"
-            # TODO: set attribute on house with north
-
+            northAngle = Math.atan2(north.y, north.x)
+            puts "north: #{north}, #{northAngle}"
+            
+            Envelop::OperationUtils.operation_chain "Remember Orientation", true, lambda {
+              Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'northAngle', northAngle)
+              Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'modelIsOriented', true)
+            }
+            
             reset_tool
             view.invalidate
+
+            Envelop::AreaOutput.open_dialog if @proceedToOutput
+            Sketchup.active_model.select_tool(nil)
           else
             # set start point
             @first_point.copy!(@mouse_ip)
