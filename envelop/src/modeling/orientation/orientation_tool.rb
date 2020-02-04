@@ -6,8 +6,8 @@ module Envelop
       # 2D points of the "north" indicator
       INDICATOR_POINTS = [[0, 0], [0.5, -0.5], [0, 1], [0, 0], [-0.5, -0.5], [0, 1]]
 
-      def initialize(proceedToOutput = false)
-        @proceedToOutput = proceedToOutput
+      def initialize(&complete_callback)
+        @complete_callback = complete_callback
       end
 
       def activate
@@ -121,8 +121,8 @@ module Envelop
             reset_tool
             view.invalidate
 
-            Envelop::AreaOutput.open_dialog if @proceedToOutput
             Sketchup.active_model.select_tool(nil)
+            @complete_callback.call unless @complete_callback.nil?
           else
             # set start point
             @first_point.copy!(@mouse_ip)
@@ -190,11 +190,20 @@ module Envelop
       Sketchup.active_model.get_attribute('Envelop::OrientationTool', 'modelIsOriented', false)
     end
 
-    def self.activate_orientation_tool(proceedToOutput = false)
-      Sketchup.active_model.select_tool(Envelop::OrientationTool::OrientationTool.new(proceedToOutput))
+    #
+    # Activate the orientation tool. The optional block gets executed if the tool completed successfully
+    #
+    def self.activate_orientation_tool(&complete_callback)
+      Sketchup.active_model.select_tool(Envelop::OrientationTool::OrientationTool.new(&complete_callback))
     end
 
     def self.reload
+      # delete the attribute dictionary on model
+      Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+        Sketchup.active_model.attribute_dictionaries.delete("Envelop::OrientationTool")
+        true
+      })
+
       Sketchup.active_model.select_tool(nil)
     end
     reload

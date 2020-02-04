@@ -6,8 +6,8 @@ module Envelop
       # TODO: consider using the input on the lower right hand side to either set line length or set how long the line should be
       PHASES = { BEFORE_FIRST_POINT: 0, BEFORE_SECOND_POINT: 2, BEFORE_SCALE: 3 }.freeze
 
-      def initialize(proceedToOutput = false)
-        @proceedToOutput = proceedToOutput
+      def initialize(&complete_callback)
+        @complete_callback = complete_callback
       end
 
       def activate
@@ -24,14 +24,14 @@ module Envelop
       end
 
       def resume(view)
-        puts 'resuming ScaleTool...'
+        # puts 'resuming ScaleTool...'
 
         set_status_text
         view.invalidate
       end
 
       def suspend(_view)
-        puts 'suspending ScaleTool...'
+        # puts 'suspending ScaleTool...'
       end
 
       def onCancel(_reason, _view)
@@ -93,7 +93,7 @@ module Envelop
             if scale_dialog
               Envelop::ScaleTool.model_is_scaled
               Sketchup.active_model.select_tool(nil)
-              Envelop::AreaOutput.open_dialog if @proceedToOutput
+              @complete_callback.call unless @complete_callback.nil?
             else
               @phase = PHASES[:BEFORE_SECOND_POINT]
               set_status_text
@@ -137,6 +137,9 @@ module Envelop
             group.explode
             true
           })
+
+          # Refresh housekeeper
+          Envelop::Housekeeper.get_house
 
           return true
         end
@@ -182,11 +185,20 @@ module Envelop
       Sketchup.active_model.get_attribute('Envelop::ScaleTool', 'modelIsScaled', false)
     end
 
-    def self.activate_scale_tool(proceedToOutput = false)
-      Sketchup.active_model.select_tool(Envelop::ScaleTool::ScaleTool.new(proceedToOutput))
+    #
+    # Activate the scale tool. The optional block gets executed if the tool completed successfully
+    #
+    def self.activate_scale_tool(&complete_callback)
+      Sketchup.active_model.select_tool(Envelop::ScaleTool::ScaleTool.new(&complete_callback))
     end
 
     def self.reload
+      # delete the attribute dictionary on model
+      Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+        Sketchup.active_model.attribute_dictionaries.delete("Envelop::ScaleTool")
+        true
+      })
+
       Sketchup.active_model.select_tool(nil)
     end
     reload
