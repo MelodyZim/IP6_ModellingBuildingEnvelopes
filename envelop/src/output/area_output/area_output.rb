@@ -1,23 +1,52 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module Envelop
   module AreaOutput
 		# public
-		def self.open_dialog(house = Envelop::Housekeeper.get_house)
-      if !Envelop::ScaleTool.is_model_scaled
-        UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
-        Envelop::ScaleTool.activate_scale_tool(true)
-      elsif Envelop::Materialisation.house_contains_default_material
-        UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
+    def self.open_dialog
+      if Envelop::Housekeeper.get_house.nil?
+        UI.messagebox('Got no house to perform area calculation')
       else
-        area = calc_area(house)
-  			@area_json = area.to_json
-        DIALOG_OPTIONS[:height] = BASE_HEIGHT + area.length * 21
-        Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
+        check_material
       end
 		end
 
-		private
+    private
+
+    def self.check_material
+      if Envelop::Materialisation.house_contains_default_material
+        UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
+      else
+        check_scale
+      end
+    end
+    
+    def self.check_scale
+      if !Envelop::ScaleTool.is_model_scaled
+        UI.messagebox('The model must be scaled before outputting area measurements. Starting scale tool...')
+        Envelop::ScaleTool.activate_scale_tool { check_orientation }
+      else
+        check_orientation
+      end
+    end
+
+    def self.check_orientation
+      if !Envelop::OrientationTool.is_model_oriented
+        UI.messagebox('The north direction must be set before outputting area measurements. Starting orientation tool...')
+        Envelop::OrientationTool.activate_orientation_tool { output_area }
+      else
+        output_area
+      end
+    end
+
+    def self.output_area
+      area = calc_area(Envelop::Housekeeper.get_house)
+      @area_json = area.to_json
+      DIALOG_OPTIONS[:height] = BASE_HEIGHT + area.length * 21
+      Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
+    end  
 
     # settings
     BASE_HEIGHT = 10 + 23 + 2 + 22 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
