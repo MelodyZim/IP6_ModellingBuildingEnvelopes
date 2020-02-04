@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sketchup'
+require_relative '../../vendor/rb/os'
 
 module Envelop
   module Toolbar
@@ -15,8 +16,13 @@ module Envelop
           MF_GRAYED
         end
       end
-      cmd.small_icon = 'area.svg'
-      cmd.large_icon = 'area.svg'
+      if OS.mac?
+        cmd.small_icon = 'area.pdf'
+        cmd.large_icon = 'area.pdf'
+      else
+        cmd.small_icon = 'area.svg'
+        cmd.large_icon = 'area.svg'
+      end
       cmd.tooltip = 'Area Output'
       cmd.status_bar_text = 'Calculate surface area of selection'
       cmd.menu_text = 'Area'
@@ -93,8 +99,14 @@ module Envelop
       cmd = UI::Command.new('Push-Pull Tool') do
         Envelop::PushPullTool.activate_pushpull_tool()
       end
-      cmd.small_icon = 'pushpull.svg'
-      cmd.large_icon = 'pushpull.svg'
+
+      if OS.mac?
+        cmd.small_icon = 'pushpull_tool.pdf'
+        cmd.large_icon = 'pushpull_tool.pdf'
+      else
+        cmd.small_icon = 'pushpull_tool.svg'
+        cmd.large_icon = 'pushpull_tool.svg'
+      end
       cmd.tooltip = 'Push-Pull'
       cmd.status_bar_text = 'Extrude a face into a volume and add to or remove from house'
       cmd.menu_text = 'Push-Pull Tool'
