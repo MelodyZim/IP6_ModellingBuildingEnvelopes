@@ -103,7 +103,7 @@ module Envelop
       def onUserDistances(distances)
         # set the @pushpull_vector according to distance
         @pushpull_vector = @direction
-        @pushpull_vector.length = distances[0].to_f
+        @pushpull_vector.length = distances[0]
 
         # finish operation
         finish_pushpull

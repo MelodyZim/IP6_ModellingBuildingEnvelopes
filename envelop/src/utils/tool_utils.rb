@@ -81,7 +81,7 @@ module Envelop
         if text.include?(",") or text.include?(" ")
           distances = text.split(/\s*[, ]\s*/).map { |s| s.empty? ? nil : s.to_l.to_f }
         else
-          distances = [text.to_l]
+          distances = [text.to_l.to_f]
         end
 
         onUserDistances(distances) if defined? onUserDistances

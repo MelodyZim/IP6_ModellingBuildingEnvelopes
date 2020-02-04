@@ -142,8 +142,8 @@ module Envelop
         @prev_points.each { |p|; boundingBox.add(p) }
       end
 
-      def onUserDistances(distances) # TODO: test this
-        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode && distances.length >= 2
+      def onUserDistances(distances)
+        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode
           ps = try_get_rectangle_points
           unless ps.nil?
 
@@ -151,7 +151,7 @@ module Envelop
             v1 = ps[1] - ps[0]
             v2 = ps[2] - ps[1]
             v1.length = distances[0] unless distances[0].nil?
-            v2.length = distances[1] unless distances[0].nil?
+            v2.length = distances[1] unless distances[1].nil?
 
             ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
 
