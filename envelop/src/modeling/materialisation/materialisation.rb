@@ -48,9 +48,9 @@ module Envelop
                         else
                           face.material.name
                         end
-        face.set_attribute('tmp_material', 'original_name', original_name)
 
         material = materials.add(SecureRandom.hex(8))
+        material.set_attribute('tmp_material', 'original_name', original_name)
         face.material = material
       end
     end
@@ -59,7 +59,10 @@ module Envelop
       materials = Sketchup.active_model.materials
 
       grp.entities.grep(Sketchup::Face).each do |face|
-        original_name = face.get_attribute('tmp_material', 'original_name')
+        next if face.material.nil?
+
+        original_name = face.material.get_attribute('tmp_material', 'original_name')
+
         next if original_name.nil?
 
         materials.remove(face.material)

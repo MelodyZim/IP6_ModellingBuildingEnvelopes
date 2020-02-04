@@ -79,4 +79,46 @@ class ATool
   end
 end
 
+def printModel
+  puts 'Model Attributes:'
+  printDicts(Sketchup.active_model.attribute_dictionaries, 1)
+  puts ''
+  puts 'Model Hierarchy'
+  printHierarchy(Sketchup.active_model.active_entities, 1)
+  nil
+end
+
+def printHierarchy(grp = Sketchup.active_model.active_entities, indent = 0)
+  grp.each do |e|
+    if e.is_a? Sketchup::Face
+      printIndent(indent)
+      puts 'Face Attributes:'
+      printDicts(e.attribute_dictionaries, indent + 1)
+    elsif e.is_a? Sketchup::Group
+      printIndent(indent)
+      puts 'Group Attributes:'
+      printDicts(e.attribute_dictionaries, indent + 1)
+
+      printIndent(indent)
+      puts 'Group Hierarchy:'
+      printHierarchy(e.entities, indent + 1)
+    end
+  end
+end
+
+def printDicts(dicts, indent = 0)
+  dicts&.each do |d|
+    printIndent(indent)
+    puts d.name.to_s
+    d.each do |k, v|
+      printIndent(indent + 1)
+      puts "#{k} -> #{v}"
+    end
+  end
+end
+
+def printIndent(indent)
+  print '  ' * indent
+end
+
 Sketchup.active_model.select_tool(ATool.new)
