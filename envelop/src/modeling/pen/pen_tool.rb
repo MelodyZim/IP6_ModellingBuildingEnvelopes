@@ -102,34 +102,6 @@ module Envelop
         end
       end
 
-      def onUserDistances(distances) # TODO: test this
-        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode && distances.length >= 2
-          ps = try_get_rectangle_points
-          unless ps.nil?
-
-            # calculate new points based on input
-            v1 = ps[1] - ps[0]
-            v2 = ps[2] - ps[1]
-            v1.length = distances[0]
-            v2.length = distances[1]
-
-            ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
-
-            finish_with_points(ps)
-            return
-          end
-        end
-
-        if @phase != PHASES[:INITIAL]
-
-          v = @ip.position - @prev_points[-1]
-          v.length = distances[0]
-          p = @prev_points[-1] + v
-
-          finish_with_point(p)
-        end
-      end
-
       def set_status_text # TODO: update this$
         if @phase == PHASES[:INITIAL]
           Sketchup.status_text = 'Click/`Enter` to select start point.'
@@ -168,6 +140,34 @@ module Envelop
       def populateExtents(boundingBox)
         boundingBox.add(@ip) if @ip.valid?
         @prev_points.each { |p|; boundingBox.add(p) }
+      end
+
+      def onUserDistances(distances) # TODO: test this
+        if @phase == PHASES[:FIRST_POINT] && !@alternate_mode && distances.length >= 2
+          ps = try_get_rectangle_points
+          unless ps.nil?
+
+            # calculate new points based on input
+            v1 = ps[1] - ps[0]
+            v2 = ps[2] - ps[1]
+            v1.length = distances[0] unless distances[0].nil?
+            v2.length = distances[1] unless distances[0].nil?
+
+            ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
+
+            finish_with_points(ps)
+            return
+          end
+        end
+
+        if @phase != PHASES[:INITIAL]
+
+          v = @ip.position - @prev_points[-1]
+          v.length = distances[0]
+          p = @prev_points[-1] + v
+
+          finish_with_point(p)
+        end
       end
 
       # internal
