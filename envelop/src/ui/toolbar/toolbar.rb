@@ -50,6 +50,19 @@ module Envelop
       cmd
     end
 
+    def self.orientation_tool_command
+      cmd = UI::Command.new('Orientation') do
+        Envelop::OrientationTool.activate_orientation_tool
+      end
+      cmd.small_icon = 'orientation_tool.svg'
+      cmd.large_icon = 'orientation_tool.svg'
+      cmd.tooltip = 'Set which direction is North'
+      cmd.status_bar_text = 'Set which direction is North'
+      cmd.menu_text = 'Orientation'
+
+      cmd
+    end
+
     def self.floor_maker_command
       cmd = UI::Command.new('Floor Maker') do
         Envelop::FloorMakerTool.activate_floor_maker_tool
@@ -153,6 +166,7 @@ module Envelop
 
       @toolbar = @toolbar.add_separator
       @toolbar = @toolbar.add_item scale_tool_command
+      @toolbar = @toolbar.add_item orientation_tool_command
       @toolbar = @toolbar.add_item area_command
 
       @toolbar = @toolbar.add_separator
