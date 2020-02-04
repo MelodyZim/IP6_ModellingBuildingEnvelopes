@@ -31,13 +31,13 @@ module Envelop
       end
 
       def resume(view)
-        puts "resuming #{@name}..."
+        # puts "resuming #{@name}..."
 
         redraw
       end
 
       def suspend(_view)
-        puts "suspending #{@name}..."
+        # puts "suspending #{@name}..."
       end
 
       def onCancel(_reason, _view)
