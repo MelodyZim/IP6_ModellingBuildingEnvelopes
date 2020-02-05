@@ -124,7 +124,7 @@ module Envelop
       cmd = UI::Command.new('Open Wizard') do
         Envelop::Wizard.open_dialog
       end
-      set_icon(cmd, 'wizard') # TODO: make a image
+      set_icon(cmd, 'wizard')
       cmd.tooltip = 'Open Wizard'
       cmd.status_bar_text = 'Open Wizard'
       cmd.menu_text = 'Open Wizard'
@@ -136,7 +136,7 @@ module Envelop
       cmd = UI::Command.new('Plan Manager Tool') do
         Envelop::PlanManagerTool.activate_plan_manager_tool
       end
-      set_icon(cmd, 'plan_manager') # TODO: make a image
+      set_icon(cmd, 'plan_manager')
       cmd.tooltip = 'Plan Manager Tool'
       cmd.status_bar_text = 'Move and Hide Plans'
       cmd.menu_text = 'Plan Manager Tool'
