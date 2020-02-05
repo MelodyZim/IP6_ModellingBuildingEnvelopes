@@ -15,6 +15,8 @@ module Envelop
         erase_construction_geometry
       end
 
+      # TODO also end on dragged in mouse up
+
       def onCancel(reason, view)
         if @phase == PHASES[:MULTIPLE_POINTS]
           @target_faces = @prev_target_faces

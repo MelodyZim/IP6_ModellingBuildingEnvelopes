@@ -2,70 +2,31 @@
 
 module Envelop
   module FloorMakerTool
-    class FloorMakerTool
-      def initialize; end
-
-      def activate
-        puts 'activating FloorMakerTool...'
-
-        reset_tool
-      end
-
-      def deactivate(view)
-        puts 'deactivating FloorMakerTool...'
-
-        # no need to reset_tool, tool instance will be discarded after this
-
-        view.invalidate
-      end
-
-      def resume(view)
-        puts 'resuming FloorMakerTool...'
-        set_status_text
-        view.invalidate
-      end
-
-      def suspend(_view)
-        puts 'suspending FloorMakerTool...'
-      end
-
-      def onCancel(_reason, _view)
-        Sketchup.active_model.select_tool(nil) # this will invalidate view & discard tool instance
+    class FloorMakerTool < Envelop::ToolUtils::AbstractTool
+      def initialize
+        super(PenTool, cursor_id: Envelop::ToolUtils::CURSOR_PENCIL)
       end
 
       def draw(view)
-        @mouse_ip.draw(view) if @mouse_ip.display?
+        super(view)
+
+        draw_preview(view) if @ip.valid?
       end
 
-      # TODO: consider having a custom cursor like: CURSOR_PENCIL = UI.create_cursor(cursor_path, 0, 0)
-      CURSOR_PENCIL = 632
-      def onSetCursor
-        UI.set_cursor(CURSOR_PENCIL) # TODO: this totally doesn't work reliably on mac
-      end
+      def onLButtonDown(flags, x, y, view)
+        super(flags, x, y, view)
 
-      def onMouseMove(_flags, x, y, view)
-        @mouse_ip.pick(view, x, y)
-        view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
-        view.invalidate
-      end
+        if @ip.valid?
 
-      def onLButtonDown(_flags, _x, _y, view)
-        puts 'Envelop::MaterialisationTool::FloorMakerTool.onLButtonDown: ...'
-
-        if @mouse_ip.valid?
-          model = Sketchup.active_model
-
+          remove_preview
           Envelop::OperationUtils.operation_chain('Envelop: New floor at mouseclick', false, lambda {
-
-            return split_house_at(@mouse_ip.position.z)
-
+            return split_house_at(Envelop::Housekeeper.get_house)
           })
+          redraw
 
         else
-          UI.messagebox('Could not make floor because current mouse position is invalid InputPosition.')
+          UI.messagebox('Could not make floor because current mouse position is invalid.')
         end
-
-        view.invalidate # TODO: is this rally needed in the else case?
       end
 
       private
@@ -73,7 +34,8 @@ module Envelop
       # Settings
       FOR_SURE_OUTSIDE_MODEL = 999_999_999
 
-      def split_house_at(height)
+      def split_house_at(target_grp, height = @ip.position.z)
+        return false if target_grp.nil?
 
         entities = Sketchup.active_model.active_entities
 
@@ -85,20 +47,37 @@ module Envelop
         house_group = Envelop::Housekeeper.get_house
         return false if house_group.nil?
 
-        house_group.entities.intersect_with(true, house_group.transformation, house_group.entities, house_group.transformation, true, intersect_group)
+        house_group.entities.intersect_with(true, house_group.transformation, target_grp.entities, house_group.transformation, true, intersect_group)
 
         intersect_group.erase!
-      end
-
-      def reset_tool
-        # reset state
-        @mouse_ip = Sketchup::InputPoint.new
-
-        set_status_text
+        return true
       end
 
       def set_status_text
-        Sketchup.status_text = 'Click anywhere to create floor separation at that elevation. "Esc" to abort.'
+        Sketchup.status_text = 'Click anywhere to create floor separation at that elevation. `Esc` to abort.'
+      end
+
+      def draw_preview(view)
+        Envelop::OperationUtils.operation_chain('Envelop: Split House Preview', true, lambda {
+          remove_preview
+          @preview_grp = Sketchup.active_model.active_entities.add_group
+          @preview_grp.transformation = Envelop::Housekeeper.get_house.transformation
+          split_house_at(@preview_grp)
+          # todo: make preview colored
+        })
+      end
+
+      def remove_preview
+        if not @preview_grp.nil? and not @preview_grp.deleted?
+          @preview_grp.erase!
+        end
+        @preview_grp = nil
+      end
+
+      def reset_tool
+        super
+
+        @preview_grp = nil
       end
     end
 

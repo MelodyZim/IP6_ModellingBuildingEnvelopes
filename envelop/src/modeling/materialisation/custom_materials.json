@@ -1,5 +1,173 @@
 [
   {
+    "name": "IW 2",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 2",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
+    "name": "IW 1",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 1",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
+    "name": "IW 3",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 3",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
+    "name": "IW 4",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 4",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
+    "name": "IW 5",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 5",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
+    "name": "IW 6",
+    "base_id": "IW",
+    "base_name": "Innenwand",
+    "count": 2,
+    "color_rgb": [
+      87,
+      134,
+      231
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 5
+  },
+  {
+    "name": "AF 6",
+    "base_id": "AF",
+    "base_name": "Fenster",
+    "count": 2,
+    "color_rgb": [
+      226,
+      77,
+      77
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.59,
+    "index": 14
+  },
+  {
     "name": "AW 1",
     "base_id": "AW",
     "base_name": "Aussenwand",
@@ -42,7 +210,7 @@
     "index": 3
   },
   {
-    "name": "IW 1",
+    "name": "IW 7",
     "base_id": "IW",
     "base_name": "Innenwand",
     "count": 1,
@@ -56,7 +224,7 @@
     "index": 4
   },
   {
-    "name": "IW 2",
+    "name": "IW 8",
     "base_id": "IW",
     "base_name": "Innenwand",
     "count": 2,
@@ -70,7 +238,7 @@
     "index": 5
   },
   {
-    "name": "IW 3",
+    "name": "IW 9",
     "base_id": "IW",
     "base_name": "Innenwand",
     "count": 3,
@@ -168,7 +336,7 @@
     "index": 12
   },
   {
-    "name": "AF 1",
+    "name": "AF 7",
     "base_id": "AF",
     "base_name": "Fenster",
     "count": 1,
@@ -182,7 +350,7 @@
     "index": 13
   },
   {
-    "name": "AF 2",
+    "name": "AF 8",
     "base_id": "AF",
     "base_name": "Fenster",
     "count": 2,
