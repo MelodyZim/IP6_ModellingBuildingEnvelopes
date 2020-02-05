@@ -58,26 +58,39 @@ module Envelop
       end
 
       def draw_preview(view)
-        Envelop::OperationUtils.operation_chain('Envelop: Split House Preview', true, lambda {
           remove_preview
-          @preview_grp = Sketchup.active_model.active_entities.add_group
-          @preview_grp.transformation = Envelop::Housekeeper.get_house.transformation
-          split_house_at(@preview_grp)
-          # todo: make preview colored
-        })
+          Envelop::OperationUtils.operation_chain('Envelop: Split House Preview', true, lambda {
+
+              new_grp = Sketchup.active_model.active_entities.add_group
+              split_house_at(new_grp)
+
+              house_group = Envelop::Housekeeper.get_house
+              entities = Sketchup.active_model.active_entities
+              new_grp.entities.grep(Sketchup::Edge).each do |edge|
+                start_p = Geom::Point3d.new(edge.start)
+                start_p.transform! house_group.transformation
+                end_p = Geom::Point3d.new(edge.end)
+                end_p.transform! house_group.transformation
+                line = entities.add_cline(start_p, end_p)
+                line.set_attribute("Envelop::FoolMakerTool", "isPreview", true)
+                edge.erase!
+              end
+          })
       end
 
       def remove_preview
-        if not @preview_grp.nil? and not @preview_grp.deleted?
-          @preview_grp.erase!
-        end
-        @preview_grp = nil
+        Envelop::OperationUtils.operation_chain('Envelop: Split House Renove Preview', true, lambda {
+          Sketchup.active_model.active_entities.grep(Sketchup::ConstructionLine).each do |cline|
+            isPreview = cline.get_attribute("Envelop::FoolMakerTool", "isPreview", false)
+            if isPreview
+              cline.erase!
+            end
+          end
+        })
       end
 
       def reset_tool
         super
-
-        @preview_grp = nil
       end
     end
 
