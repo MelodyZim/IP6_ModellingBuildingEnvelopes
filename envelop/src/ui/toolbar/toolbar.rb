@@ -16,13 +16,7 @@ module Envelop
           MF_GRAYED
         end
       end
-      if OS.mac?
-        cmd.small_icon = 'area.pdf'
-        cmd.large_icon = 'area.pdf'
-      else
-        cmd.small_icon = 'area.svg'
-        cmd.large_icon = 'area.svg'
-      end
+      set_icon(cmd, 'area')
       cmd.tooltip = 'Area Output'
       cmd.status_bar_text = 'Calculate surface area of selection'
       cmd.menu_text = 'Area'
@@ -34,8 +28,7 @@ module Envelop
       cmd = UI::Command.new('Reload') do
         Envelop.reload
       end
-      cmd.small_icon = 'reload.svg'
-      cmd.large_icon = 'reload.svg'
+      set_icon(cmd, 'reload')
       cmd.tooltip = 'Envelop.reload'
       cmd.status_bar_text = 'Reload the envelop plugin'
       cmd.menu_text = 'Reload'
@@ -47,8 +40,7 @@ module Envelop
       cmd = UI::Command.new('Scale') do
         Envelop::ScaleTool.activate_scale_tool
       end
-      cmd.small_icon = 'scale_tool.svg'
-      cmd.large_icon = 'scale_tool.svg'
+      set_icon(cmd, 'scale_tool')
       cmd.tooltip = 'Scale model'
       cmd.status_bar_text = 'Scale model by defining a known distance'
       cmd.menu_text = 'Scale'
@@ -60,8 +52,7 @@ module Envelop
       cmd = UI::Command.new('Orientation') do
         Envelop::OrientationTool.activate_orientation_tool
       end
-      cmd.small_icon = 'orientation_tool.svg'
-      cmd.large_icon = 'orientation_tool.svg'
+      set_icon(cmd, 'orientation_tool')
       cmd.tooltip = 'Set which direction is North'
       cmd.status_bar_text = 'Set which direction is North'
       cmd.menu_text = 'Orientation'
@@ -73,8 +64,7 @@ module Envelop
       cmd = UI::Command.new('Floor Maker') do
         Envelop::FloorMakerTool.activate_floor_maker_tool
       end
-      cmd.small_icon = 'floor_tool.svg'
-      cmd.large_icon = 'floor_tool.svg'
+      set_icon(cmd, 'floor_tool')
       cmd.tooltip = 'Create Floor'
       cmd.status_bar_text = 'Create a Floor at Mouseclick-Height'
       cmd.menu_text = 'Create Floor'
@@ -86,8 +76,7 @@ module Envelop
       cmd = UI::Command.new('Pen Tool') do
         Envelop::PenTool.activate_pen_tool
       end
-      cmd.small_icon = 'pen_tool.svg'
-      cmd.large_icon = 'pen_tool.svg'
+      set_icon(cmd, 'pen_tool')
       cmd.tooltip = 'Create Polygon or Rectangle'
       cmd.status_bar_text = 'Create Polygon or Rectangle Face'
       cmd.menu_text = 'Pen Tool'
@@ -99,14 +88,7 @@ module Envelop
       cmd = UI::Command.new('Push-Pull Tool') do
         Envelop::PushPullTool.activate_pushpull_tool()
       end
-
-      if OS.mac?
-        cmd.small_icon = 'pushpull_tool.pdf'
-        cmd.large_icon = 'pushpull_tool.pdf'
-      else
-        cmd.small_icon = 'pushpull_tool.svg'
-        cmd.large_icon = 'pushpull_tool.svg'
-      end
+      set_icon(cmd, 'pushpull_tool')
       cmd.tooltip = 'Push-Pull'
       cmd.status_bar_text = 'Extrude a face into a volume and add to or remove from house'
       cmd.menu_text = 'Push-Pull Tool'
@@ -118,8 +100,7 @@ module Envelop
       cmd = UI::Command.new('Hide all plans') do
         Envelop::PlanManager.hide_all_plans
       end
-      cmd.small_icon = 'hide_plans.svg'
-      cmd.large_icon = 'hide_plans.svg'
+      set_icon(cmd, 'hide_plans')
       cmd.tooltip = 'Hide all plans'
       cmd.status_bar_text = 'Hide all plans'
       cmd.menu_text = 'Hide all plans'
@@ -131,8 +112,7 @@ module Envelop
       cmd = UI::Command.new('Unhide all plans') do
         Envelop::PlanManager.unhide_all_plans
       end
-      cmd.small_icon = 'unhide_plans.svg'
-      cmd.large_icon = 'unhide_plans.svg'
+      set_icon(cmd, 'unhide_plans')
       cmd.tooltip = 'Unhide all plans'
       cmd.status_bar_text = 'Unhide all plans'
       cmd.menu_text = 'Unhide all plans'
@@ -144,8 +124,7 @@ module Envelop
       cmd = UI::Command.new('Open Wizard') do
         Envelop::Wizard.open_dialog
       end
-      cmd.small_icon = 'todo.svg' # TODO: make a image
-      cmd.large_icon = 'todo.svg'
+      set_icon(cmd, 'wizard') # TODO: make a image
       cmd.tooltip = 'Open Wizard'
       cmd.status_bar_text = 'Open Wizard'
       cmd.menu_text = 'Open Wizard'
@@ -157,13 +136,28 @@ module Envelop
       cmd = UI::Command.new('Plan Manager Tool') do
         Envelop::PlanManagerTool.activate_plan_manager_tool
       end
-      cmd.small_icon = 'todo.svg' # TODO: make a image
-      cmd.large_icon = 'todo.svg'
+      set_icon(cmd, 'plan_manager') # TODO: make a image
       cmd.tooltip = 'Plan Manager Tool'
       cmd.status_bar_text = 'Move and Hide Plans'
       cmd.menu_text = 'Plan Manager Tool'
 
       cmd
+    end
+
+    #
+    # Set the icon for the command. Assumes that path.svg and path.pdf exists
+    #
+    # @param cmd [UI::Command]
+    # @param path [String] icon file name without extension
+    #
+    def self.set_icon(cmd, path)
+      if OS.mac?
+        cmd.small_icon = path + ".pdf"
+        cmd.large_icon = path + ".pdf"
+      else
+        cmd.small_icon = path + ".svg"
+        cmd.large_icon = path + ".svg"
+      end
     end
 
     unless file_loaded?(__FILE__)
