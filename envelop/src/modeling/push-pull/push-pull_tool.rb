@@ -127,6 +127,9 @@ module Envelop
 
           # add the group to the house
           Envelop::Housekeeper.add_to_house(group)
+        }, lambda {
+          # check if house is still manifold
+          Envelop::Housekeeper.get_or_find_house&.manifold? || false
         }, lambda  {
           Envelop::Materialisation.apply_default_material
           Envelop::GeometryUtils.erase_face(@face) unless @face.deleted?
@@ -224,7 +227,10 @@ module Envelop
           else
             Envelop::Housekeeper.remove_from_house(group)
           end
-
+        }, lambda {
+          # check if house is still manifold
+          Envelop::Housekeeper.get_or_find_house&.manifold? || false
+        }, lambda {
           Envelop::Materialisation.apply_default_material
 
           # delete original face
