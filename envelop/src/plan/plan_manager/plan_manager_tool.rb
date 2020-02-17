@@ -43,7 +43,14 @@ module Envelop
       end
 
       def onMouseMove(_flags, x, y, view)
+        # hide selected plan to ignore while picking
+        @plan.visible = false unless @plan.nil?
+
         @mouse_ip.pick(view, x, y)
+
+        # show plan again
+        @plan.visible=true unless @plan.nil?
+
         view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
 
         if (@phase == PHASES[:DRAGGING]) || (@phase == PHASES[:MOVING])
