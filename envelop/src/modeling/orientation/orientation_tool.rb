@@ -4,7 +4,7 @@ module Envelop
   module OrientationTool
     class OrientationTool
       # 2D points of the "north" indicator
-      INDICATOR_POINTS = [[0, 0], [0.5, -0.5], [0, 1], [0, 0], [-0.5, -0.5], [0, 1]]
+      ARROW = [[0, 0], [0.5, -0.5], [0, 1], [0, 0], [-0.5, -0.5], [0, 1]]
 
       def initialize(&complete_callback)
         @complete_callback = complete_callback
@@ -43,14 +43,34 @@ module Envelop
         main_color = "Blue"
         if @first_point.valid?
           Envelop::GeometryUtils.draw_lines(view, main_color, *get_transformed_indicator_points)
+          view.draw(GL_POLYGON, *get_transformed_indicator_points)
+
           north = compute_north(@first_point, @mouse_ip)
+          east = Geom::Vector3d.new(north.y, -north.x, 0)
+
+          # text
+          labels = Hash[
+            "N" => @first_point.position + north, 
+            "O" => @first_point.position + east, 
+            "S" => @first_point.position - north, 
+            "W" => @first_point.position - east]
+
+          options = {
+            :size => 40,
+            :align => TextAlignCenter,
+          }
+
+          labels.each do |text, position|
+            draw_text(view, view.screen_coords(position), text, options)
+            view.draw_points(position, 10, 2)
+          end
 
           # circle
-          subdivision = 40
-          size = north.length.to_f
+          subdivision = 100
+          radius = north.length.to_f
           circle_Points = Array.new(subdivision) do |i| 
             angle = (i * Math::PI * 2) / subdivision
-            Geom::Point3d.new(Math.cos(angle) * size, Math.sin(angle) * size, 0)
+            Geom::Point3d.new(Math.cos(angle) * radius, Math.sin(angle) * radius, 0)
           end
           circle_Points = circle_Points.map { |p| p + @first_point.position.to_a }
           Envelop::GeometryUtils.draw_lines(view, main_color, *circle_Points, circle_Points[0])
@@ -62,6 +82,22 @@ module Envelop
         end
 
         @mouse_ip.draw(view) if @mouse_ip.display?
+      end
+
+      IS_WIN = Sketchup.platform == :platform_win
+
+      # This will ensure text is drawn with consistent size across platforms,
+      # using pixels as size units.
+      def draw_text(view, position, text, **options)
+        native_options = options.dup
+        if IS_WIN && options.key?(:size)
+          native_options[:size] = pixels_to_points(options[:size])
+        end
+        view.draw_text(position, text, **native_options)
+      end
+
+      def pixels_to_points(pixels)
+        ((pixels.to_f / 96.0) * 72.0).round
       end
 
       def draw_snap_lines(view, count, length, color)
@@ -163,7 +199,7 @@ module Envelop
           east = Geom::Vector3d.new(north.y, -north.x, 0)
 
           # transform points
-          INDICATOR_POINTS.map do |p| 
+          ARROW.map do |p| 
             origin + Envelop::GeometryUtils.vec_mul(east, p[0]) + Envelop::GeometryUtils.vec_mul(north, p[1])
           end
         end
