@@ -102,7 +102,11 @@ module Envelop
 
       def onUserDistances(distances)
         # set the @pushpull_vector according to distance
-        @pushpull_vector = @direction
+        if @pushpull_vector.valid?
+          @pushpull_vector.normalize!
+        else
+          @pushpull_vector = @direction
+        end
         @pushpull_vector.length = distances[0]
 
         # finish operation
@@ -245,8 +249,7 @@ module Envelop
 
       def get_distance
         if @pushpull_vector.valid?
-          sign = @pushpull_vector.samedirection?(@direction) ? 1 : -1
-          distance = @pushpull_vector.length * sign
+          distance = @pushpull_vector.length
         else
           distance = 0
         end
