@@ -2,6 +2,17 @@ require 'sketchup.rb'
 require 'extensions.rb'
 
 module Envelop
+  class ReloadAppObserver < Sketchup::AppObserver
+    def onActivateModel(model)
+      Envelop.reload
+    end
+    def onNewModel(model)
+      Envelop.reload
+    end
+    def onOpenModel(model)
+      Envelop.reload
+    end
+  end
 
   # Utility method to mute Ruby warnings for whatever is executed by the block.
   def self.mute_warnings(&block)
@@ -39,6 +50,8 @@ module Envelop
   end
 
   def self.create_extension
+    Sketchup.add_observer(ReloadAppObserver.new)
+
     ex = SketchupExtension.new('Envelop', 'src/main')
     ex.description = 'Envelop: Quickly Modelling Building Envelops Based on PDF Plans'
     ex.version     = '0.1'
