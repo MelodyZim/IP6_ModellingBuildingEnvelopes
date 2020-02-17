@@ -1,4 +1,30 @@
 $(function() {
+  // set up drag & drop
+    $('body').on(
+      'dragover',
+      function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+  )
+  $('body').on(
+      'dragenter',
+      function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+  )
+  $('body').on(
+      'drop',
+      function(e){
+          if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
+              e.preventDefault();
+              e.stopPropagation();
+               Array.from(e.originalEvent.dataTransfer.files).map(load_file);
+          }
+      }
+  );
+
   // Upon click this should should trigger click on the #file-to-upload file input element
   // This is better than showing the not-good-looking file input element
   $("#upload-button").on('click', function() {
