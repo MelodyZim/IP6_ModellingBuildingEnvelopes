@@ -31,9 +31,13 @@ module Envelop
     end
 
     def self.unhide_all_plans
+      @hidden_plans.each do |plan|
+        plan.hidden = false
+      end
+
       @hidden_plans = []
 
-      update_plans_visibility
+      # update_plans_visibility
 
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
