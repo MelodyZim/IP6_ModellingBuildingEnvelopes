@@ -10,7 +10,7 @@ module Envelop
       def draw(view)
         super(view)
 
-        draw_preview(view) if @ip.valid?
+        # draw_preview(view) if @ip.valid?
       end
 
       def onLButtonDown(flags, x, y, view)
@@ -18,8 +18,8 @@ module Envelop
 
         if @ip.valid?
 
-          remove_preview
-          Envelop::OperationUtils.operation_chain('Envelop: New floor at mouseclick', false, lambda {
+          Envelop::OperationUtils.operation_chain('New Floor', false, lambda {
+            remove_preview
             return split_house_at(Envelop::Housekeeper.get_house)
           })
           redraw
@@ -58,35 +58,38 @@ module Envelop
       end
 
       def draw_preview(view)
-          remove_preview
-          Envelop::OperationUtils.operation_chain('Envelop: Split House Preview', true, lambda {
+          Envelop::OperationUtils.operation_chain('Internal Preview Operation', true, lambda {
+              remove_preview
 
               new_grp = Sketchup.active_model.active_entities.add_group
-              split_house_at(new_grp)
+              if split_house_at(new_grp)
 
-              house_group = Envelop::Housekeeper.get_house
-              entities = Sketchup.active_model.active_entities
-              new_grp.entities.grep(Sketchup::Edge).each do |edge|
-                start_p = Geom::Point3d.new(edge.start)
-                start_p.transform! house_group.transformation
-                end_p = Geom::Point3d.new(edge.end)
-                end_p.transform! house_group.transformation
-                line = entities.add_cline(start_p, end_p)
-                line.set_attribute("Envelop::FoolMakerTool", "isPreview", true)
-                edge.erase!
+                house_group = Envelop::Housekeeper.get_house
+                entities = Sketchup.active_model.active_entities
+                new_grp.entities.grep(Sketchup::Edge).each do |edge|
+                  start_p = Geom::Point3d.new(edge.start)
+                  start_p.transform! house_group.transformation
+                  end_p = Geom::Point3d.new(edge.end)
+                  end_p.transform! house_group.transformation
+                  line = entities.add_cline(start_p, end_p)
+                  line.set_attribute("Envelop::FoolMakerTool", "isPreview", true)
+                  edge.erase!
+                end
+
+                return true
+              else
+                return false
               end
           })
       end
 
       def remove_preview
-        Envelop::OperationUtils.operation_chain('Envelop: Split House Renove Preview', true, lambda {
-          Sketchup.active_model.active_entities.grep(Sketchup::ConstructionLine).each do |cline|
-            isPreview = cline.get_attribute("Envelop::FoolMakerTool", "isPreview", false)
-            if isPreview
-              cline.erase!
-            end
+        Sketchup.active_model.active_entities.grep(Sketchup::ConstructionLine).each do |cline|
+          isPreview = cline.get_attribute("Envelop::FoolMakerTool", "isPreview", false)
+          if isPreview
+            cline.erase!
           end
-        })
+        end
       end
 
       def reset_tool

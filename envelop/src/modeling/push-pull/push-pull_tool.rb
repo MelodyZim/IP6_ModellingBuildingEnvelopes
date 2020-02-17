@@ -117,7 +117,7 @@ module Envelop
         max_z = z_coords.max
         min_z = z_coords.min
 
-        Envelop::OperationUtils.operation_chain 'Lukarne', false, lambda {
+        Envelop::OperationUtils.operation_chain 'Add Lukarne', false, lambda {
           # only continue if face is sloped
           !face_normal.parallel?(Z_AXIS) && !face_normal.perpendicular?(Z_AXIS)
         }, lambda  {
@@ -191,7 +191,7 @@ module Envelop
         res = true
 
         Envelop::ToolUtils.silenced do
-          Envelop::OperationUtils.operation_chain('Intersection Test', false, lambda  {
+          Envelop::OperationUtils.operation_chain('Internal Preview Operation', false, lambda  {
             group = pushpull_group
             return false if group.nil?
 

@@ -91,7 +91,6 @@ module Envelop
             set_status_text
 
             if scale_dialog
-              Envelop::ScaleTool.model_is_scaled
               Sketchup.active_model.select_tool(nil)
               @complete_callback.call unless @complete_callback.nil?
             else
@@ -131,10 +130,13 @@ module Envelop
           trans = Geom::Transformation.scaling(Geom::Point3d.new, ratio)
           entities = Sketchup.active_model.entities
 
-          Envelop::OperationUtils.operation_chain("Scale", false, lambda {
+          Envelop::OperationUtils.operation_chain("Set Scale", false, lambda {
             group = entities.add_group(*entities)
             group.transform!(trans)
             group.explode
+
+            Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
+
             true
           })
 
@@ -175,12 +177,6 @@ module Envelop
       end
     end
 
-    def self.model_is_scaled
-      Envelop::OperationUtils.operation_chain("Remember Scale", true, lambda {
-        Sketchup.active_model.set_attribute('Envelop::ScaleTool', 'modelIsScaled', true)
-      })
-    end
-
     def self.is_model_scaled
       Sketchup.active_model.get_attribute('Envelop::ScaleTool', 'modelIsScaled', false)
     end
@@ -194,7 +190,7 @@ module Envelop
 
     def self.reload
       # delete the attribute dictionary on model
-      Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+      Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
         Sketchup.active_model.attribute_dictionaries.delete("Envelop::ScaleTool")
         true
       })

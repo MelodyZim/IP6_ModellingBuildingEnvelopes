@@ -6,7 +6,7 @@ module Envelop
     def self.add_image(image_base64, orientation)
       model = Sketchup.active_model
 
-      Envelop::OperationUtils.operation_chain('Envelop: Import Plan', false, lambda { # TODO: consider separating moving and scaling into two operations, or even adding into a third operation
+      Envelop::OperationUtils.operation_chain('Import Plan', false, lambda { # TODO: consider separating moving and scaling into two operations, or even adding into a third operation
 
         image = import_image(image_base64)
         position_image(image, orientation)

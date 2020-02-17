@@ -50,9 +50,9 @@ module Envelop
 
           # text
           labels = Hash[
-            "N" => @first_point.position + north, 
-            "O" => @first_point.position + east, 
-            "S" => @first_point.position - north, 
+            "N" => @first_point.position + north,
+            "O" => @first_point.position + east,
+            "S" => @first_point.position - north,
             "W" => @first_point.position - east]
 
           options = {
@@ -68,7 +68,7 @@ module Envelop
           # circle
           subdivision = 100
           radius = north.length.to_f
-          circle_Points = Array.new(subdivision) do |i| 
+          circle_Points = Array.new(subdivision) do |i|
             angle = (i * Math::PI * 2) / subdivision
             Geom::Point3d.new(Math.cos(angle) * radius, Math.sin(angle) * radius, 0)
           end
@@ -109,7 +109,7 @@ module Envelop
             sin = Math.sin(angle)
             cos = Math.cos(angle)
             Geom::Point3d.new((p[0] * cos + p[1] * -sin) * size, (p[0] * sin + p[1] * cos) * size, 0)
-          
+
           end
           translated = rotated.map { |p| p + @first_point.position.to_a }
 
@@ -148,12 +148,12 @@ module Envelop
             north = compute_north(@first_point, @mouse_ip).normalize
             northAngle = Math.atan2(north.y, north.x)
             puts "north: #{north}, #{northAngle}"
-            
-            Envelop::OperationUtils.operation_chain "Remember Orientation", true, lambda {
+
+            Envelop::OperationUtils.operation_chain "Set Orientation", true, lambda {
               Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'northAngle', northAngle)
               Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'modelIsOriented', true)
             }
-            
+
             reset_tool
             view.invalidate
 
@@ -199,7 +199,7 @@ module Envelop
           east = Geom::Vector3d.new(north.y, -north.x, 0)
 
           # transform points
-          ARROW.map do |p| 
+          ARROW.map do |p|
             origin + Envelop::GeometryUtils.vec_mul(east, p[0]) + Envelop::GeometryUtils.vec_mul(north, p[1])
           end
         end
@@ -235,7 +235,7 @@ module Envelop
 
     def self.reload
       # delete the attribute dictionary on model
-      Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+      Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
         Sketchup.active_model.attribute_dictionaries.delete("Envelop::OrientationTool")
         true
       })

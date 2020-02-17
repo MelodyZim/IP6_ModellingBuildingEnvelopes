@@ -44,7 +44,7 @@ module Envelop
       # Envelop::PlanManager.get_plans.each do |plan|
       #   next if @hidden_plans.include?(plan)
       #
-      #   Envelop::OperationUtils.operation_chain('Update plan visibility', true, lambda {
+      #   Envelop::OperationUtils.operation_chain('Plan Visibility Update', true, lambda {
       #     # TODO: calculate angle correct even if camera is set to perspective
       #     normal_flipped = Geom::Vector3d.new((ORIGIN - plan.normal).to_a)
       #     plan.hidden = Math.acos(view.camera.direction.dot(normal_flipped)).radians > HIDE_THRESHOLD
@@ -54,7 +54,7 @@ module Envelop
     end
 
     def self.hide_plan(plan)
-      Envelop::OperationUtils.operation_chain('Hide plan', true, lambda {
+      Envelop::OperationUtils.operation_chain('Hide Plan', true, lambda {
         plan.hidden = true
         true
       })
@@ -100,7 +100,7 @@ module Envelop
       Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
 
-    Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+    Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
       reload
       true
     })

@@ -205,7 +205,7 @@ module Envelop
       #
       def erase_construction_geometry
         unless @construction_entities.empty?
-          Envelop::OperationUtils.operation_chain('Pen Tool cleanup', true, lambda {
+          Envelop::OperationUtils.operation_chain('Internal Preview Operation', true, lambda {
             @construction_entities&.each(&:erase!)
             @construction_entities = []
             true
@@ -235,7 +235,7 @@ module Envelop
         face = try_get_target_face
 
         if !face.nil? &&
-           Envelop::OperationUtils.operation_chain('Pen Tool on Face', false, lambda {
+           Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
                                                                                 # remember if the parent of the picked face is manifold
                                                                                 manifold_before = !face.parent.nil? && face.parent.manifold?
 
@@ -285,7 +285,7 @@ module Envelop
       end
 
       def add_construction_geometry(last_point, new_point)
-        Envelop::OperationUtils.operation_chain('Guide', true, lambda {
+        Envelop::OperationUtils.operation_chain('Internal Preview Operation', true, lambda {
           # TODO: check if construction points/lines are necessary for inference, if so fix undo-stack littering
           @construction_entities << Sketchup.active_model.entities.add_cpoint(new_point)
 

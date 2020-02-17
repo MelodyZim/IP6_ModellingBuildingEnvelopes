@@ -144,7 +144,7 @@ module Envelop
       find_house
     end
 
-    Envelop::OperationUtils.operation_chain("reload #{File.basename(__FILE__)}", false, lambda {
+    Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
       reload
       true
     })
