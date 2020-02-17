@@ -39,16 +39,18 @@ module Envelop
     end
 
     def self.update_plans_visibility(view = Sketchup.active_model.active_view)
-      Envelop::PlanManager.get_plans.each do |plan|
-        next if @hidden_plans.include?(plan)
+      # Automatic plan hiding has been disabled, see https://github.com/FSiffer/IP6_ModellingBuildingEnvelopes/issues/48
 
-        Envelop::OperationUtils.operation_chain('Update plan visibility', true, lambda {
-          # TODO: calculate angle correct even if camera is set to perspective
-          normal_flipped = Geom::Vector3d.new((ORIGIN - plan.normal).to_a)
-          plan.hidden = Math.acos(view.camera.direction.dot(normal_flipped)).radians > HIDE_THRESHOLD
-          true
-        })
-      end
+      # Envelop::PlanManager.get_plans.each do |plan|
+      #   next if @hidden_plans.include?(plan)
+      #
+      #   Envelop::OperationUtils.operation_chain('Update plan visibility', true, lambda {
+      #     # TODO: calculate angle correct even if camera is set to perspective
+      #     normal_flipped = Geom::Vector3d.new((ORIGIN - plan.normal).to_a)
+      #     plan.hidden = Math.acos(view.camera.direction.dot(normal_flipped)).radians > HIDE_THRESHOLD
+      #     true
+      #   })
+      # end
     end
 
     def self.hide_plan(plan)
