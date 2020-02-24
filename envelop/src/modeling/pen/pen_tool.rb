@@ -18,12 +18,7 @@ module Envelop
       # TODO also end on dragged in mouse up
 
       def onCancel(reason, view)
-        if @phase == PHASES[:MULTIPLE_POINTS]
-          @target_normals = @previous_target_normals
-          finish_with_points(@previous_points)
-        else
-          erase_construction_geometry
-        end
+        erase_construction_geometry
 
         super(reason, view)
       end
@@ -66,7 +61,7 @@ module Envelop
 
             return if try_finish_rectangle
             if on_edge_or_vertex(view, x, y)
-              finish_with_point(@ip.position)
+              finish_with_additional_point(@ip.position)
             else
               add_construction_geometry(@previous_points[-1], @ip.position)
               update_prev_state(@ip.position)
@@ -76,7 +71,7 @@ module Envelop
           elsif @phase == PHASES[:MULTIPLE_POINTS]
             
             if (@previous_points.include? @ip.position) || on_edge_or_vertex(view, x, y)
-              finish_with_point(@ip.position)
+              finish_with_additional_point(@ip.position)
             else
               add_construction_geometry(@previous_points[-1], @ip.position)
               update_prev_state(@ip.position)
@@ -90,23 +85,24 @@ module Envelop
 
       def onReturn(_view)
         if @ip.valid?
-          if @phase == PHASES[:INITIAL]
-            add_construction_geometry(nil, @ip.position)
-            update_prev_state(@ip.position)
-            @phase = PHASES[:FIRST_POINT]
-
-          elsif @phase == PHASES[:FIRST_POINT]
+          if @phase == PHASES[:FIRST_POINT]
             return if try_finish_rectangle
-
-            finish_with_point(@ip.position)
-
           elsif @phase == PHASES[:MULTIPLE_POINTS]
-
-            finish_with_point(@ip.position) if @previous_points.length == 2
-
-            @target_normals = @previous_target_normals
-            finish_with_point(@previous_points[0])
+            if @alternate_mode
+              # close the shape
+              finish_with_additional_point(@previous_points[0])
+            else
+              # finish with existing points
+              finish_with_points(@previous_points)
+            end
           end
+        end
+      end
+
+      def onKeyDown(key, repeat, flags, view)
+        super(key, repeat, flags, view)
+        if key == Envelop::ToolUtils::KEY_ENTER
+          onReturn(view)
         end
       end
 
@@ -117,7 +113,7 @@ module Envelop
 
         elsif @phase == PHASES[:FIRST_POINT]
           Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish in the textfield. `Enter` to finish with next point or confirm rectangle. `Alt` to disable rectangle mode. `Esc` to abort.'
-          Sketchup.vcb_value = try_get_triangle_distances || get_distance
+          Sketchup.vcb_value = try_get_rectangle_distances || get_distance
 
         else
           enterText = if @previous_points.length == 2
@@ -176,13 +172,13 @@ module Envelop
           p = @previous_points[-1] + v
 
           @target_normals = @previous_target_normals
-          finish_with_point(p)
+          finish_with_additional_point(p)
         end
       end
 
       # internal
 
-      def try_get_triangle_distances
+      def try_get_rectangle_distances
         unless @alternate_mode
           ps = try_get_rectangle_points
           unless ps.nil?
@@ -258,7 +254,7 @@ module Envelop
         redraw
       end
 
-      def finish_with_point(point)
+      def finish_with_additional_point(point)
         @previous_points << point
         finish_with_points(@previous_points)
       end
