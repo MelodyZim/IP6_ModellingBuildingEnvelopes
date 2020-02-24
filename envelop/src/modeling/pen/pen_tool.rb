@@ -19,8 +19,8 @@ module Envelop
 
       def onCancel(reason, view)
         if @phase == PHASES[:MULTIPLE_POINTS]
-          @target_faces = @prev_target_faces
-          finish_with_points(@prev_points)
+          @target_normals = @previous_target_normals
+          finish_with_points(@previous_points)
         else
           erase_construction_geometry
         end
@@ -39,17 +39,17 @@ module Envelop
       end
 
       def onMouseMove(flags, x, y, view)
-        if @phase != PHASES[:INITIAL]
-          super(flags, x, y, view, @prev_points[-1])
-        else
+        if @phase == PHASES[:INITIAL]
           super(flags, x, y, view)
+        else
+          super(flags, x, y, view, @previous_points[-1])
         end
 
-        @target_faces = if @phase != PHASES[:INITIAL]
-                          @prev_target_faces & pick_all_faces_set(view, x, y)
-                        else
-                          pick_all_faces_set(view, x, y)
-                        end
+        @target_normals = if @phase == PHASES[:INITIAL]
+                            pick_all_faces_normals_set(view, x, y)
+                          else
+                            @previous_target_normals & pick_all_faces_normals_set(view, x, y)
+                          end
       end
 
       def onLButtonDown(flags, x, y, view)
@@ -65,19 +65,23 @@ module Envelop
           elsif @phase == PHASES[:FIRST_POINT]
 
             return if try_finish_rectangle
-
-            add_construction_geometry(@prev_points[-1], @ip.position)
-            update_prev_state(@ip.position)
-            @phase = PHASES[:MULTIPLE_POINTS]
-
-          elsif @phase == PHASES[:MULTIPLE_POINTS]
-
-            if @prev_points.include? @ip.position
+            if on_edge_or_vertex(view, x, y)
               finish_with_point(@ip.position)
+            else
+              add_construction_geometry(@previous_points[-1], @ip.position)
+              update_prev_state(@ip.position)
+              @phase = PHASES[:MULTIPLE_POINTS]
             end
 
-            add_construction_geometry(@prev_points[-1], @ip.position)
-            update_prev_state(@ip.position)
+          elsif @phase == PHASES[:MULTIPLE_POINTS]
+            
+            if (@previous_points.include? @ip.position) || on_edge_or_vertex(view, x, y)
+              finish_with_point(@ip.position)
+            else
+              add_construction_geometry(@previous_points[-1], @ip.position)
+              update_prev_state(@ip.position)
+            end
+
           end
 
           redraw
@@ -98,10 +102,10 @@ module Envelop
 
           elsif @phase == PHASES[:MULTIPLE_POINTS]
 
-            finish_with_point(@ip.position) if @prev_points.length == 2
+            finish_with_point(@ip.position) if @previous_points.length == 2
 
-            @target_faces = @prev_target_faces
-            finish_with_point(@prev_points[0])
+            @target_normals = @previous_target_normals
+            finish_with_point(@previous_points[0])
           end
         end
       end
@@ -116,7 +120,7 @@ module Envelop
           Sketchup.vcb_value = try_get_triangle_distances || get_distance
 
         else
-          enterText = if @prev_points.length == 2
+          enterText = if @previous_points.length == 2
                         '`Enter` to finish with next point.'
                       else
                         '`Enter` to complete polygon with first point.'
@@ -132,18 +136,18 @@ module Envelop
       # inherited
 
       def reset_tool
-        @prev_points = []
+        @previous_points = []
         @construction_entities = []
 
-        @target_faces = Set.new
-        @prev_target_faces = Set.new
+        @target_normals = Set.new
+        @previous_target_normals = Set.new
 
         super
       end
 
       def populateExtents(boundingBox)
         boundingBox.add(@ip) if @ip.valid?
-        @prev_points.each { |p|; boundingBox.add(p) }
+        @previous_points.each { |p|; boundingBox.add(p) }
       end
 
       def onUserDistances(distances)
@@ -159,7 +163,7 @@ module Envelop
 
             ps = [ps[0], ps[0] + v1, ps[0] + v1 + v2, ps[0] + v2, ps[0]]
 
-            @target_faces = @prev_target_faces
+            @target_normals = @previous_target_normals
             finish_with_points(ps)
             return
           end
@@ -167,11 +171,11 @@ module Envelop
 
         if @phase != PHASES[:INITIAL]
 
-          v = @ip.position - @prev_points[-1]
+          v = @ip.position - @previous_points[-1]
           v.length = distances[0]
-          p = @prev_points[-1] + v
+          p = @previous_points[-1] + v
 
-          @target_faces = @prev_target_faces
+          @target_normals = @previous_target_normals
           finish_with_point(p)
         end
       end
@@ -193,7 +197,7 @@ module Envelop
 
       def get_distance
         distance = if @ip.valid?
-                     @ip.position.distance(@prev_points[-1])
+                     @ip.position.distance(@previous_points[-1])
                    else
                      0
                    end
@@ -223,7 +227,7 @@ module Envelop
         end
 
         if @phase != PHASES[:INITIAL]
-          Envelop::GeometryUtils.draw_lines(view, nil, @prev_points[-1], @ip.position)
+          Envelop::GeometryUtils.draw_lines(view, nil, @previous_points[-1], @ip.position)
         end
       end
 
@@ -231,27 +235,21 @@ module Envelop
         # clear construction geometry before creating actual lines to get a clean undo history
         erase_construction_geometry
 
-        # try to add edges to picked face without destroying the manifoldness of the faces parent
-        face = try_get_target_face
+        # try to add edges to the house
+        house = Envelop::Housekeeper.get_or_find_house
+        successful = Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
+          !house.nil?
+        }, lambda {
+          Envelop::GeometryUtils.create_line(house.entities, house.transformation.inverse, ps, add_all_faces: false)
 
-        if !face.nil? &&
-           Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
-                                                                                # remember if the parent of the picked face is manifold
-                                                                                manifold_before = !face.parent.nil? && face.parent.manifold?
+          # check if house is stil manifold
+          Envelop::Housekeeper.get_or_find_house&.manifold? || false
+        })
 
-                                                                                entities = (face.parent&.definition || Sketchup.active_model).entities
-
-                                                                                Envelop::GeometryUtils.create_line(entities, face.transform.inverse, ps, add_all_faces: false)
-
-                                                                                # check if the parent of the picked face is still manifold if it was before
-                                                                                !manifold_before || face.parent.manifold?
-                                                                              })
-        # ok
-
-        # either there was no face or the atempt with the picked face failed
-        else
+        #  if the previous attempt failed add the lines to active_entities
+        unless successful
           Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
-            Envelop::GeometryUtils.create_line(Sketchup.active_model.entities, IDENTITY, ps, add_all_faces: true)
+            Envelop::GeometryUtils.create_line(Sketchup.active_model.active_entities, IDENTITY, ps, add_all_faces: true)
             true
           })
         end
@@ -261,8 +259,8 @@ module Envelop
       end
 
       def finish_with_point(point)
-        @prev_points << point
-        finish_with_points(@prev_points)
+        @previous_points << point
+        finish_with_points(@previous_points)
       end
 
       def try_finish_rectangle
@@ -280,8 +278,8 @@ module Envelop
       end
 
       def update_prev_state(point)
-        @prev_points << point
-        @prev_target_faces = @target_faces
+        @previous_points << point
+        @previous_target_normals = @target_normals
       end
 
       def add_construction_geometry(last_point, new_point)
@@ -296,23 +294,41 @@ module Envelop
         })
       end
 
+      # check if the x, y position points on an edge or vertex
+      def on_edge_or_vertex(view, x, y)
+        !(Envelop::GeometryUtils.pick_all_entity(view, x, y).select do
+          |p| (p.entity.is_a? Sketchup::Edge) || (p.entity.is_a? Sketchup::Vertex)
+        end).empty?
+      end
+
       def try_get_rectangle_points
-        normal = try_get_target_faces_normal
-        Envelop::GeometryUtils.construct_rectangle(@prev_points[-1], @ip.position, normal)
+        normal = try_get_target_face_normal
+        Envelop::GeometryUtils.construct_rectangle(@previous_points[-1], @ip.position, normal)
       end
 
-      def try_get_target_face
-        @target_faces.length == 1 ? @target_faces.first : nil
-      end
-
-      def try_get_target_faces_normal
-        face = try_get_target_face
-        face ? Envelop::GeometryUtils.normal_transformation(face.transform) * face.entity.normal : nil
+      # try to get the normal of the face we are on
+      def try_get_target_face_normal
+        @target_normals.length == 1 ? @target_normals.first.vector3d : nil
       end
 
       # @return [Set<PickResult>] a set with all faces, their transform and parent at x, y position
-      def pick_all_faces_set(view, x, y)
-        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face)
+      def pick_all_faces_normals_set(view, x, y)
+        Set.new Envelop::GeometryUtils.pick_all_entity(view, x, y, Sketchup::Face).map { |f| ComparableVector3d.new(f.entity.normal) }
+      end
+
+      # Wrapper for using Geom::Vector3d inside a ruby sets
+      ComparableVector3d = Struct.new(:vector3d) do
+        def hash
+          round(vector3d).hash
+        end
+
+        def eql?(other)
+          round(vector3d).eql? round(other.vector3d)
+        end
+
+        def round(vector3d)
+          vector3d.to_a.map { |e| e.round(5) }
+        end
       end
     end
 
