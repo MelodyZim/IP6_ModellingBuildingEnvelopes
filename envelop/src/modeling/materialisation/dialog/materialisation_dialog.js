@@ -57,9 +57,10 @@ function add_material(parent, matrial_as_hash) {
   material_div.find('.material-content').css("color", (matrial_as_hash.color_hsl_l > 0.5 ? 'black' : 'white'));
 
   material_div.find('.material-delete').on('click', function(local_material_div, local_matrial_as_hash) {
-    return function() {
+    return function(event) {
       local_material_div.remove();
       sketchup.delete_material(local_matrial_as_hash.name);
+      event.stopPropagation();
     }
   }(material_div, matrial_as_hash));
 
@@ -72,6 +73,12 @@ function add_material(parent, matrial_as_hash) {
   material_change_color = material_div.find('.material-change-color');
   material_change_color.attr('data-color', '#' + CP.RGB2HEX(matrial_as_hash.color_rgb));
   picker = new CP(material_change_color[0])
+  material_change_color.on('click', function(local_picker) {
+    return function(event) {
+      local_picker.enter();
+      event.stopPropagation();
+    }
+  }(picker));
   picker.on('change', function(local_material_div) {
     return function(value) {
       var exited = local_material_div.attr('exited');
@@ -122,8 +129,6 @@ function add_material(parent, matrial_as_hash) {
     }
   }(picker), false);
   picker.self.appendChild(cancel_button);
-
-  // TODO :FS: the materialisation tool is generaly active after clicking the buttons to do something with ti - that is wrong
 
   material_div.on('click', function(local_matrial_as_hash) {
     return function() {
