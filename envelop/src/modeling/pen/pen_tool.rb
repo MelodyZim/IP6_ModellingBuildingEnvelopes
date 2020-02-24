@@ -88,7 +88,7 @@ module Envelop
           if @phase == PHASES[:FIRST_POINT]
             return if try_finish_rectangle
           elsif @phase == PHASES[:MULTIPLE_POINTS]
-            if @alternate_mode
+            if @alternate_mode && @previous_points.length >= 3
               # close the shape
               finish_with_additional_point(@previous_points[0])
             else
@@ -108,21 +108,21 @@ module Envelop
 
       def set_status_text # TODO: update this$
         if @phase == PHASES[:INITIAL]
-          Sketchup.status_text = 'Click/`Enter` to select start point.'
+          Sketchup.status_text = 'Click to select start point.'
           Sketchup.vcb_value = ''
 
         elsif @phase == PHASES[:FIRST_POINT]
-          Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish in the textfield. `Enter` to finish with next point or confirm rectangle. `Alt` to disable rectangle mode. `Esc` to abort.'
+          Sketchup.status_text = 'Click to select next point or confirm rectangle. Input manual distance to finish in the textfield. `Alt` to disable rectangle mode. `Esc` to abort.'
           Sketchup.vcb_value = try_get_rectangle_distances || get_distance
 
         else
-          enterText = if @previous_points.length == 2
-                        '`Enter` to finish with next point.'
-                      else
+          enterText = if @alternate_mode && @previous_points.length >= 3
                         '`Enter` to complete polygon with first point.'
+                      else
+                        '`Enter` to finish with existing point.'
                       end
 
-          Sketchup.status_text = 'Click to select next point, on previous point to finish. Input manual distance to finish in the textfield. ' + enterText + ' `Esc` to confirm previously selected points.'
+          Sketchup.status_text = 'Click to select next point, on previous point to finish. Input manual distance to finish in the textfield. ' + enterText + ' `Esc` to abort.'
           Sketchup.vcb_value = get_distance
         end
       end
@@ -223,7 +223,7 @@ module Envelop
         end
 
         if @phase != PHASES[:INITIAL]
-          if @alternate_mode
+          if @alternate_mode && @previous_points.length >= 3
             Envelop::GeometryUtils.draw_lines(view, 'Cyan', @previous_points[-1], @previous_points[0])
           else
             Envelop::GeometryUtils.draw_lines(view, nil, @previous_points[-1], @ip.position)
