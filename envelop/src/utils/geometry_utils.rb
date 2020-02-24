@@ -295,17 +295,17 @@ module Envelop
     # @param view [Sketchup::View]
     # @param x [Integer]
     # @param y [Integer]
-    # @param type [Class]
+    # @param type [Class, nil] the type of object you are looking for, nil for no filtering
     #
     # @return [Array<PickResult>] The found pick results
     #
     # @see http://www.thomthom.net/thoughts/wp-content/uploads/2013/01/PickHelper-Rev3.2-18-03-2013.pdf PickHelper guide
     #
-    def self.pick_all_entity(view, x, y, type)
+    def self.pick_all_entity(view, x, y, type=nil)
       ph = view.pick_helper(x, y, aperture = 20) # TODO: investigate what the best value for aperture is
       (0..ph.count - 1)
         .map { |i| PickResult.new(ph.leaf_at(i), ph.transformation_at(i), ph.path_at(i)[-2], ph.depth_at(i)) }
-        .select { |p| p.entity.is_a? type }
+        .select { |p| type.nil? || p.entity.is_a?(type) }
         .select { |p| p.parent.nil? || !p.parent.is_a?(Sketchup::Image) }
     end
 
