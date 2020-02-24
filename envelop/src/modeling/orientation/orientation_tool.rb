@@ -234,12 +234,6 @@ module Envelop
     end
 
     def self.reload
-      # delete the attribute dictionary on model
-      Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
-        Sketchup.active_model.attribute_dictionaries.delete("Envelop::OrientationTool")
-        true
-      })
-
       Sketchup.active_model.select_tool(nil)
     end
     reload

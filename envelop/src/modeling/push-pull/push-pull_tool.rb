@@ -121,7 +121,7 @@ module Envelop
         max_z = z_coords.max
         min_z = z_coords.min
 
-        Envelop::OperationUtils.operation_chain 'Add Lukarne', false, lambda {
+        successful = Envelop::OperationUtils.operation_chain 'Add Lukarne', false, lambda {
           # only continue if face is sloped
           !face_normal.parallel?(Z_AXIS) && !face_normal.perpendicular?(Z_AXIS)
         }, lambda  {
@@ -139,6 +139,11 @@ module Envelop
           Envelop::GeometryUtils.erase_face(@face) unless @face.deleted?
           true
         }
+
+        unless successful
+          # inform user of failure
+          UI.messagebox('Unable to create dormer because the result would be invalid')
+        end
       end
 
       def update_pushpull_vector(view, x, y)
@@ -220,7 +225,7 @@ module Envelop
       def finish_pushpull
         to_add = to_add?
 
-        Envelop::OperationUtils.operation_chain("Push/Pull #{to_add ? 'Add' : 'Subtract'}", false, lambda {
+        successful = Envelop::OperationUtils.operation_chain("Push/Pull #{to_add ? 'Add' : 'Subtract'}", false, lambda {
           group = pushpull_group
 
           return false if group.nil?
@@ -245,6 +250,11 @@ module Envelop
         })
 
         reset_tool
+
+        unless successful
+          # inform user of failure
+          UI.messagebox('Unable to Push-Pull because the result would be invalid')
+        end
       end
 
       def get_distance

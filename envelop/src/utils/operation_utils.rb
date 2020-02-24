@@ -24,7 +24,7 @@ module Envelop
     #
     def self.operation_chain(name, transparent, *lambdas) # TODO: what happens if another operation chain is started within the chain
       if @is_operation_active
-        warns "New Operation Chain, but operation is already in progress."
+        warn "New Operation Chain, but operation is already in progress."
       end
 
       Sketchup.active_model.start_operation(name, true, false, transparent)
