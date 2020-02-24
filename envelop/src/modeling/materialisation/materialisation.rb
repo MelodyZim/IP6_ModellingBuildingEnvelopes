@@ -88,11 +88,18 @@ module Envelop
 
       add_default_material
 
-      if File.exist?(custom_materials_path)
-        load_custom_materials
-      else
-        load_default_materials
+      if !File.exist?(custom_materials_path)
+        init_custom_materials # TODO: write this out
       end
+
+      load_custom_materials
+    end
+
+    def self.new_material(material_name)
+      puts "Envelop::Materialisation.new_material: new material with name #{material_name}..."
+
+      # create_material
+      create_material(material_name, nil, "#{material_name} 1", random_color)
     end
 
     def self.add_material(material_name)
@@ -100,14 +107,11 @@ module Envelop
 
       # get values
       base_material = Sketchup.active_model.materials[material_name]
-      base_id = base_material.get_attribute('material', 'base_id')
-      base_name = base_material.get_attribute('material', 'base_name')
       base_color_hsl = ColorMath.new(*base_material.get_attribute('material', 'color_rgb')).to_hsl
-      count = find_next_count_for_material_id_count(base_id, base_material.get_attribute('material', 'count'))
-      index = find_index_for_material_id_count(base_id, count)
+      base_name = base_material.get_attribute('material', 'base_name')
 
-      # create
-      create_material(base_id, base_name, count, base_color_hsl, index)
+      # create_material
+      create_material(base_name, base_color_hsl)
     end
 
     def self.update_color(material_name, color_rgb_a)
@@ -117,21 +121,6 @@ module Envelop
       material.color = Sketchup::Color.new(*color_rgb_a)
       material.set_attribute('material', 'color_rgb', color_rgb_a)
       material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
-    end
-
-    def self.update_base_id(material_name, new_base_id)
-      puts "Envelop::Materialisation.update_base_id: updating base name for material with name #{material_name} to #{new_base_id}..."
-
-      material = Sketchup.active_model.materials[material_name]
-
-      count = find_next_count_for_material_id_count(new_base_id, 0)
-      index = find_index_for_material_id_count(new_base_id, count)
-
-      material.name = "#{new_base_id} #{count}"
-
-      material.set_attribute('material', 'base_id', new_base_id)
-      material.set_attribute('material', 'count', count)
-      material.set_attribute('material', 'index', index)
     end
 
     private
@@ -147,109 +136,46 @@ module Envelop
     MIN_DEVIATION = 0.1
     MAX_HUE_DEVIATION = 0.1
     MIN_HUE_DEVIATION = 0.01
+    MIN_HSL_S = 20
+    MAX_HSL_S = 100
+    MIN_HSL_L = 20
+    MAX_HSL_L = 90
 
     #  Methods
-    def self.find_next_count_for_material_id_count(id, count)
-      materials = Sketchup.active_model.materials
-
-      # find unused name
-      next_count = count + 1
-      next_count += 1 until materials["#{id} #{next_count}"].nil?
-
-      next_count
-    end
-
-    def self.find_index_for_material_id_count(id, count)
-      # TODO: this creates gaps inbetween groups of similarly named materials... but i think this is fine
-
-      materials = Sketchup.active_model.materials
-
-      # find prev material
-      prev_count = count - 1
-      while materials["#{id} #{prev_count}"].nil?
-        prev_count -= 1
-
-        next unless prev_count < 1
-
-        puts 'Envelop::Materialisation.find_index_for_material_id_count: prev_count < 1 while finding previous material, which should not happen. Returning base_material.index + 1, if any, else LAST_MATERIAL_INDEX...'
-        base_material = materials["#{id} #{count}"]
-        if base_material.nil?
-          return LAST_MATERIAL_INDEX
-        else
-          return base_material.get_attribute('material', 'index') + 1
-        end
-      end
-
-      # remember index + 1
-      index = materials["#{id} #{prev_count}"].get_attribute('material', 'index') + 1
-
-      # inc all other index
-      materials.each do |material|
-        aIndex = material.get_attribute('material', 'index')
-        if !aIndex.nil? && aIndex >= index
-          material.set_attribute('material', 'index', aIndex + 1)
-        end
-      end
-
-      # return res
-      index
-    end
-
-    def self.load_default_materials # TODO: save material pallete per machine, independent of default materials and then use those saved materials if any
-      default_materials_path = html_file = File.join(__dir__, 'default_materials.json')
-      default_materials = JSON.parse(File.read(default_materials_path))['default_materials']
-
-      material_index = 1
-
-      default_materials.each do |material_hash|
-        count = 1
-
-        base_color = ColorMath.new(material_hash['color']['r'], material_hash['color']['g'], material_hash['color']['b'])
-        base_color_hsl = base_color.to_hsl
-
-        while count <= material_hash['count']
-
-          create_material(material_hash['id'], material_hash['name'], count, base_color_hsl, material_index)
-
-          count += 1
-          material_index += 1
-        end
-      end
-    end
-
-    def self.create_material(id, name, count, base_color_hsl, index,
+    def self.create_material(base_name, base_color_hsl,
+                             name = "#{base_name} 1",
                              color = deviate_color(base_color_hsl),
                              color_rgb = color.to_rgb,
                              color_hsl_l = color.to_hsl[2] / 100.0,
                              color_alpha = Envelop::Materialisation::DEFAULT_ALPHA)
-      # create
-      material = Sketchup.active_model.materials.add("#{id} #{count}")
+       # create
+       material = Sketchup.active_model.materials.add(name)
 
-      # base data
-      material.set_attribute('material', 'base_id', id)
-      material.set_attribute('material', 'base_name', name)
-      material.set_attribute('material', 'count', count)
+       # base data
+       material.set_attribute('material', 'base_name', base_name)
 
-      # description
-      # material.set_attribute('material', 'description', "#{name} #{count}") # TODO: display this somewhere
+       # color
+       material.color = Sketchup::Color.new(color_rgb)
+       material.set_attribute('material', 'color_rgb', color_rgb)
+       material.set_attribute('material', 'color_hsl_l', color_hsl_l)
+       material.alpha = color_alpha
 
-      # color
-      material.color = Sketchup::Color.new(color_rgb)
-      material.set_attribute('material', 'color_rgb', color_rgb)
-      material.set_attribute('material', 'color_hsl_l', color_hsl_l)
-      material.alpha = color_alpha
+       # is user_facing
+       material.set_attribute('material', 'user_facing', true)
 
-      # sorting index
-      material.set_attribute('material', 'index', index)
-
-      # is user_facing
-      material.set_attribute('material', 'user_facing', true)
-
-      material
+       material
     end
 
     def self.custom_materials_path
       File.join(__dir__, 'custom_materials.json') # TODO: FS: this is a bad idea - it should be written to some user folder, probalby doesnt even work in zipped extension like this
+    end
+
+    def self.default_custom_materials_path
+      File.join(__dir__, 'default_custom_materials.json') # TODO: FS: this is a bad idea - it should be written to some user folder, probalby doesnt even work in zipped extension like this
+    end
+
+    def self.init_custom_materials
+      FileUtils.cp(default_custom_materials_path, custom_materials_path)
     end
 
     def self.user_facing_materials_as_hash_array
@@ -261,18 +187,17 @@ module Envelop
 
         material_hash['name'] = material.name
 
-        material_hash['base_id'] = material.get_attribute('material', 'base_id')
         material_hash['base_name'] = material.get_attribute('material', 'base_name')
-        material_hash['count'] = material.get_attribute('material', 'count')
 
         material_hash['color_rgb'] = material.get_attribute('material', 'color_rgb')
         material_hash['color_alpha'] = material.alpha
         material_hash['color_hsl_l'] = material.get_attribute('material', 'color_hsl_l')
 
-        material_hash['index'] = material.get_attribute('material', 'index')
-
         res.push(material_hash)
       end
+
+      res.sort_by { |mat| mat[:name] }
+
       res
     end
 
@@ -286,29 +211,35 @@ module Envelop
       materials_array = JSON.parse(File.read(custom_materials_path))
 
       materials_array.each do |material_hash|
-        create_material(material_hash['base_id'], material_hash['base_name'], material_hash['count'], nil, material_hash['index'],
-                        nil, material_hash['color_rgb'], material_hash['color_hsl_l'], material_hash['color_alpha'])
+        create_material(material_hash['base_name'], nil,
+                        material_hash['name'], nil,
+                        material_hash['color_rgb'], material_hash['color_hsl_l'], material_hash['color_alpha'])
       end
+    end
+
+    def self.random_color()
+      res = ColorMath.from_hsl(
+        ([-1, 1].sample * rand()).clamp(0, 360),
+        ([-1, 1].sample * rand()).clamp(MIN_HSL_S, MAX_HSL_S),
+        ([-1, 1].sample * rand()).clamp(MIN_HSL_L, MAX_HSL_L)
+      )
+
+      res
     end
 
     def self.deviate_color(color_hsl)
       return nil if color_hsl.nil?
 
-      # puts "Envelop::Materialisation.deviate_color: in_hsl: (#{color_hsl[0]}, #{color_hsl[1]}, #{color_hsl[2]})"
-
-      rand_hue = [-1, 1].sample * rand(Envelop::Materialisation::MIN_HUE_DEVIATION..Envelop::Materialisation::MAX_HUE_DEVIATION) * 360
-      rand1 = [-1, 1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
-      rand2 = [-1, 1].sample * rand(Envelop::Materialisation::MIN_DEVIATION..Envelop::Materialisation::MAX_DEVIATION) * 100
-
-      # puts "Envelop::Materialisation.deviate_color: res_from_hsl: (#{color_hsl[0]}, #{(color_hsl[1] + rand1).clamp(0, 100)}, #{(color_hsl[2] + rand2).clamp(0, 100)})"
+      rand_hue = [-1, 1].sample * rand(MIN_HUE_DEVIATION..MAX_HUE_DEVIATION) * 360
+      rand1 = [-1, 1].sample * rand(MIN_DEVIATION..MAX_DEVIATION) * 100
+      rand2 = [-1, 1].sample * rand(MIN_DEVIATION..MAX_DEVIATION) * 100
 
       res = ColorMath.from_hsl(
         (color_hsl[0] + rand_hue).clamp(0, 360),
-        (color_hsl[1] + rand1).clamp(20, 100),
-        (color_hsl[2] + rand2).clamp(20, 90)
+        (color_hsl[1] + rand1).clamp(MIN_HSL_S, MAX_HSL_S),
+        (color_hsl[2] + rand2).clamp(MIN_HSL_L, MAX_HSL_L)
       )
 
-      # puts "Envelop::Materialisation.deviate_color: out_hsl: (#{res.to_hsl[0]}, #{res.to_hsl[1]}, #{res.to_hsl[2]})"
       res
     end
 

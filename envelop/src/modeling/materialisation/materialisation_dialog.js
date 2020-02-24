@@ -2,19 +2,42 @@ var picker;
 
 $(function() {
   $("#material-template").hide();
+  $("#group-template").hide();
+
+  $("#add-material").on('click',
+      function() {
+      var new_material_type = prompt("Please enter new material type abbreviation:");
+      if (new_material_type !== null && new_material_type !== "") {
+        sketchup.new_material_type(new_material_type);
+      }
+    });
 
   sketchup.call_set_materials();
 });
 
 function setMaterials(materials_as_hash_array) {
-  $("#materials-container").empty();
-  JSON.parse(materials_as_hash_array).sort((m1, m2) => m1.index - m2.index).forEach(add_material);
+  $("#groups-container").empty();
+
+  materials_array = JSON.parse(materials_as_hash_array);
+
+  [...new Set(materials_array.map(m => m.base_name))].forEach(g => add_group(g, materials_array.filter(m => m.base_name === g)))
 }
 
-// TODO: add name edditing
-// TODO: add color edditing
-function add_material(matrial_as_hash) {
-  material_div = new_material_div();
+function add_group(group, materials) {
+    group_div = new_group_div();
+
+    materials_sorted= materials.sort((m1,m2) => m2.name.localeCompare(m1.name, {numeric: true}));
+    materials_sorted.forEach(m => add_material(group_div, m));
+
+    group_div.find('.add-material-group').on('click', function(first_material) {
+      return function() {
+        sketchup.add_material(first_material.name);
+      }
+    }(materials_sorted[materials_sorted.length - 1]));
+}
+
+function add_material(parent, matrial_as_hash) {
+  material_div = new_material_div(parent);
 
   material_div.css("background-color", '#' + CP.RGB2HEX(matrial_as_hash.color_rgb));
   material_div.attr("data-old-color", CP.RGB2HEX(matrial_as_hash.color_rgb));
@@ -84,18 +107,7 @@ function add_material(matrial_as_hash) {
   }(matrial_as_hash, material_div, picker), false);
   picker.self.appendChild(save_color_button);
 
-// TODO: FS: it would be nicer if this was not a prompt, but would change the field to a input, and the buttons to acccept and abort
-// TODO FS: it would be nice to be able to change all fields of the materials
-// TODO: FS: it would be nice if the description would be shown wqhen howevring
 // TODO :FS: the materialisation tool is generaly active after clicking the buttons to do something with ti - that is wrong
-  material_div.find('.material-change-name').on('click', function(local_material_div, local_matrial_as_hash) {
-    return function() {
-      var new_id = prompt("Please enter new base id:", local_matrial_as_hash.base_id);
-      if (new_id !== null && new_id !== "" && new_id !== local_matrial_as_hash.base_id) {
-        sketchup.update_base_id(local_matrial_as_hash.name, new_id);
-      }
-    }
-  }(material_div, matrial_as_hash));
 
   material_div.on('click', function(local_matrial_as_hash) {
     return function() {
@@ -104,14 +116,28 @@ function add_material(matrial_as_hash) {
   }(matrial_as_hash));
 }
 
+var group_div_counter = 0;
+
+function new_group_div() {
+  group_div_counter++;
+
+  var $clone = $("#group-template").clone().prop('id', 'group-div-' + group_div_counter);
+
+  $("#groups-container").append($clone);
+
+  $clone.show();
+
+  return $clone;
+}
+
 var material_div_counter = 0;
 
-function new_material_div() {
+function new_material_div(parent) {
   material_div_counter++;
 
   var $clone = $("#material-template").clone().prop('id', 'mateiral-div-' + material_div_counter);
 
-  $("#materials-container").append($clone);
+  parent.prepend($clone);
 
   $clone.show();
 

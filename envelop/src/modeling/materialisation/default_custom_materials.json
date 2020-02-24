@@ -1,5 +1,41 @@
 [
   {
+    "name": "AW 1",
+    "base_name": "AW",
+    "color_rgb": [
+      20,
+      82,
+      46
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.2,
+    "index": 1
+  },
+  {
+    "name": "AW 2",
+    "base_name": "AW",
+    "color_rgb": [
+      183,
+      232,
+      160
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.77,
+    "index": 2
+  },
+  {
+    "name": "AW 3",
+    "base_name": "AW",
+    "color_rgb": [
+      138,
+      187,
+      129
+    ],
+    "color_alpha": 0.75,
+    "color_hsl_l": 0.62,
+    "index": 3
+  },
+  {
     "name": "IW 1",
     "base_name": "IW",
     "color_rgb": [
@@ -8,7 +44,8 @@
       121
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.24
+    "color_hsl_l": 0.24,
+    "index": 4
   },
   {
     "name": "IW 2",
@@ -19,7 +56,8 @@
       102
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2
+    "color_hsl_l": 0.2,
+    "index": 5
   },
   {
     "name": "IW 3",
@@ -30,7 +68,8 @@
       233
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.69
+    "color_hsl_l": 0.69,
+    "index": 6
   },
   {
     "name": "Bo 1",
@@ -41,7 +80,8 @@
       97
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.27
+    "color_hsl_l": 0.27,
+    "index": 7
   },
   {
     "name": "Bo 2",
@@ -52,7 +92,8 @@
       36
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.37
+    "color_hsl_l": 0.37,
+    "index": 8
   },
   {
     "name": "Bo 3",
@@ -63,7 +104,8 @@
       168
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.72
+    "color_hsl_l": 0.72,
+    "index": 9
   },
   {
     "name": "DA 1",
@@ -74,7 +116,8 @@
       20
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.4
+    "color_hsl_l": 0.4,
+    "index": 10
   },
   {
     "name": "DA 2",
@@ -85,7 +128,8 @@
       174
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.83
+    "color_hsl_l": 0.83,
+    "index": 11
   },
   {
     "name": "DE 1",
@@ -96,7 +140,8 @@
       95
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2
+    "color_hsl_l": 0.2,
+    "index": 12
   },
   {
     "name": "AF 1",
@@ -107,7 +152,8 @@
       204
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.9
+    "color_hsl_l": 0.9,
+    "index": 13
   },
   {
     "name": "AF 2",
@@ -118,7 +164,8 @@
       64
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.56
+    "color_hsl_l": 0.56,
+    "index": 14
   },
   {
     "name": "DAF 1",
@@ -129,7 +176,8 @@
       255
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.63
+    "color_hsl_l": 0.63,
+    "index": 15
   },
   {
     "name": "AT 1",
@@ -140,7 +188,8 @@
       221
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.43
+    "color_hsl_l": 0.43,
+    "index": 16
   },
   {
     "name": "IT 1",
@@ -151,94 +200,7 @@
       99
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.56
-  },
-  {
-    "name": "IW 4",
-    "base_name": "IW",
-    "color_rgb": [
-      17,
-      174,
-      118
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.37
-  },
-  {
-    "name": "IW 5",
-    "base_name": "IW",
-    "color_rgb": [
-      15,
-      125,
-      175
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.37
-  },
-  {
-    "name": "IW 6",
-    "base_name": "IW",
-    "color_rgb": [
-      19,
-      141,
-      205
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.44
-  },
-  {
-    "name": "IW 7",
-    "base_name": "IW",
-    "color_rgb": [
-      0,
-      102,
-      64
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.2
-  },
-  {
-    "name": "IW 8",
-    "base_name": "IW",
-    "color_rgb": [
-      0,
-      74,
-      102
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.2
-  },
-  {
-    "name": "IW 9",
-    "base_name": "IW",
-    "color_rgb": [
-      11,
-      184,
-      255
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.52
-  },
-  {
-    "name": "Bo 4",
-    "base_name": "Bo",
-    "color_rgb": [
-      193,
-      0,
-      39
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.38
-  },
-  {
-    "name": "DA 3",
-    "base_name": "DA",
-    "color_rgb": [
-      79,
-      23,
-      23
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.2
+    "color_hsl_l": 0.56,
+    "index": 17
   }
 ]

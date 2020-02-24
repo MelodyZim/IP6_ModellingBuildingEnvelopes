@@ -30,6 +30,7 @@ module Envelop
       end
       dialog.add_action_callback('delete_material') do |_action_context, material_name|
         Envelop::Materialisation.delete_material(material_name)
+        call_set_materials
         nil
       end
       dialog.add_action_callback('add_material') do |_action_context, material_name|
@@ -46,8 +47,8 @@ module Envelop
           call_set_materials
         nil
       end
-      dialog.add_action_callback('update_base_id') do |_action_context, material_name, new_base_id|
-          Envelop::Materialisation.update_base_id(material_name, new_base_id)
+      dialog.add_action_callback('new_material_type') do |_action_context, material_name|
+          Envelop::Materialisation.new_material(material_name)
           call_set_materials
         nil
       end

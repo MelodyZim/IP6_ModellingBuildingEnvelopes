@@ -6,10 +6,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.group-div {
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px 5px 0px 5px;
+  border: black 1px solid;
+}
+
 .material-div {
   height: 20px;
   cursor: pointer;
-  width: 175px;
+  width: calc(100% - 2px - 5px);
   border-radius: 5px;
   margin-bottom: 5px;
   display: inline-block;
@@ -18,7 +25,7 @@ body {
   border: black 1px solid;
 }
 
-#materials-container {
+#groups-container {
   width: 180px;
 }
 
@@ -36,8 +43,6 @@ body {
   margin: 0;
   border: 0;
 }
-
-.material-delete {}
 
 .button-content {
   vertical-align: middle;
