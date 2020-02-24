@@ -14,12 +14,12 @@
     "name": "IW 2",
     "base_name": "IW",
     "color_rgb": [
-      0,
-      24,
-      102
+      62,
+      93,
+      195
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2
+    "color_hsl_l": 0.5
   },
   {
     "name": "IW 3",
@@ -154,91 +154,14 @@
     "color_hsl_l": 0.56
   },
   {
-    "name": "IW 4",
-    "base_name": "IW",
-    "color_rgb": [
-      17,
-      174,
-      118
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.37
-  },
-  {
-    "name": "IW 5",
-    "base_name": "IW",
-    "color_rgb": [
-      15,
-      125,
-      175
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.37
-  },
-  {
-    "name": "IW 6",
-    "base_name": "IW",
-    "color_rgb": [
-      19,
-      141,
-      205
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.44
-  },
-  {
-    "name": "IW 7",
-    "base_name": "IW",
-    "color_rgb": [
-      0,
-      102,
-      64
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.2
-  },
-  {
-    "name": "IW 8",
-    "base_name": "IW",
-    "color_rgb": [
-      0,
-      74,
-      102
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.2
-  },
-  {
-    "name": "IW 9",
-    "base_name": "IW",
-    "color_rgb": [
-      11,
-      184,
-      255
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.52
-  },
-  {
-    "name": "Bo 4",
-    "base_name": "Bo",
-    "color_rgb": [
-      193,
-      0,
-      39
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.38
-  },
-  {
     "name": "DA 3",
     "base_name": "DA",
     "color_rgb": [
-      79,
-      23,
-      23
+      255,
+      146,
+      61
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2
+    "color_hsl_l": 0.62
   }
 ]

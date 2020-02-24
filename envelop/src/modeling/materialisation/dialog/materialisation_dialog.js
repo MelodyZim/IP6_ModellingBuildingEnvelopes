@@ -5,7 +5,7 @@ $(function() {
   $("#group-template").hide();
 
   $("#add-material").on('click',
-      function() {
+    function() {
       var new_material_type = prompt("Please enter new material type abbreviation:");
       if (new_material_type !== null && new_material_type !== "") {
         sketchup.new_material_type(new_material_type);
@@ -24,16 +24,21 @@ function setMaterials(materials_as_hash_array) {
 }
 
 function add_group(group, materials) {
-    group_div = new_group_div();
+  group_div = new_group_div();
 
-    materials_sorted= materials.sort((m1,m2) => m2.name.localeCompare(m1.name, {numeric: true}));
-    materials_sorted.forEach(m => add_material(group_div, m));
+  materials_sorted = materials.sort((m1, m2) => m2.name.localeCompare(m1.name, {
+    numeric: true
+  }));
+  materials_sorted.forEach(m => add_material(group_div, m));
 
-    group_div.find('.add-material-group').on('click', function(first_material) {
-      return function() {
-        sketchup.add_material(first_material.name);
-      }
-    }(materials_sorted[materials_sorted.length - 1]));
+  add_material_group = group_div.find('.add-material-group');
+  first_material = materials_sorted[materials_sorted.length - 1];
+  add_material_group.on('click', function(local_first_material) {
+    return function() {
+      sketchup.add_material(local_first_material.name);
+    }
+  }(first_material));
+  add_material_group.find('.material-name').html("Add " + first_material.base_name + " Material");
 }
 
 function add_material(parent, matrial_as_hash) {
@@ -46,6 +51,8 @@ function add_material(parent, matrial_as_hash) {
 
   $material_name = material_div.find('.material-name')
   $material_name.html(matrial_as_hash.name);
+
+  material_div.find((matrial_as_hash.color_hsl_l <= 0.5 ? '.black' : '.white')).hide();
 
   material_div.find('.material-content').css("color", (matrial_as_hash.color_hsl_l > 0.5 ? 'black' : 'white'));
 
@@ -89,7 +96,6 @@ function add_material(parent, matrial_as_hash) {
     }
   }(material_div, picker));
 
-// TODO: FS: it would be nice if there was a abort button too
   var save_color_button = document.createElement('button');
   save_color_button.className = 'save-color-button';
   save_color_button.innerHTML = 'Save Color';
@@ -107,7 +113,17 @@ function add_material(parent, matrial_as_hash) {
   }(matrial_as_hash, material_div, picker), false);
   picker.self.appendChild(save_color_button);
 
-// TODO :FS: the materialisation tool is generaly active after clicking the buttons to do something with ti - that is wrong
+  var cancel_button = document.createElement('button');
+  cancel_button.className = 'save-color-button';
+  cancel_button.innerHTML = 'Cancel';
+  cancel_button.addEventListener("click", function(local_picker) {
+    return function() {
+      local_picker.exit();
+    }
+  }(picker), false);
+  picker.self.appendChild(cancel_button);
+
+  // TODO :FS: the materialisation tool is generaly active after clicking the buttons to do something with ti - that is wrong
 
   material_div.on('click', function(local_matrial_as_hash) {
     return function() {

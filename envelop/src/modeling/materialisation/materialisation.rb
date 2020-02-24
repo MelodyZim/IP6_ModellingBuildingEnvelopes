@@ -227,9 +227,9 @@ module Envelop
 
     def self.random_color()
       res = ColorMath.from_hsl(
-        ([-1, 1].sample * rand()).clamp(0, 360),
-        ([-1, 1].sample * rand()).clamp(MIN_HSL_S, MAX_HSL_S),
-        ([-1, 1].sample * rand()).clamp(MIN_HSL_L, MAX_HSL_L)
+        rand(0..360),
+        rand(MIN_HSL_S..MAX_HSL_S),
+        rand(MIN_HSL_L..MAX_HSL_L)
       )
 
       res

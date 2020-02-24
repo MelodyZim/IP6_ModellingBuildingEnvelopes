@@ -16,11 +16,9 @@ body {
 .material-div {
   height: 20px;
   cursor: pointer;
-  width: calc(100% - 2px - 5px);
+  width: -webkit-fill-available;
   border-radius: 5px;
   margin-bottom: 5px;
-  display: inline-block;
-  position: relative;
   padding: 0px 0px 0px 5px;
   border: black 1px solid;
 }
@@ -44,14 +42,15 @@ body {
   border: 0;
 }
 
-.button-content {
-  vertical-align: middle;
-  display: inline-block;
+.button-content>img {
+  width: 16px;
+  height: 16px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .material-content {
   display: inline-block;
-  position: relative;
 }
 
 .material-button-black-border {
