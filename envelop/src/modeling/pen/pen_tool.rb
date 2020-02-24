@@ -223,7 +223,11 @@ module Envelop
         end
 
         if @phase != PHASES[:INITIAL]
-          Envelop::GeometryUtils.draw_lines(view, nil, @previous_points[-1], @ip.position)
+          if @alternate_mode
+            Envelop::GeometryUtils.draw_lines(view, 'Cyan', @previous_points[-1], @previous_points[0])
+          else
+            Envelop::GeometryUtils.draw_lines(view, nil, @previous_points[-1], @ip.position)
+          end
         end
       end
 
