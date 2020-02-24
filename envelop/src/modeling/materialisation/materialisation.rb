@@ -81,6 +81,8 @@ module Envelop
 
       materials = Sketchup.active_model.materials
       materials.remove(materials[material_name]) # TODO: what happens if still in use?
+
+      Envelop::Materialisation.save_custom_materials
     end
 
     def self.init_materials
@@ -100,6 +102,8 @@ module Envelop
 
       # create_material
       create_material(material_name, nil, "#{material_name} 1", random_color)
+
+      Envelop::Materialisation.save_custom_materials
     end
 
     def self.add_material(material_name)
@@ -112,6 +116,8 @@ module Envelop
 
       # create_material
       create_material(base_name, base_color_hsl)
+
+      Envelop::Materialisation.save_custom_materials
     end
 
     def self.update_color(material_name, color_rgb_a)
@@ -121,6 +127,8 @@ module Envelop
       material.color = Sketchup::Color.new(*color_rgb_a)
       material.set_attribute('material', 'color_rgb', color_rgb_a)
       material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
+
+      Envelop::Materialisation.save_custom_materials
     end
 
     private
@@ -253,16 +261,16 @@ module Envelop
       end
     end
 
-    class PreSaveModelSaveCustomMaterials < Sketchup::ModelObserver
-      def onPreSaveModel(_model)
-        Envelop::Materialisation.save_custom_materials
-      end
-    end
+    # class PreSaveModelSaveCustomMaterials < Sketchup::ModelObserver
+    #   def onPreSaveModel(_model)
+    #     Envelop::Materialisation.save_custom_materials
+    #   end
+    # end
 
     def self.reload
       init_materials
 
-      Envelop::ObserverUtils.attach_model_observer(PreSaveModelSaveCustomMaterials)
+      # Envelop::ObserverUtils.attach_model_observer(PreSaveModelSaveCustomMaterials)
     end
 
     Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
