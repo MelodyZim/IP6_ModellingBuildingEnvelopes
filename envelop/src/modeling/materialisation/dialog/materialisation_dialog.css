@@ -28,9 +28,17 @@ body {
 }
 
 .material-name {
-  margin-left: 5px;
-  margin-right: 5px;
-  font-size: small;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: small;
+    overflow-x: scroll;
+    width: 97px;
+    white-space: nowrap;
+    margin-top: 2.5px;
+}
+
+.material-name::-webkit-scrollbar {
+  display: none;
 }
 
 .hidden {
@@ -75,6 +83,6 @@ body {
 }
 
 .save-color-button {
-    margin: 5px;
-    float: right;
+  margin: 5px;
+  float: right;
 }

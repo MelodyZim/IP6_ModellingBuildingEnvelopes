@@ -156,6 +156,17 @@ module Envelop
                              color_rgb = color.to_rgb,
                              color_hsl_l = color.to_hsl[2] / 100.0,
                              color_alpha = Envelop::Materialisation::DEFAULT_ALPHA)
+      material = Sketchup.active_model.materials[name]
+      if !material.nil? &&
+        base_name == material.get_attribute('material', 'base_name') &&
+        color_rgb == material.get_attribute('material', 'color_rgb') &&
+        color_hsl_l == material.get_attribute('material', 'color_hsl_l') &&
+        color_alpha == material.alpha
+
+        return material
+      end
+
+
        # create
        material = Sketchup.active_model.materials.add(name)
 
@@ -168,8 +179,9 @@ module Envelop
        material.set_attribute('material', 'color_hsl_l', color_hsl_l)
        material.alpha = color_alpha
 
-       # is user_facing
+       # other attrs
        material.set_attribute('material', 'user_facing', true)
+       material.set_attribute('material', 'user_material', true)
 
        material
     end
@@ -210,14 +222,17 @@ module Envelop
     end
 
     def self.save_custom_materials
+      materials = user_facing_materials_as_hash_array
+      # Envelop::OperationUtils.operation_chain "Save Materials in Model", true, lambda {
+      #   Sketchup.active_model.set_attribute('Envelop::Materialisation', 'materials', materials)
+      # }
       File.open(custom_materials_path, 'w') do |f|
-        f.write(JSON.pretty_generate(user_facing_materials_as_hash_array))
+        f.write(JSON.pretty_generate(materials.select { |m| !m['name'].include?(" (Model)") }))
       end
     end
 
     def self.load_custom_materials
       materials_array = JSON.parse(File.read(custom_materials_path))
-
       materials_array.each do |material_hash|
         create_material(material_hash['base_name'], nil,
                         material_hash['name'], nil,
@@ -261,16 +276,80 @@ module Envelop
       end
     end
 
-    # class PreSaveModelSaveCustomMaterials < Sketchup::ModelObserver
-    #   def onPreSaveModel(_model)
-    #     Envelop::Materialisation.save_custom_materials
-    #   end
-    # end
+    def self.merge_materials
+      model = Sketchup.active_model
+      materials = model.materials
+      materials.each do |material|
+          next unless material.get_attribute('material', 'user_facing')
+          next unless material.name.include?(" (Model)")
+
+          local_material = materials.select { |m| m.name == material.get_attribute('material', 'original_name') }
+
+          next unless local_material.length == 1
+          local_material = local_material.first
+
+          next unless local_material.get_attribute('material', 'base_name') == material.get_attribute('material', 'base_name')
+          next unless local_material.get_attribute('material', 'color_rgb') == material.get_attribute('material', 'color_rgb')
+          next unless (local_material.alpha - material.alpha).abs <= 0.01
+          next unless (local_material.get_attribute('material', 'color_hsl_l') - material.get_attribute('material', 'color_hsl_l')).abs <=  0.01
+
+          replace_material(material, local_material)
+          materials.remove(material)
+        end
+    end
+
+    def self.replace_material(src_mat, dst_mat, entities = Sketchup.active_model.active_entities)
+
+      entities.grep(Sketchup::Face).each do |face|
+          if !face.material.nil? && (face.material == src_mat)
+            face.material = dst_mat
+          end
+      end
+
+      entities.grep(Sketchup::Group).each do |group|
+        replace_material(src_mat, dst_mat, group.entities)
+      end
+    end
+
+    class ModelSaveCustomMaterials < Sketchup::ModelObserver
+      def onPreSaveModel(model)
+        model.materials.each do |material|
+          next unless material.get_attribute('material', 'user_facing')
+          next if material.name.include?(" (Model)")
+
+          material.set_attribute('material', 'original_name', material.name)
+
+          material.name = material.name + " (Model)"
+        end
+      end
+
+      def onPostSaveModel(model)
+        Envelop::Materialisation.init_materials
+        Envelop::Materialisation.merge_materials
+      end
+    end
+
+      class OpenModelAppObserver < Sketchup::AppObserver
+        def expectsStartupModelNotifications
+          return true
+        end
+        def onActivateModel(model)
+          Envelop::Materialisation.merge_materials
+        end
+        def onOpenModel(model)
+          Envelop::Materialisation.merge_materials
+        end
+      end
 
     def self.reload
       init_materials
+      merge_materials
 
-      # Envelop::ObserverUtils.attach_model_observer(PreSaveModelSaveCustomMaterials)
+      Envelop::ObserverUtils.attach_model_observer(ModelSaveCustomMaterials)
+    end
+
+    unless file_loaded?(__FILE__)
+      Sketchup.add_observer(OpenModelAppObserver.new)
     end
 
     Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {

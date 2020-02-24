@@ -8,8 +8,7 @@
       46
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2,
-    "index": 1
+    "color_hsl_l": 0.2
   },
   {
     "name": "AW 2",
@@ -20,20 +19,7 @@
       160
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.77,
-    "index": 2
-  },
-  {
-    "name": "AW 3",
-    "base_name": "AW",
-    "color_rgb": [
-      138,
-      187,
-      129
-    ],
-    "color_alpha": 0.75,
-    "color_hsl_l": 0.62,
-    "index": 3
+    "color_hsl_l": 0.77
   },
   {
     "name": "IW 1",
@@ -44,8 +30,7 @@
       121
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.24,
-    "index": 4
+    "color_hsl_l": 0.24
   },
   {
     "name": "IW 2",
@@ -56,8 +41,7 @@
       102
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2,
-    "index": 5
+    "color_hsl_l": 0.2
   },
   {
     "name": "IW 3",
@@ -68,8 +52,7 @@
       233
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.69,
-    "index": 6
+    "color_hsl_l": 0.69
   },
   {
     "name": "Bo 1",
@@ -80,8 +63,7 @@
       97
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.27,
-    "index": 7
+    "color_hsl_l": 0.27
   },
   {
     "name": "Bo 2",
@@ -92,8 +74,7 @@
       36
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.37,
-    "index": 8
+    "color_hsl_l": 0.37
   },
   {
     "name": "Bo 3",
@@ -104,8 +85,7 @@
       168
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.72,
-    "index": 9
+    "color_hsl_l": 0.72
   },
   {
     "name": "DA 1",
@@ -116,20 +96,18 @@
       20
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.4,
-    "index": 10
+    "color_hsl_l": 0.4
   },
   {
     "name": "DA 2",
     "base_name": "DA",
     "color_rgb": [
-      221,
-      250,
-      174
+      203,
+      140,
+      43
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.83,
-    "index": 11
+    "color_hsl_l": 0.48
   },
   {
     "name": "DE 1",
@@ -140,8 +118,7 @@
       95
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.2,
-    "index": 12
+    "color_hsl_l": 0.2
   },
   {
     "name": "AF 1",
@@ -152,8 +129,7 @@
       204
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.9,
-    "index": 13
+    "color_hsl_l": 0.9
   },
   {
     "name": "AF 2",
@@ -164,8 +140,7 @@
       64
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.56,
-    "index": 14
+    "color_hsl_l": 0.56
   },
   {
     "name": "DAF 1",
@@ -176,8 +151,7 @@
       255
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.63,
-    "index": 15
+    "color_hsl_l": 0.63
   },
   {
     "name": "AT 1",
@@ -188,8 +162,7 @@
       221
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.43,
-    "index": 16
+    "color_hsl_l": 0.43
   },
   {
     "name": "IT 1",
@@ -200,7 +173,6 @@
       99
     ],
     "color_alpha": 0.75,
-    "color_hsl_l": 0.56,
-    "index": 17
+    "color_hsl_l": 0.56
   }
 ]
