@@ -143,6 +143,9 @@ module Envelop
           # Refresh housekeeper
           Envelop::Housekeeper.get_house
 
+          # Refresh PlanManager
+          Envelop::PlanManager.reload
+
           return true
         end
 
