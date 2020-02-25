@@ -4,10 +4,6 @@ require 'sketchup.rb'
 
 module Envelop
   module PlanManager
-    # If the angle between a plans flipped normal and the cameras view vector is larger
-    # than HIDE_THRESHOLD, the plan gets hidden
-    HIDE_THRESHOLD = 75
-
     def self.add_plan(plan)
       if plan.is_a? Sketchup::Image
         Envelop::ObserverUtils.attach_entity_observer(RemovePlanFromManagerUponErase, plan)
@@ -26,35 +22,12 @@ module Envelop
       get_plans.each do |plan|
         hide_plan(plan)
       end
-
-      Envelop::ObserverUtils.dettach_view_observer(PlansVisibilityManager)
     end
 
     def self.unhide_all_plans
-      @hidden_plans.each do |plan|
+      @plans.each do |plan|
         plan.hidden = false
       end
-
-      @hidden_plans = []
-
-      # update_plans_visibility
-
-      Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
-    end
-
-    def self.update_plans_visibility(view = Sketchup.active_model.active_view)
-      # Automatic plan hiding has been disabled, see https://github.com/FSiffer/IP6_ModellingBuildingEnvelopes/issues/48
-
-      # Envelop::PlanManager.get_plans.each do |plan|
-      #   next if @hidden_plans.include?(plan)
-      #
-      #   Envelop::OperationUtils.operation_chain('Plan Visibility Update', true, lambda {
-      #     # TODO: calculate angle correct even if camera is set to perspective
-      #     normal_flipped = Geom::Vector3d.new((ORIGIN - plan.normal).to_a)
-      #     plan.hidden = Math.acos(view.camera.direction.dot(normal_flipped)).radians > HIDE_THRESHOLD
-      #     true
-      #   })
-      # end
     end
 
     def self.hide_plan(plan)
@@ -62,7 +35,6 @@ module Envelop
         plan.hidden = true
         true
       })
-      @hidden_plans.push(plan)
     end
 
     private
@@ -79,29 +51,16 @@ module Envelop
       end
     end
 
-    class PlansVisibilityManager < Sketchup::ViewObserver
-      def onViewChanged(view)
-        # hide plans that are facing backwards
-        Envelop::PlanManager.update_plans_visibility(view)
-      end
-    end
-
     def self.reload
       @plans = []
-      @hidden_plans = []
 
-      model = Sketchup.active_model
-
-      model.entities.each do |entity|
+      # search the model for Images marked as plans
+      Sketchup.active_model.entities.each do |entity|
         isPlan = entity.get_attribute('Envelop::PlanManager', 'isPlan')
         if !isPlan.nil? && isPlan && entity.is_a?(Sketchup::Image)
           Envelop::PlanManager.add_plan(entity)
         end
       end
-
-      Envelop::PlanManager.update_plans_visibility(model.active_view)
-
-      Envelop::ObserverUtils.attach_view_observer(PlansVisibilityManager)
     end
 
     Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
