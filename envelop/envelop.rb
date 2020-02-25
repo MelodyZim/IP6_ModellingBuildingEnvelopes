@@ -55,8 +55,8 @@ module Envelop
     ex = SketchupExtension.new('Envelop', 'src/main')
     ex.description = 'Envelop: Quickly Modelling Building Envelops Based on PDF Plans'
     ex.version     = '0.1'
-    # ex.copyright   = '' # TODO ?
-    ex.creator     = 'Florian Siffer & Ptatrick Ackermann'
+    ex.copyright   = '2020 Florian Siffer & Patrick Ackermann'
+    ex.creator     = 'Florian Siffer & Patrick Ackermann'
 
     Sketchup.register_extension(ex, true)
 
