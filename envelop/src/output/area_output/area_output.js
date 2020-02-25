@@ -20,7 +20,7 @@ function set_result(result) {
 
   // generate header
   html += "<tr><th></th>"
-  directions.forEach(function (dir, index) {
+  directions.forEach(function(dir, index) {
     html += `<th>${dir}</th>`
   });
   html += "</tr>"
@@ -30,7 +30,7 @@ function set_result(result) {
     if (Object.prototype.hasOwnProperty.call(result_json, prop)) {
       html += `<tr><th>${prop}</th>`
 
-      directions.forEach(function (dir, index) {
+      directions.forEach(function(dir, index) {
         if (dir in result_json[prop]) {
           html += `<td>${result_json[prop][dir].toFixed(2)}</td>`
         } else {
@@ -46,12 +46,26 @@ function set_result(result) {
 }
 
 //from https://stackoverflow.com/a/33572804
-function getSortedHash(inputHash){
+function getSortedHash(inputHash) {
   var resultHash = {};
 
   var keys = Object.keys(inputHash);
   keys.sort(function(a, b) {
-    return inputHash[a].index - inputHash[b].index
+
+    if (a == "Total" && b == "Unset") {
+      return 1;
+    } else if (a == "Unset" && b == "Total") {
+      return -1;
+    } else if (a == "Total" || a == "Unset") {
+      return 1;
+    } else if (b == "Total" || b == "Unset") {
+      return -1;
+    } else {
+
+      return a.localeCompare(b, {
+        numeric: true
+      });
+    }
   }).forEach(function(k) {
     resultHash[k] = inputHash[k];
   });
