@@ -86,3 +86,11 @@ body {
   margin: 5px;
   float: right;
 }
+
+.add-material-group>.material-name {
+  width: 124px;
+}
+
+#add-material>.material-name {
+  width: 136px;
+}
