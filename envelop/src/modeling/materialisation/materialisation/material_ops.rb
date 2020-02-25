@@ -19,6 +19,8 @@ module Envelop
         materials.remove(material)
 
         Envelop::Materialisation.save_custom_materials
+
+        manage_materials
       end
     end
 
