@@ -63,16 +63,17 @@ module Envelop
             target = @mouse_ip.position.project_to_line(line)
           end
 
-          unless @pushpull_vector.nil?
-            @plan.transform!(@pushpull_vector.reverse)
-          end
-
+          old_pushpull_vector = @pushpull_vector.nil? ? Geom::Vector3d.new(0, 0, 0) : @pushpull_vector
           @pushpull_vector = target - @origin
 
-          @plan.transform!(@pushpull_vector)
-        end
+          @plan.transform!(@pushpull_vector - old_pushpull_vector)
 
-        view.invalidate
+          # immediatly force a redraw, view.invalidate did not redraw fast enough
+          view.refresh
+        else
+          # mark the view as in need of a redraw
+          view.invalidate
+        end
       end
 
       CLICK_DRAG_THRESHOLD_MS = 300 # TODO: make global
