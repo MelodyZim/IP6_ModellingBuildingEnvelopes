@@ -60,17 +60,14 @@ module Envelop
           elsif @phase == PHASES[:FIRST_POINT]
 
             return if try_finish_rectangle
-            if on_edge_or_vertex(view, x, y)
-              finish_with_additional_point(@ip.position)
-            else
-              add_construction_geometry(@previous_points[-1], @ip.position)
-              update_prev_state(@ip.position)
-              @phase = PHASES[:MULTIPLE_POINTS]
-            end
+
+            add_construction_geometry(@previous_points[-1], @ip.position)
+            update_prev_state(@ip.position)
+            @phase = PHASES[:MULTIPLE_POINTS]
 
           elsif @phase == PHASES[:MULTIPLE_POINTS]
             
-            if (@previous_points.include? @ip.position) || on_edge_or_vertex(view, x, y)
+            if (@previous_points.include? @ip.position)
               finish_with_additional_point(@ip.position)
             else
               add_construction_geometry(@previous_points[-1], @ip.position)
