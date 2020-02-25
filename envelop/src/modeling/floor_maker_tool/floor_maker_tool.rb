@@ -10,7 +10,7 @@ module Envelop
       def draw(view)
         super(view)
 
-        # draw_preview(view) if @ip.valid?
+        draw_preview(view) if @ip.valid?
       end
 
       def onLButtonDown(flags, x, y, view)
