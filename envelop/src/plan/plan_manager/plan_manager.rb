@@ -61,6 +61,8 @@ module Envelop
           Envelop::PlanManager.add_plan(entity)
         end
       end
+
+      unhide_all_plans
     end
 
     Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {
