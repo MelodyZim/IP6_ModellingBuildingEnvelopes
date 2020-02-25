@@ -18,13 +18,13 @@ module Envelop
       end
 
       def resume(view)
-        puts 'resuming PlanManagerTool...'
+        # puts 'resuming PlanManagerTool...'
         set_status_text
         view.invalidate
       end
 
       def suspend(_view)
-        puts 'suspending PlanManagerTool...'
+        # puts 'suspending PlanManagerTool...'
       end
 
       def onCancel(_reason, _view)

@@ -28,14 +28,14 @@ module Envelop
       end
 
       def resume(view)
-        puts 'resuming PlanPositionTool...'
+        # puts 'resuming PlanPositionTool...'
 
         set_status_text
         view.invalidate
       end
 
       def suspend(_view)
-        puts 'suspending PlanPositionTool...'
+        # puts 'suspending PlanPositionTool...'
       end
 
       def onCancel(_reason, _view)
