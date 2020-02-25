@@ -48,6 +48,7 @@ module Envelop
       if materials[DEFAULT_MATERIAL].nil?
 
         material = materials.add(DEFAULT_MATERIAL)
+        material.set_attribute("material", "original_name", "Unset")
         material.color = Sketchup::Color.new(COLOR_DEFAULT_MATERIAL_R, COLOR_DEFAULT_MATERIAL_G, COLOR_DEFAULT_MATERIAL_B)
         material.alpha = ALPHA_DEFAULT_MATERIAL
       end

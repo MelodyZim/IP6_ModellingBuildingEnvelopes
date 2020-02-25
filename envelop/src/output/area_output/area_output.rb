@@ -17,10 +17,11 @@ module Envelop
 
     def self.check_material
       if Envelop::Materialisation.house_contains_default_material
-        UI.messagebox('The model still contains faces with the default material. Please asign non-default materials from the list on the right to all faces.')
-      else
-        check_orientation
+        result = UI.messagebox('The model still contains faces with the default material. Do you want to continue anyway?', MB_YESNO)
+        return if result == IDNO
       end
+
+      check_orientation
     end
 
     def self.check_orientation
