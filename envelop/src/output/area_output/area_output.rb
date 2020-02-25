@@ -22,7 +22,7 @@ module Envelop
         check_orientation
       end
     end
-    
+
     def self.check_orientation
       if !Envelop::OrientationTool.is_model_oriented
         UI.messagebox('The north direction must be set before outputting area measurements. Starting orientation tool...')
@@ -46,7 +46,7 @@ module Envelop
       @area_json = area.to_json
       DIALOG_OPTIONS[:height] = BASE_HEIGHT + area.length * 21
       Envelop::DialogUtils.show_dialog(DIALOG_OPTIONS) { |dialog| attach_callbacks(dialog) }
-    end  
+    end
 
     # settings
     BASE_HEIGHT = 10 + 23 + 2 + 22 + Envelop::WindowUtils.html_window_header_and_vert_scrollbar_height
@@ -91,7 +91,7 @@ module Envelop
         materials = Hash.new
 
         materials["Total"] = Hash.new
-        materials["Total"]["index"] = Envelop::Materialisation::LAST_MATERIAL_INDEX
+        materials["Total"]
       end
 
       # extract interesting entities
@@ -101,13 +101,13 @@ module Envelop
       # calculate faces
       faces.each do |face|
         material = face.material
-        name = material.nil? ? "default" : material.name
+        name = material.nil? ? "default" : material.get_attribute("material", "original_name")
         area = area_to_current_unit(face.area(transformation))
         direction = map_direction(get_direction(face.normal))
 
         if materials[name].nil?
           materials[name] = Hash.new
-          materials[name]["index"] = material.get_attribute('material', 'index') # TODO handle the case where material=nil
+          materials[name]
         end
 
         if materials[name][direction].nil?

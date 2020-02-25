@@ -8,11 +8,7 @@ $(function() {
     function() {
       var new_material_type = prompt("Please enter new material type abbreviation:");
       if (new_material_type !== null && new_material_type !== "") {
-        if (new_material_type.includes(" (Model)")) {
-          alert("Material type names cannot contain ' (Model)'. Please choose a different name.");
-        } else {
-          sketchup.new_material_type(new_material_type);
-        }
+        sketchup.new_material_type(new_material_type);
       }
     });
 

@@ -56,7 +56,7 @@ module Envelop
 
     #  Methods
     def self.call_set_materials
-      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "setMaterials('#{Envelop::Materialisation.user_facing_materials_as_hash_array.to_json}')")
+      Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "setMaterials('#{Envelop::Materialisation.user_facing_materials_as_hash_array.select { |m| !m['is_hidden'] }.to_json}')")
     end
   end
 end
