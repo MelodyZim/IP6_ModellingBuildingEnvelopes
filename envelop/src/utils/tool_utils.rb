@@ -9,6 +9,8 @@ module Envelop
     TAP_HOLD_THRESHOLD_MS = 300
     CLICK_DRAG_THRESHOLD_MS = 300
 
+    KEY_ENTER = 13 # Sketchup defines no constant for Enter
+
     class AbstractTool
       def initialize(name, phases: nil, cursor_id: nil)
         @name = name
