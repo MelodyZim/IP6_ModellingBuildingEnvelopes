@@ -235,6 +235,13 @@ module Envelop
 
     def self.reload
       Sketchup.active_model.select_tool(nil)
+
+      if !is_model_oriented
+        Envelop::OperationUtils.operation_chain "Set Orientation", true, lambda {
+          Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'northAngle', Math::PI / 2.0)
+          Sketchup.active_model.set_attribute('Envelop::OrientationTool', 'modelIsOriented', true)
+        }
+      end
     end
     reload
   end
