@@ -19,7 +19,7 @@ module Envelop
     end
 
     def self.hide_all_plans
-      get_plans.each do |plan|
+      @plans.each do |plan|
         hide_plan(plan)
       end
     end
