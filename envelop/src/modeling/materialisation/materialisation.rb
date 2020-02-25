@@ -9,19 +9,7 @@ module Envelop
     DEFAULT_MATERIAL = 'default'
 
     def self.house_contains_default_material(entities = nil)
-      entities = Envelop::Housekeeper.get_house.entities if entities.nil? # TODO : this and model_contains_default_material: why active entities and not entities in general
-
-      entities.grep(Sketchup::Face).each do |face|
-        if !face.material.nil? && (face.material.name == DEFAULT_MATERIAL)
-          return true
-        end
-      end
-
-      entities.grep(Sketchup::Group).each do |group|
-        return true if model_contains_default_material(group.entities)
-      end
-
-      false
+      entities_contains_material()
     end
 
     # Apply DEFAULT_MATERIAL to all faces without material
@@ -80,9 +68,21 @@ module Envelop
       puts "Envelop::Materialisation.delete_material: deleting material with name #{material_name}..."
 
       materials = Sketchup.active_model.materials
-      materials.remove(materials[material_name]) # TODO: what happens if still in use?
+      material = materials[material_name]
 
-      Envelop::Materialisation.save_custom_materials
+      if !material.nil?
+        if entities_contains_material(material_name)
+          result = UI.messagebox('The model contains surfaces with the material you are about to delete. Do you want to continue?', MB_YESNO)
+          if result == IDNO
+            return
+          end
+          replace_material(material, materials[DEFAULT_MATERIAL])
+        end
+
+        materials.remove(material)
+
+        Envelop::Materialisation.save_custom_materials
+      end
     end
 
     def self.init_materials
@@ -150,6 +150,21 @@ module Envelop
     MAX_HSL_L = 90
 
     #  Methods
+
+    def self.entities_contains_material(material_name = DEFAULT_MATERIAL, entities = Envelop::Housekeeper.get_house.entities)
+      entities.grep(Sketchup::Face).each do |face|
+        if !face.material.nil? && (face.material.name == material_name)
+          return true
+        end
+      end
+
+      entities.grep(Sketchup::Group).each do |group|
+        return true if entities_contains_material(group.entities)
+      end
+
+      false
+    end
+
     def self.create_material(base_name, base_color_hsl,
                              name = "#{base_name} 1",
                              color = deviate_color(base_color_hsl),
