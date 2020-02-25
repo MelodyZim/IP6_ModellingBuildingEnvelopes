@@ -17,6 +17,8 @@ module Envelop
       merge_materials
 
       hide_conflicting_materials
+
+      Envelop::MaterialisationDialog.call_set_materials
     end
 
     def self.save_custom_materials
@@ -139,7 +141,7 @@ module Envelop
     class ModelSaveCustomMaterials < Sketchup::ModelObserver
       def onPreSaveModel(model)
         Sketchup.active_model.materials.purge_unused
-        
+
         model.materials.each do |material|
           next unless material.get_attribute('material', 'user_facing')
           next if material.get_attribute('material', 'from_model')
@@ -175,6 +177,8 @@ module Envelop
 
     unless file_loaded?(__FILE__)
       Sketchup.add_observer(OpenModelAppObserver.new)
+
+      file_loaded(__FILE__)
     end
 
     Envelop::OperationUtils.operation_chain("Reload #{File.basename(__FILE__)}", false, lambda {

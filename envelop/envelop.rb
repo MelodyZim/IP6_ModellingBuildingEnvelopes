@@ -50,8 +50,6 @@ module Envelop
   end
 
   def self.create_extension
-    Sketchup.add_observer(ReloadAppObserver.new)
-
     ex = SketchupExtension.new('Envelop', 'src/main')
     ex.description = 'Envelop: Quickly Modelling Building Envelops Based on PDF Plans'
     ex.version     = '0.1'
@@ -66,6 +64,9 @@ module Envelop
   unless file_loaded?(__FILE__)
     @extension = create_extension
     @extension.check
+
+    Sketchup.add_observer(ReloadAppObserver.new)
+
     file_loaded(__FILE__)
   end
 
