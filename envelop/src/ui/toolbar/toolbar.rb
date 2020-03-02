@@ -163,26 +163,64 @@ module Envelop
 
     unless file_loaded?(__FILE__)
       @toolbar = UI::Toolbar.new 'Envelop Toolbar'
+      extensionsmenu = UI.menu('Extensions')
+      submenu = extensionsmenu.add_submenu('Envelop')
 
-      @toolbar = @toolbar.add_item open_wizard_command
-
-      @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item pen_tool_command
-      @toolbar = @toolbar.add_item pushpull_command
-      @toolbar = @toolbar.add_item floor_maker_command
-
-      @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item scale_tool_command
-      @toolbar = @toolbar.add_item orientation_tool_command
-      @toolbar = @toolbar.add_item area_command
+      owc = open_wizard_command
+      @toolbar = @toolbar.add_item owc
+      submenu.add_item owc
 
       @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item plan_manager_tool_command
-      @toolbar = @toolbar.add_item hide_plans_command
-      @toolbar = @toolbar.add_item unhide_plans_command
+      submenu.add_separator
+
+      ptc = pen_tool_command
+      @toolbar = @toolbar.add_item ptc
+      submenu.add_item ptc
+
+      ppc = pushpull_command
+      @toolbar = @toolbar.add_item ppc
+      submenu.add_item ppc
+
+      fmc = floor_maker_command
+      @toolbar = @toolbar.add_item fmc
+      submenu.add_item fmc
 
       @toolbar = @toolbar.add_separator
-      @toolbar = @toolbar.add_item reload_command
+      submenu.add_separator
+
+      stc = scale_tool_command
+      @toolbar = @toolbar.add_item stc
+      submenu.add_item stc
+
+      otc = orientation_tool_command
+      @toolbar = @toolbar.add_item otc
+      submenu.add_item otc
+
+      ac = area_command
+      @toolbar = @toolbar.add_item ac
+      submenu.add_item ac
+
+      @toolbar = @toolbar.add_separator
+      submenu.add_separator
+
+      pmtc = plan_manager_tool_command
+      @toolbar = @toolbar.add_item pmtc
+      submenu.add_item pmtc
+
+      hpc = hide_plans_command
+      @toolbar = @toolbar.add_item hpc
+      submenu.add_item hpc
+
+      upc = unhide_plans_command
+      @toolbar = @toolbar.add_item upc
+      submenu.add_item upc
+
+      @toolbar = @toolbar.add_separator
+      submenu.add_separator
+
+      rc = reload_command
+      @toolbar = @toolbar.add_item rc
+      submenu.add_item rc
 
       file_loaded(__FILE__)
     end
