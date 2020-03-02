@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<script src="../../vendor/js/jquery-3.4.1.js"></script>
-    <link  href="../../vendor/css/cropper.css" rel="stylesheet">
-    <script src="../../vendor/js/cropper.js"></script>
-		<script src="plan_edit.js"></script>
-    <link  href="plan_edit.css" rel="stylesheet">
-	</head>
-	<body>
-    <div id="plan_container">
-      <img id="target" height="100%"/>
-    </div>
 
-		<div id="buttons_container">
-	    <div class="buttons_row">
-	      <button id="switchMode"><label for="switchMode" id="switchLabel">Move Plan</label></button>
-	      <button id="rotCCW"><label for="rotCCW">Rotate Left</label></button>
-	      <button id="rotCW"><label for="rotCW">Rotate Right</label></button>
-	      <button id="cancel"><label for="cancel">Cancel</label></button>
-	    </div>
+<head>
+	<script src="../../vendor/js/jquery-3.4.1.js"></script>
+	<link href="../../vendor/css/cropper.css" rel="stylesheet">
+	<script src="../../vendor/js/cropper.js"></script>
+	<script src="plan_edit.js"></script>
+	<link href="plan_edit.css" rel="stylesheet">
+</head>
 
-			<div class="buttons_row">
-		    <button value="0" id="place_F"><label for="place_F">Floor</label></button>
-		    <button value="1" id="place_N"><label for="place_N">North</label></button>
-		    <button value="2" id="place_E"><label for="place_E">East</label></button>
-		    <button value="3" id="place_S"><label for="place_S">South</label></button>
-		    <button value="4" id="place_W"><label for="place_W">West</label></button>
-			</div>
+<body>
+	<div id="plan_container">
+		<img id="target" height="100%" />
+	</div>
+
+	<div id="buttons_container">
+		<div class="buttons_row">
+			<button id="switchMode"><label for="switchMode" id="switchLabel">Move Plan</label></button>
+			<button id="rotCCW"><label for="rotCCW">Rotate Left</label></button>
+			<button id="rotCW"><label for="rotCW">Rotate Right</label></button>
+			<button id="cancel"><label for="cancel">Cancel</label></button>
 		</div>
 
-    <!-- output for debugging purposes -->
-    <img id="output" />
-    <p id="orientation"></p>
-	</body>
+		<div class="buttons_row">
+			<button value="0" id="place_F"><label for="place_F">Floor</label></button>
+			<button value="1" id="place_N"><label for="place_N">North</label></button>
+			<button value="2" id="place_E"><label for="place_E">East</label></button>
+			<button value="3" id="place_S"><label for="place_S">South</label></button>
+			<button value="4" id="place_W"><label for="place_W">West</label></button>
+		</div>
+	</div>
+
+	<!-- output for debugging purposes -->
+	<img id="output" />
+	<p id="orientation"></p>
+</body>
+
 </html>
