@@ -31,6 +31,11 @@ module Envelop
         Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "setImage('#{@image_base64}')")
         nil
       end
+      dialog.add_action_callback('call_set_north') do |_action_context|
+        north = Sketchup.active_model.get_attribute("Envelop::OrientationTool", "northAngle", Math::PI / 2).radians
+        Envelop::DialogUtils.execute_script(DIALOG_OPTIONS[:id], "setNorth('#{north}')")
+        nil
+      end
       dialog.add_action_callback('accept') do |_action_context, image_base64, orientation|
         puts "plan_edit accept: orientation=#{orientation}"
         Envelop::PlanPosition.add_image(image_base64, orientation)

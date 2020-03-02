@@ -69,6 +69,7 @@ $(function() {
     zoomCropperCanvas();
   });
 
+  sketchup.call_set_north();
   sketchup.call_set_image();
 })
 
@@ -105,4 +106,18 @@ function place(button) {
 function setImage(image_base64) {
   if (typeof cropper === 'undefined') return
   cropper.replace(image_base64);
+}
+
+function setNorth(north) {
+  setCardinalDirectionText($("#place_N"), 90 - north);
+  setCardinalDirectionText($("#place_W"), 180 - north);
+  setCardinalDirectionText($("#place_S"), 270 - north);
+  setCardinalDirectionText($("#place_E"), 360 - north);
+}
+
+function setCardinalDirectionText(element, direction /*angle in degrees*/) {
+  direction += 1 // to get around rounding issues
+  index = (Math.round(direction * (1 / 45)) / (1 / 45) / 45 % 8 + 8) % 8
+  cardinal_directions = ['North', 'North-West', 'West', 'South-West', 'South', 'South-East', 'East', 'North-East']
+  element.text(cardinal_directions[index])
 }
