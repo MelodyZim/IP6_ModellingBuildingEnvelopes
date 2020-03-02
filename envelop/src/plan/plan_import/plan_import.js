@@ -39,7 +39,7 @@ $(function() {
   });
 
   $(this).keydown(function(e) {
-    if (e.keyCode == 65) {
+    if (e.key == 'a') {
       $("#file-to-upload").trigger('click');
     }
   });

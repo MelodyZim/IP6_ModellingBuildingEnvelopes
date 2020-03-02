@@ -48,23 +48,24 @@ $(function() {
   });
 
   $(this).keydown(function(e) {
-    if (e.keyCode == 27) {
+    // Key values: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+    if (e.key == 'Escape') {
       sketchup.cancel();
-    } else if (e.keyCode == 16 || e.keyCode == 17 || e.keyCode == 18 || e.keyCode == 91) {
+    } else if (e.key == 'Shift' || e.key == 'Control' || e.key == 'Alt' || e.key == 'Meta') {
       switch_mode();
-    } else if (e.keyCode == 37) {
+    } else if (e.key == 'ArrowLeft') {
         cropper.rotate(-90);
-    } else if (e.keyCode == 39) {
+    } else if (e.key == 'ArrowRight') {
         cropper.rotate(90);
-    } else if (e.keyCode == 70) {
+    } else if (e.key == 'f') {
       place($('#place_F'));
-    } else if (e.keyCode == 78) {
+    } else if (e.key == 'n') {
       place($('#place_N'));
-    } else if (e.keyCode == 69) {
+    } else if (e.key == 'e' || e.key == 'o') {
       place($('#place_E'));
-    } else if (e.keyCode == 83) {
+    } else if (e.key == 's') {
       place($('#place_S'));
-    } else if (e.keyCode == 87) {
+    } else if (e.key == 'w') {
       place($('#place_W'));
     }
   });
