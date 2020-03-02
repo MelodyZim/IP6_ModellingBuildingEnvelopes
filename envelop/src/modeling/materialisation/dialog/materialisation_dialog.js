@@ -4,16 +4,23 @@ $(function() {
   $("#material-template").hide();
   $("#group-template").hide();
 
-  $("#add-material").on('click',
-    function() {
-      var new_material_type = prompt("Please enter new material type abbreviation:");
-      if (new_material_type !== null && new_material_type !== "") {
-        sketchup.new_material_type(new_material_type);
+  $("#add-material").on('click', new_material);
+
+    $(this).keydown(function(e) {
+      if (e.keyCode == 78) {
+        new_material();
       }
     });
 
   sketchup.call_set_materials();
 });
+
+function new_material() {
+  var new_material_type = prompt("Please enter new material type abbreviation:");
+  if (new_material_type !== null && new_material_type !== "") {
+    sketchup.new_material_type(new_material_type);
+  }
+}
 
 function setMaterials(materials_as_hash_array) {
   $("#groups-container").empty();

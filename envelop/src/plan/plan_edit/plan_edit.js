@@ -20,17 +20,7 @@ $(function() {
   });
 
   mode_select = true;
-  $("#switchMode").on('click', function() {
-    if (mode_select) {
-      cropper.setDragMode("move");
-      $("#switchLabel").html("Select Square");
-      mode_select = false;
-    } else {
-      cropper.setDragMode("crop");
-      $("#switchLabel").html("Move Plan");
-        mode_select = true;
-    }
-  });
+  $("#switchMode").on('click', switch_mode);
 
   $("#rotCCW").on('click', function() {
     cropper.rotate(-90);
@@ -60,6 +50,22 @@ $(function() {
   $(this).keydown(function(e) {
     if (e.keyCode == 27) {
       sketchup.cancel();
+    } else if (e.keyCode == 16 || e.keyCode == 17 || e.keyCode == 18 || e.keyCode == 91) {
+      switch_mode();
+    } else if (e.keyCode == 37) {
+        cropper.rotate(-90);
+    } else if (e.keyCode == 39) {
+        cropper.rotate(90);
+    } else if (e.keyCode == 70) {
+      place($('#place_F'));
+    } else if (e.keyCode == 78) {
+      place($('#place_N'));
+    } else if (e.keyCode == 69) {
+      place($('#place_E'));
+    } else if (e.keyCode == 83) {
+      place($('#place_S'));
+    } else if (e.keyCode == 87) {
+      place($('#place_W'));
     }
   });
 
@@ -72,6 +78,18 @@ $(function() {
   sketchup.call_set_north();
   sketchup.call_set_image();
 })
+
+function switch_mode() {
+  if (mode_select) {
+    cropper.setDragMode("move");
+    $("#switchLabel").html("Select Square");
+    mode_select = false;
+  } else {
+    cropper.setDragMode("crop");
+    $("#switchLabel").html("Move Plan");
+      mode_select = true;
+  }
+}
 
 // zoom the cropper canvas to fit inside the container
 function zoomCropperCanvas() {

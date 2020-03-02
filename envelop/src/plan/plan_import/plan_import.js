@@ -38,6 +38,12 @@ $(function() {
     Promise.all(ps).then(call_save_imported_plans);
   });
 
+  $(this).keydown(function(e) {
+    if (e.keyCode == 65) {
+      $("#file-to-upload").trigger('click');
+    }
+  });
+
   sketchup.call_load_imported_plans();
 });
 

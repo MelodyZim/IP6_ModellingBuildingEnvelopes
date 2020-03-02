@@ -1,17 +1,27 @@
 $(function() {
-  $("#copy").on('click', function() {
-    selection = window.getSelection();
-    selection.empty();
-    selection.selectAllChildren($('#areaTable').get(0));
-    document.execCommand("copy")
-  });
+  $("#copy").on('click', copy);
 
   $("#close").on('click', function() {
     sketchup.close();
   });
 
+  $(this).keydown(function(e) {
+    if (e.keyCode == 27) {
+      sketchup.close();
+    } else if (e.keyCode == 67) {
+      copy();
+    }
+  });
+
   sketchup.call_set_result();
 })
+
+function copy() {
+  selection = window.getSelection();
+  selection.empty();
+  selection.selectAllChildren($('#areaTable').get(0));
+  document.execCommand("copy")
+}
 
 function set_result(result) {
   var html = '';
