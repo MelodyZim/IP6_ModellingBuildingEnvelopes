@@ -336,6 +336,23 @@ module Envelop
     end
 
     #
+    # Check if the given face is part of a Sketchup::Image
+    #
+    # @param [Sketchup::Face, nil] the face to test
+    #
+    # @return [Boolean] true if the face is part of a Sketchup::Image, false otherwise
+    #
+    def self.is_image_face(face)
+      unless face.nil?
+        parent = face.parent
+        if parent.is_a? Sketchup::ComponentDefinition # could also be Sketchup::Model
+          return parent.image?
+        end
+      end
+      false
+    end
+
+    #
     # Draw the given points as a continuous line
     # if color is nil the default Sketchup axis colors are used
     #

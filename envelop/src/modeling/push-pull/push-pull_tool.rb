@@ -147,7 +147,7 @@ module Envelop
       end
 
       def update_pushpull_vector(view, x, y)
-        if @ip.edge.nil? && @ip.vertex.nil?
+        if @ip.edge.nil? && @ip.vertex.nil? && !Envelop::GeometryUtils.is_image_face(@ip.face)
           camera_ray = view.pickray(x, y)
           target = Geom.closest_points(@line, camera_ray)[0]
         else
