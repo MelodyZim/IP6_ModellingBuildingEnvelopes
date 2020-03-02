@@ -18,12 +18,12 @@ module Envelop
         puts 'deactivating PlanPositionTool...'
 
         # no need to reset_tool, tool instance will be discarded after this
-
-        if @phase != PHASES[:FINISHED]
+        if @phase != PHASES[:FINISHED] and @phase != PHASES[:BEFORE_SCALE] and @phase != PHASES[:BEFORE_SECOND_POINT]
           if @image_obj
             Sketchup.active_model.active_entities.erase_entities @image_obj
           end
         end
+        Envelop::PlanManager.unhide_all_plans
         view.invalidate
       end
 
@@ -40,7 +40,9 @@ module Envelop
 
       def onCancel(_reason, _view)
         # reset_tool TODO: is removing the image and deactivating the tool the correct behaviour? should it instead just reset before the frist click?
-
+        if @image_obj
+          Sketchup.active_model.active_entities.erase_entities @image_obj
+        end
         Envelop::PlanManager.unhide_all_plans
         Sketchup.active_model.select_tool(nil) # this will invalidate view & delete becasue phase will not be FINISHED
       end
