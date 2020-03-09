@@ -7,7 +7,7 @@ $(function() {
   $("#add-material").on('click', new_material);
 
     $(this).keydown(function(e) {
-      if (e.keyCode == 78) {
+      if (e.key == 'n') {
         new_material();
       }
     });
