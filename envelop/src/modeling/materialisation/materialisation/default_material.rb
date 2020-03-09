@@ -6,7 +6,7 @@ module Envelop
     COLOR_DEFAULT_MATERIAL_G = 242
     COLOR_DEFAULT_MATERIAL_B = 242
 
-    def self.house_contains_default_material(entities = nil)
+    def self.house_contains_default_material()
       entities_contains_material()
     end
 
