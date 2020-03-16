@@ -1,6 +1,6 @@
 $(function() {
   $(this).keydown(function(e) {
-    if (e.keyCode == 27) {
+    if (e.key == 'Escape') {
       sketchup.close();
     }
   });

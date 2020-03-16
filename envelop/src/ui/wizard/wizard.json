@@ -1,154 +1,201 @@
 {
   "steps": [{
       "number": 1,
-      "title": "Pläne Importieren"
+      "title": "Import plans"
     },
     {
       "number": 2,
-      "title": "Tiefster Bodenplan Einfügen"
+      "title": "Insert lowest floor plan"
     },
     {
       "number": 3,
-      "title": "Grundriss Zeichnen"
+      "title": "Trace floor"
     },
     {
       "number": 4,
-      "title": "Eine Aufsicht Einfügen"
+      "title": "Insert side views"
     },
     {
       "number": 5,
-      "title": "Ein Stockwerk Hochziehen"
+      "title": "Pull up floor"
     },
     {
       "number": 6,
-      "title": "Alle Stockwerke Erstellen",
+      "title": "Create remaining floors",
       "sublist": [{
         "number": 1,
-        "title": "Nächster Bodenplan Einfügen"
+        "title": "Insert next floor plan"
       }, {
         "number": 2,
-        "title": "Stockwerk Hochziehen"
+        "title": "Pull up floor"
       }, {
         "number": 3,
-        "title": "Wiederholen Bis Unter Dach"
+        "title": "Repeat until all floors exept the roof are done"
       }]
     },
     {
       "number": 7,
-      "title": "Dach Erstellen",
+      "title": "Create roof",
       "sublist": [{
         "number": 1,
-        "title": "Seitenansicht Zeichnen"
+        "title": "Trace the roof from a side view"
       }, {
         "number": 2,
-        "title": "Dach Über Gebäude Ziehen"
-      }, {
-        "number": 3,
-        "title": "Wiederholen Bis Dach Fertig"
+        "title": "Pull the roof over the building"
       }]
     },
     {
       "number": 8,
-      "title": "Restliche Aufsichten Einfügen"
+      "title": "Create dormers"
     },
     {
       "number": 9,
-      "title": "Fenster und Lukarnen Einzeichnen"
+      "title": "Draw windows and other details"
     },
     {
       "number": 10,
-      "title": "Oberflächen Materialisieren"
+      "title": "Apply materials to faces"
     },
     {
       "number": 11,
-      "title": "Skalieren"
+      "title": "Scale building"
+    },
+    {
+      "number": 12,
+      "title": "Set north direction"
+    },
+    {
+      "number": 13,
+      "title": "Export Surface area"
     }
   ],
   "details": [{
       "forNumber": 1,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Import plans",
+      "steps": [
+        "Click on the plus button on the Plan Import dialog", 
+        "Select the plan files and click Open. Pdf and Image files are supported"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 2,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Insert lowest floor plan",
+      "steps": [
+        "Select the floor plan on the Plan Import dialog",
+        "The selected plan opens in a separate dialog",
+        "Click and drag a box around the floor plan",
+        "Click the Floor button to insert the plan as a floor"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 3,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Trace floor",
+      "steps": [
+        "If the Envelop is not visible go to View -> Toolbars... and tick the box for Envelop Toolbar",
+        "Select the pen tool",
+        "Create a face by tracing the contour of the floor plan"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 4,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Insert side views",
+      "steps": [
+        "Select a side view on the Plan Import dialog",
+        "The selected plan opens in a separate dialog",
+        "Click and drag a box around the side view on the plan",
+        "Click the respective button depending on the cardinal direction of the side view",
+        "Select a point on the plan and then the corresponding point on the floor to snap the two points together",
+        "Select another point on the plan and the correspointing point on the floor to scale the plan accordingly"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 5,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Pull up floor",
+      "steps": [
+        "Select the Envelop Push-Pull tool",
+        "Select the floor face and drag up the lowest floor using the side view as a reference",
+        "Click to accept the preview"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 6,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Create remaining floors",
+      "steps": [
+        "Insert next floor plan from the Plan Import dialog",
+        "Pull up floor with the Envelop Push-Pull tool using a side view as referece",
+        "Repeat until all floors exept the roof are done"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 7,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Create roof",
+      "steps": [
+        "Trace the roof from a side view with the pen tool",
+        "Pull the roof over the building with the Envelop Push-Pull tool. Sometimes it is easier to subtract instead of adding"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 8,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Create dormers",
+      "steps": [
+        "Draw the outline with the pen tool on the sloped face of the roof",
+        "Select the Push-Pull tool and double-click the outline",
+        "Add a roof on the dormer as needed"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 9,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Draw windows and other details",
+      "steps": [
+        "Make sure the plan for a window is alligned with the respective wall. If not use the Plan Manager Tool to move a plan around",
+        "Use the pen tool to draw windows and other details like separations between different wall materials"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 10,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Apply materials to faces",
+      "steps": [
+        "Select a material on the Materialization dialog",
+        "Click a face to apply the material"
       ],
       "video": "mov_bbb.ogv"
     },
     {
       "forNumber": 11,
-      "title": "Lorem ipsum title",
-      "steps": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "Nunc et lectus vel nisi sodales tempor id ac nisi.", "Sed lacinia eros sit amet dui tristique, sed pretium sem maximus.",
-        "Vivamus aliquet odio in risus tristique rhoncus.", "Donec sagittis nulla in felis vehicula, vel molestie purus egestas."
+      "title": "Scale building",
+      "steps": [
+        "Search a readable and preferably long measurement on a plan",
+        "Select the Scale model tool",
+        "Click the end points of a measurement and enter the length in the input box"
+      ],
+      "video": "mov_bbb.ogv"
+    },
+    {
+      "forNumber": 12,
+      "title": "Set north direction",
+      "steps": [
+        "Select the Orientation tool",
+        "Click somewhere",
+        "Click again to accept the previewed orientation"
+      ],
+      "video": "mov_bbb.ogv"
+    },
+    {
+      "forNumber": 13,
+      "title": "Export Surface area",
+      "steps": [
+        "Select Area Ouput, a dialog with surface area in a table will open",
+        "Click the copy button to copy the results to the clipboard",
+        "Paste the results for example into Excel"
       ],
       "video": "mov_bbb.ogv"
     }
