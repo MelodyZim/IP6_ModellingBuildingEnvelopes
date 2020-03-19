@@ -30,7 +30,7 @@
         "title": "Pull up floor"
       }, {
         "number": 3,
-        "title": "Repeat until all floors exept the roof are done"
+        "title": "Repeat until all floors except the roof are done"
       }]
     },
     {
@@ -76,7 +76,7 @@
         "Click on the plus button on the Plan Import dialog", 
         "Select the plan files and click Open. Pdf and Image files are supported"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/01_import_plans.webm"
     },
     {
       "forNumber": 2,
@@ -87,7 +87,7 @@
         "Click and drag a box around the floor plan",
         "Click the Floor button to insert the plan as a floor"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/02_insert_plan.webm"
     },
     {
       "forNumber": 3,
@@ -95,22 +95,23 @@
       "steps": [
         "If the Envelop is not visible go to View -> Toolbars... and tick the box for Envelop Toolbar",
         "Select the pen tool",
-        "Create a face by tracing the contour of the floor plan"
+        "Create a face by tracing the contour of the floor plan",
+        "Delete unneeded separation with the Erase tool"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/03_trace_floor_plan.webm"
     },
     {
       "forNumber": 4,
       "title": "Insert side views",
       "steps": [
-        "Select a side view on the Plan Import dialog",
+        "On the Plan Import dialog, select a plan that contains a side view",
         "The selected plan opens in a separate dialog",
         "Click and drag a box around the side view on the plan",
         "Click the respective button depending on the cardinal direction of the side view",
         "Select a point on the plan and then the corresponding point on the floor to snap the two points together",
-        "Select another point on the plan and the correspointing point on the floor to scale the plan accordingly"
+        "Select another point on the plan and the corresponding point on the floor to scale the plan accordingly"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/04_insert_side_view.webm"
     },
     {
       "forNumber": 5,
@@ -120,45 +121,48 @@
         "Select the floor face and drag up the lowest floor using the side view as a reference",
         "Click to accept the preview"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/05_push_pull_floor.webm"
     },
     {
       "forNumber": 6,
       "title": "Create remaining floors",
       "steps": [
         "Insert next floor plan from the Plan Import dialog",
-        "Pull up floor with the Envelop Push-Pull tool using a side view as referece",
-        "Repeat until all floors exept the roof are done"
+        "Pull up floor with the Envelop Push-Pull tool using a side view as reference",
+        "Repeat until all floors except the roof are done"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/06_create_remaining_floors.webm"
     },
     {
       "forNumber": 7,
       "title": "Create roof",
       "steps": [
+        "Insert necessary plans",
         "Trace the roof from a side view with the pen tool",
         "Pull the roof over the building with the Envelop Push-Pull tool. Sometimes it is easier to subtract instead of adding"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/07_roof.webm"
     },
     {
       "forNumber": 8,
       "title": "Create dormers",
       "steps": [
+        "Move the side view of the dormer into the house",
+        "Set camera to Parallel Projection",
         "Draw the outline with the pen tool on the sloped face of the roof",
         "Select the Push-Pull tool and double-click the outline",
         "Add a roof on the dormer as needed"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/08_dormer.webm"
     },
     {
       "forNumber": 9,
       "title": "Draw windows and other details",
       "steps": [
-        "Make sure the plan for a window is alligned with the respective wall. If not use the Plan Manager Tool to move a plan around",
+        "Make sure the plan for a window is aligned with the respective wall. If not use the Plan Manager Tool to move a plan around",
         "Use the pen tool to draw windows and other details like separations between different wall materials"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/09_windows.webm"
     },
     {
       "forNumber": 10,
@@ -167,7 +171,7 @@
         "Select a material on the Materialization dialog",
         "Click a face to apply the material"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/10_material.webm"
     },
     {
       "forNumber": 11,
@@ -177,7 +181,7 @@
         "Select the Scale model tool",
         "Click the end points of a measurement and enter the length in the input box"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/11_scale.webm"
     },
     {
       "forNumber": 12,
@@ -187,17 +191,17 @@
         "Click somewhere",
         "Click again to accept the previewed orientation"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/12_orientation.webm"
     },
     {
       "forNumber": 13,
       "title": "Export Surface area",
       "steps": [
-        "Select Area Ouput, a dialog with surface area in a table will open",
+        "Select Area Output, a dialog with surface area in a table will open",
         "Click the copy button to copy the results to the clipboard",
         "Paste the results for example into Excel"
       ],
-      "video": "mov_bbb.ogv"
+      "video": "videos/13_output.webm"
     }
   ]
 }
