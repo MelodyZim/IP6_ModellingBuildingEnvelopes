@@ -129,4 +129,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/ruby,macos,windows,sketchup,visualstudiocode
-/envelop/src/utils/prefs
+/envelop/envelop/utils/prefs
