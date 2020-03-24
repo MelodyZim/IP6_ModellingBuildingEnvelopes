@@ -27,9 +27,12 @@
         "title": "Insert next floor plan"
       }, {
         "number": 2,
-        "title": "Pull up floor"
+        "title": "Trace the new floor outline"
       }, {
         "number": 3,
+        "title": "Pull up floor"
+      }, {
+        "number": 4,
         "title": "Repeat until all floors except the roof are done"
       }]
     },
@@ -128,6 +131,7 @@
       "title": "Create remaining floors",
       "steps": [
         "Insert next floor plan from the Plan Import dialog",
+        "Trace the new floor outline if it is different than the previous floor",
         "Pull up floor with the Envelop Push-Pull tool using a side view as reference",
         "Repeat until all floors except the roof are done"
       ],
