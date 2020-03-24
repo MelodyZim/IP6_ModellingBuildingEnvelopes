@@ -172,6 +172,7 @@
       "forNumber": 10,
       "title": "Apply materials to faces",
       "steps": [
+        "Create necessary materials on the Materialization dialog",
         "Select a material on the Materialization dialog",
         "Click a face to apply the material"
       ],
