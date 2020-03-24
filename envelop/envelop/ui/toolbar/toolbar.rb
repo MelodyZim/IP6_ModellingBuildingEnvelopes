@@ -215,11 +215,11 @@ module Envelop
       @toolbar = @toolbar.add_item upc
       submenu.add_item upc
 
-      @toolbar = @toolbar.add_separator
+      # @toolbar = @toolbar.add_separator
       submenu.add_separator
 
       rc = reload_command
-      @toolbar = @toolbar.add_item rc
+      # @toolbar = @toolbar.add_item rc
       submenu.add_item rc
 
       file_loaded(__FILE__)
