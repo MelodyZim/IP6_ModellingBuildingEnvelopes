@@ -83,7 +83,7 @@ $(function() {
 function switch_mode() {
   if (mode_select) {
     cropper.setDragMode("move");
-    $("#switchLabel").html("Select Square");
+    $("#switchLabel").html("Select Rectangle");
     mode_select = false;
   } else {
     cropper.setDragMode("crop");
