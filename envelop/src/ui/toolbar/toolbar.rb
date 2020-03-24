@@ -47,13 +47,13 @@ module Envelop
     end
 
     def self.open_wizard_command
-      cmd = UI::Command.new('Open Wizard') do
+      cmd = UI::Command.new('Open Quick Guide') do
         Envelop::Wizard.open_dialog
       end
       set_icon(cmd, 'lesson')
-      cmd.tooltip = 'Open Wizard'
-      cmd.status_bar_text = 'Open Wizard'
-      cmd.menu_text = 'Open Wizard'
+      cmd.tooltip = 'Open Quick Guide'
+      cmd.status_bar_text = 'Open Quick Guide'
+      cmd.menu_text = 'Open Quick Guide'
 
       cmd
     end

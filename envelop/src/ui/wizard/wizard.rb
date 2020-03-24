@@ -16,7 +16,7 @@ module Envelop
 
     DIALOG_OPTIONS = {
       path_to_html: File.join(__dir__, 'wizard.html'),
-      title: 'Wizard',
+      title: 'Quick Guide',
       id: 'Envelop::Wizard:Wizard',
       height: HTML_HEIGHT, width: HTML_WIDTH,
       pos_x: 0, pos_y: Envelop::WindowUtils.sketchup_menu_and_toolbar_height,
@@ -26,7 +26,7 @@ module Envelop
 
     DETAIL_DIALOG_OPTIONS = {
       path_to_html: File.join(__dir__, 'wizard_detail.html'),
-      title: 'Wizard Detail',
+      title: 'Quick Guide Detail',
       id: 'Envelop::Wizard:WizardDetail',
       height: 600, width: 500,
       pos_x: 0, pos_y: 0,
