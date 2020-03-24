@@ -50,7 +50,7 @@ module Envelop
   end
 
   def self.create_extension
-    ex = SketchupExtension.new('Envelop', 'src/main')
+    ex = SketchupExtension.new('Envelop', 'envelop/main')
     ex.description = 'Envelop: Quickly Modelling Building Envelops Based on PDF Plans'
     ex.version     = '0.1'
     ex.copyright   = '2020 Florian Siffer & Patrick Ackermann'
