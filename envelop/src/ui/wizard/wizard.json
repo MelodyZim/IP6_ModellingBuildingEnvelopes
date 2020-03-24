@@ -44,7 +44,7 @@
         "title": "Trace the roof from a side view"
       }, {
         "number": 2,
-        "title": "Pull the roof over the building"
+        "title": "Add and/or subtract material with the PushPull tool"
       }]
     },
     {
@@ -143,7 +143,7 @@
       "steps": [
         "Insert necessary plans",
         "Trace the roof from a side view with the pen tool",
-        "Pull the roof over the building with the Envelop Push-Pull tool. Sometimes it is easier to subtract instead of adding"
+        "Use the PushPull tool to add and/or subtract material from the house"
       ],
       "video": "videos/07_roof.webm"
     },
