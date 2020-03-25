@@ -90,6 +90,7 @@ module Envelop
     def self.merge_materials
       model = Sketchup.active_model
       materials = model.materials
+      materials_to_remove = []
 
       #  merge identical materials
       materials.each do |material|
@@ -106,8 +107,12 @@ module Envelop
         next unless (local_material.alpha - material.alpha).abs <= 0.01
         next unless (local_material.get_attribute('material', 'color_hsl_l') - material.get_attribute('material', 'color_hsl_l')).abs <=  0.01
 
-        replace_material(material, local_material)
-        materials.remove(material)
+        materials_to_remove << [material, local_material]
+      end
+
+      materials_to_remove.each do |materials|
+        replace_material(materials[0], materials[1])
+        model.materials.remove(materials[0])
       end
     end
 
