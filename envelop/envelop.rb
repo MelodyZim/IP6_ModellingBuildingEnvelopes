@@ -63,12 +63,14 @@ module Envelop
 
   unless file_loaded?(__FILE__)
     @extension = create_extension
-    @extension.check
+    # @extension.check
 
     Sketchup.add_observer(ReloadAppObserver.new)
 
     file_loaded(__FILE__)
   end
 
-  Envelop::Main.show_dialogs
+  if defined?(Envelop::Main)
+    Envelop::Main.show_dialogs
+  end
 end # Envelop

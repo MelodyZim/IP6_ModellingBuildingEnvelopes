@@ -74,5 +74,6 @@ module Envelop
     end
 
     delete_marc
+    Envelop::Main.show_dialogs
   end
 end
