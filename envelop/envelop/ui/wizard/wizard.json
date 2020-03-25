@@ -70,6 +70,10 @@
     {
       "number": 13,
       "title": "Export surface area"
+    },
+    {
+      "number": " ",
+      "title": "Recovering from mistakes and exceptions"
     }
   ],
   "details": [{
@@ -96,9 +100,9 @@
       "forNumber": 3,
       "title": "Trace floor",
       "steps": [
-        "If the Envelop is not visible go to View -> Toolbars... and tick the box for Envelop Toolbar",
+        "If the Envelop toolbar is not visible go to View -> Toolbars... and tick the box for Envelop Toolbar",
         "Select the pen tool",
-        "Create a face by tracing the contour of the floor plan",
+        "Create a face by tracing the contour of the floor plan. It is easier to subtract complex cut-outs later",
         "Delete unneeded separation with the Erase tool"
       ],
       "video": "videos/03_trace_floor_plan.webm"
@@ -133,7 +137,8 @@
         "Insert next floor plan from the Plan Import dialog",
         "Trace the new floor outline if it is different than the previous floor",
         "Pull up floor with the Envelop Push-Pull tool using a side view as reference",
-        "Repeat until all floors except the roof are done"
+        "Repeat until all floors except the roof are done",
+        "Add or subtract complex details"
       ],
       "video": "videos/06_create_remaining_floors.webm"
     },
@@ -207,6 +212,18 @@
         "Paste the results for example into Excel"
       ],
       "video": "videos/13_output.webm"
+    },
+    {
+      "forNumber": " ",
+      "title": "Recovering from mistakes and exceptions",
+      "steps": [
+        "Undo Operation: If something unexpected happens, try to undo by pressing ‘Ctrl’ + ‘Z’ or by selecting Edit > Undo.",
+        "Reload Extension: If Envelope unexpected, try to reload the Envelope extension by selecting Extensions > Envelop > Reload.",
+        "Restart Sketchup: If the errors persist, try a more thorough reload of both Sketchup and Envelop by closing Sketchup and opening it again.",
+        "Modelling outside of Envelop: If you spot errors in the model but are unable to fix them with Envelop tools, try using Sketchup native tools",
+        "New Model: If you are unable to recover, try to restart with a new model."
+      ],
+      "video": "videos/14_recover.webm"
     }
   ]
 }

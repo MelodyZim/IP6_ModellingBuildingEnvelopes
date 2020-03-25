@@ -36,7 +36,11 @@ module Envelop
         nil
       end
       dialog.add_action_callback('save_imported_plans') do |_action_context, imported_plans|
-        Sketchup.active_model.set_attribute('Envelop::PlanImport', 'imported_plans', imported_plans)
+        Envelop::OperationUtils.operation_chain('Save Plan', true, lambda {
+          Sketchup.active_model.set_attribute('Envelop::PlanImport', 'imported_plans', imported_plans)
+          
+          true # commit operation
+        })
         nil
       end
     end
