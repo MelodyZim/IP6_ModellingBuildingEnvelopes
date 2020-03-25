@@ -70,6 +70,10 @@
     {
       "number": 13,
       "title": "Export surface area"
+    },
+    {
+      "number": " ",
+      "title": "Recovering from mistakes and exceptions"
     }
   ],
   "details": [{
@@ -207,6 +211,18 @@
         "Paste the results for example into Excel"
       ],
       "video": "videos/13_output.webm"
+    },
+    {
+      "forNumber": " ",
+      "title": "Recovering from mistakes and exceptions",
+      "steps": [
+        "Undo Operation: If something unexpected happens, try to undo by pressing ‘Ctrl’ + ‘Z’ or by selecting Edit > Undo.",
+        "Reload Extension: If Envelope unexpected, try to reload the Envelope extension by selecting Extensions > Envelop > Reload.",
+        "Restart Sketchup: If the errors persist, try a more thorough reload of both Sketchup and Envelop by closing Sketchup and opening it again.",
+        "Modelling outside of Envelop: If you spot errors in the model but are unable to fix them with Envelop tools, try using Sketchup native tools",
+        "New Model: If you are unable to recover, try to restart with a new model."
+      ],
+      "video": "videos/14_recover.webm"
     }
   ]
 }
