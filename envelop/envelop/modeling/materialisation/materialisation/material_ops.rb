@@ -5,63 +5,83 @@ module Envelop
     def self.delete_material(material_name)
       puts "Envelop::Materialisation.delete_material: deleting material with name #{material_name}..."
 
-      materials = Sketchup.active_model.materials
-      material = materials[material_name]
+      Envelop::OperationUtils.operation_chain('Delete Material', false, lambda {
 
-      unless material.nil?
-        if entities_contains_material(material_name)
-          result = UI.messagebox('The model contains surfaces with the material you are about to delete. Do you want to continue?', MB_YESNO)
-          return if result == IDNO
+        materials = Sketchup.active_model.materials
+        material = materials[material_name]
 
-          replace_material(material, materials[DEFAULT_MATERIAL])
+        unless material.nil?
+          if entities_contains_material(material_name)
+            result = UI.messagebox('The model contains surfaces with the material you are about to delete. Do you want to continue?', MB_YESNO)
+            return if result == IDNO
+
+            replace_material(material, materials[DEFAULT_MATERIAL])
+          end
+
+          materials.remove(material)
+
+          Envelop::Materialisation.save_custom_materials
+
+          manage_materials
         end
 
-        materials.remove(material)
-
-        Envelop::Materialisation.save_custom_materials
-
-        manage_materials
-      end
+        true # commit operation
+      })
     end
 
     def self.new_material(material_name)
       puts "Envelop::Materialisation.new_material: new material with name #{material_name}..."
 
-      # create_material
-      create_material(material_name, nil, "#{material_name} 1", random_color)
+      Envelop::OperationUtils.operation_chain('New Material', false, lambda {
 
-      Envelop::Materialisation.save_custom_materials
+        # create_material
+        create_material(material_name, nil, "#{material_name} 1", random_color)
+
+        Envelop::Materialisation.save_custom_materials
+
+        true # commit operation
+      })
     end
 
     def self.add_material(material_name)
       puts "Envelop::Materialisation.add_material: adding material based on material with name #{material_name}..."
 
-      # get values
-      base_material = Sketchup.active_model.materials[material_name]
-      base_color_hsl = ColorMath.new(*base_material.get_attribute('material', 'color_rgb')).to_hsl
-      base_name = base_material.get_attribute('material', 'base_name')
+      Envelop::OperationUtils.operation_chain('Add Material', false, lambda {
 
-      # create_material
-      material = create_material(base_name, base_color_hsl)
-      hide_conflicting_materials
-      while material.get_attribute('material', 'is_hidden')
-        puts "Envelop::Materialisation.add_material: Creating another material as the previous is hidden."
+        # get values
+        base_material = Sketchup.active_model.materials[material_name]
+        base_color_hsl = ColorMath.new(*base_material.get_attribute('material', 'color_rgb')).to_hsl
+        base_name = base_material.get_attribute('material', 'base_name')
+
+        # create_material
         material = create_material(base_name, base_color_hsl)
         hide_conflicting_materials
-      end
+        while material.get_attribute('material', 'is_hidden')
+          puts "Envelop::Materialisation.add_material: Creating another material as the previous is hidden."
+          material = create_material(base_name, base_color_hsl)
+          hide_conflicting_materials
+        end
 
-      Envelop::Materialisation.save_custom_materials
+        Envelop::Materialisation.save_custom_materials
+
+        true # commit operation
+      })
     end
 
     def self.update_color(material_name, color_rgb_a)
       puts "Envelop::Materialisation.update_color: changing color for material with name #{material_name} to color #{color_rgb_a}..."
 
-      material = Sketchup.active_model.materials[material_name]
-      material.color = Sketchup::Color.new(*color_rgb_a)
-      material.set_attribute('material', 'color_rgb', color_rgb_a)
-      material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
+      Envelop::OperationUtils.operation_chain('Change Material Color', false, lambda {
 
-      Envelop::Materialisation.save_custom_materials
+        material = Sketchup.active_model.materials[material_name]
+        material.color = Sketchup::Color.new(*color_rgb_a)
+        material.set_attribute('material', 'color_rgb', color_rgb_a)
+        material.set_attribute('material', 'color_hsl_l', ColorMath.new(*color_rgb_a).to_hsl[2] / 100.0)
+
+        Envelop::Materialisation.save_custom_materials
+
+        true # commit operation
+      })
     end
 
     def self.user_facing_materials_as_hash_array

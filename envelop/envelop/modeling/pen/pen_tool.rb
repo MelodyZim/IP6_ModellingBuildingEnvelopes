@@ -233,10 +233,10 @@ module Envelop
         erase_construction_geometry
 
         # try to add edges to the house
-        house = Envelop::Housekeeper.get_or_find_house
         successful = Envelop::OperationUtils.operation_chain('Pen Tool', false, lambda {
-          !house.nil?
+          !Envelop::Housekeeper.get_or_find_house.nil?
         }, lambda {
+          house = Envelop::Housekeeper.get_or_find_house
           Envelop::GeometryUtils.create_line(house.entities, house.transformation.inverse, ps, add_all_faces: false)
 
           # check if house is stil manifold
