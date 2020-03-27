@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+
 module Envelop
   module PlanPosition
     # orientation: 0 = Floor, 1 = North, 2 = East, 3 = South, 4 = West
