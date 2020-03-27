@@ -1,4 +1,4 @@
-require_relative '../../../vendor/rb/color_math'
+Sketchup.require "#{File.dirname(__FILE__)}/../../../vendor/rb/color_math"
 
 module Envelop
   module Materialisation

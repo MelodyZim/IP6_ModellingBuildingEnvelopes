@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../vendor/rb/image_size'
+Sketchup.require "#{File.dirname(__FILE__)}/../../vendor/rb/image_size"
 
 module Envelop
   module PlanEdit

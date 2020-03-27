@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'sketchup'
-require_relative '../../vendor/rb/os'
+Sketchup.require "#{File.dirname(__FILE__)}/../../vendor/rb/os"
 
 module Envelop
   module Toolbar
